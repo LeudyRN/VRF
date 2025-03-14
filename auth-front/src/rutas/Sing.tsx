@@ -1,8 +1,9 @@
 import { useState } from "react";
 import DefaultLayout from "../layout/DefaultLayout";
 import { useAuth } from "../auth/AuthProvider";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { API_URL } from "../auth/constants";
+import { AuthResponseError } from "../types/types";
 
 export default function Sing() {
   const [nombre, setNombre] = useState<string>("");
@@ -11,7 +12,8 @@ export default function Sing() {
   const [usuario, setUsuario] = useState<string>("");
   const [correo, setCorreo] = useState<string>("");
   const [contraseña, setContraseña] = useState<string>("");
-
+  const [errorResponse, setErrorResponse] = useState("");
+  const goTo = useNavigate();
 
  async function handleSubmit (e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -34,7 +36,14 @@ export default function Sing() {
 
       if (response.ok) {
         console.log("User created successfully");
-      } else {console.log("Something went wrong")}
+        setErrorResponse("");
+        goTo("/");
+      } else {
+        console.log("Something went wrong");
+        const json = (await response.json()) as AuthResponseError;
+        setErrorResponse(json.body.error);
+        return;
+      }
 
     } catch (error) {
       console.log(error);
@@ -51,6 +60,7 @@ export default function Sing() {
     <DefaultLayout>
       <form className="form" onSubmit={handleSubmit}>
       <h1>Regístrate</h1>
+      {!! errorResponse && <div className="errorMessage">{errorResponse}</div>}
 
         <label htmlFor="nombre">Nombre</label>
         <input
