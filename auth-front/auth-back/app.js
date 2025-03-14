@@ -16,9 +16,12 @@ app.use("/api/user", require("./routes/user"));
 app.use("/api/todos", require("./routes/todos"));
 app.use("/api/refresh-token", require("./routes/refreshToken"));
 app.use("/api/singout", require("./routes/singout"));
+app.use("/api/register-card", require("./routes/registerCard"));
+app.use("/user", require("./routes/user"));
+
 
 app.get("/", (req, res) => {
-  res.send("Hello");
+  res.send(" ");
 });
 
 app.listen(port, () => {
