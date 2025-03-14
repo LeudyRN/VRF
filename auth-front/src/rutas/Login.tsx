@@ -12,38 +12,31 @@ export default function Login() {
   const goTo = useNavigate();
   const [errorResponse, setErrorResponse] = useState("");
 
-
-  async function handleSubmit (e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${API_URL}/sing`, {
+      const response = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-          usuario,
-          contraseña
-        }),
+        body: JSON.stringify({ usuario, contraseña }),
       });
 
       if (response.ok) {
-        console.log("User created successfully");
+        const json = await response.json();
+        auth.login(json.accessToken);
         setErrorResponse("");
-        goTo("/");
+        goTo("/dashboard");
       } else {
-        console.log("Something went wrong");
         const json = (await response.json()) as AuthResponseError;
         setErrorResponse(json.body.error);
-        return;
       }
-
     } catch (error) {
       console.log(error);
     }
-  };
-
+  }
   if(auth.isAuthenticated){
     return <Navigate to="/Dashboard" />
   }

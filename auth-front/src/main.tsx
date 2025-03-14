@@ -10,29 +10,29 @@ import { AuthProvider } from './auth/AuthProvider.tsx'
 
 const router = createBrowserRouter([
   {
-   path: "/",
-   element: <Login />,
+    path: "/login",
+    element: <Login />,
   },
   {
-    path: "/Sing",
+    path: "/sing",
     element: <Sing />,
-   },
-   {
+  },
+  {
     path: "/",
     element: <ProtectedRoute />,
     children: [
       {
-        path: "/Dashboard",
+        path: "dashboard",
         element: <Dashboard />,
       },
     ],
-   },
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <AuthProvider>
-    <RouterProvider router={router} />
+      <RouterProvider router={router} />
     </AuthProvider>
   </React.StrictMode>
 );
