@@ -1,7 +1,39 @@
-const router = require("express").Router();
+const express = require("express");
+const jwt = require("jsonwebtoken");
+const pool = require("../config/db");
+const router = express.Router();
 
-router.get("/", (req, res) => {
-res.send("refresh token")
+router.post("/", async (req, res) => {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    return res.status(401).json({ error: "Token de refresco requerido" });
+  }
+
+  try {
+    // Verifica que el refresh token esté en la base de datos
+    const [user] = await pool.query("SELECT id FROM usuarios WHERE refresh_token = ?", [refreshToken]);
+
+    if (user.length === 0) {
+      return res.status(403).json({ error: "Refresh token inválido" });
+    }
+
+    // Verifica la validez del token
+    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
+      if (err) {
+        return res.status(403).json({ error: "Refresh token expirado o inválido" });
+      }
+
+      // Genera un nuevo access token
+      const accessToken = jwt.sign({ id: decoded.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15m" });
+
+      res.json({ accessToken });
+    });
+
+  } catch (error) {
+    console.error("Error al refrescar token:", error);
+    res.status(500).json({ error: "Error en el servidor" });
+  }
 });
 
 module.exports = router;

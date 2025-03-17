@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import DefaultLayout from "../layout/DefaultLayout";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { API_URL } from "../auth/constants";
 
 export default function Sing() {
@@ -10,11 +10,13 @@ export default function Sing() {
   const [usuario, setUsuario] = useState<string>("");
   const [correo, setCorreo] = useState<string>("");
   const [contraseña, setContraseña] = useState<string>("");
+  const [mostrarContraseña, setMostrarContraseña] = useState<boolean>(false); // Estado para "mostrar/ocultar" contraseña
   const [errorResponse, setErrorResponse] = useState<string>("");
-  const [successResponse, setSuccessResponse] = useState<string>(""); // Nuevo estado para mensaje exitoso
-  const [emailVerified, setEmailVerified] = useState<boolean>(false); // Verifica si el correo fue confirmado
-  const goTo = useNavigate();
+  const [successResponse, setSuccessResponse] = useState<string>("");
+  const [emailVerified, setEmailVerified] = useState<boolean>(false);
+  const navigate = useNavigate();
 
+  // Limpiar mensajes de éxito y error automáticamente después de 5 segundos
   useEffect(() => {
     if (errorResponse || successResponse) {
       const timer = setTimeout(() => {
@@ -29,6 +31,7 @@ export default function Sing() {
     e.preventDefault();
 
     try {
+      // Enviar datos al backend
       const response = await fetch(`${API_URL}/sing`, {
         method: "POST",
         headers: {
@@ -46,14 +49,12 @@ export default function Sing() {
 
       if (response.ok) {
         const data = await response.json();
-        const { userId } = data;
+        const { userId } = data; // Obtiene el ID del usuario
 
-        // Verificar que el backend devolvió un userId y proceder normalmente
         if (userId) {
-          localStorage.setItem("userId", userId); // Guarda el ID del usuario
-          goTo("/email-confirmation"); // Redirige al siguiente paso
+          localStorage.setItem("userId", userId);
+          navigate("/email-confirmation"); // Redirige a la pantalla de confirmación
           setSuccessResponse("Registro exitoso. Revisa tu correo para confirmar tu cuenta.");
-          setErrorResponse(""); // Limpia los errores previos
           setNombre("");
           setApellido("");
           setGenero("");
@@ -61,86 +62,162 @@ export default function Sing() {
           setCorreo("");
           setContraseña("");
         } else {
-          // Manejo en caso de que no se reciba userId
           setErrorResponse("Error inesperado al registrar. Intenta nuevamente.");
         }
       } else {
         const alert: { error?: string } = await response.json();
         setErrorResponse(alert.error || "Ocurrió un error inesperado.");
-        setSuccessResponse(""); // Limpia mensajes de éxito previos
       }
-
     } catch (error) {
       setErrorResponse("Error de conexión con el servidor.");
     }
   }
 
+  // Alternar visibilidad de la contraseña
+  const togglePasswordVisibility = () => {
+    setMostrarContraseña(!mostrarContraseña);
+  };
+
+  // Verificar si el correo ha sido confirmado
   useEffect(() => {
     async function checkEmailVerified() {
       try {
         const userId = localStorage.getItem("userId");
+        if (!userId) return;
 
-        // Si no existe userId, detén el proceso y no escribas en la consola.
-        if (!userId) {
-          return; // Simplemente sal de la función sin hacer nada
-        }
-
-        // Si existe userId, procede a hacer la solicitud
         const response = await fetch(`${API_URL}/user/status?userId=${userId}`);
         const data = await response.json();
 
         if (data.email_verified) {
-          setEmailVerified(true); // Cambia el estado a verdadero si está verificado
-        } else {
-          console.log("El correo aún no está verificado."); // Mensaje de estado normal
+          setEmailVerified(true);
         }
       } catch (error) {
-        console.error("Error verificando el correo:", error); // Manejo de errores reales
+        console.error("Error verificando el correo:", error);
       }
     }
 
     checkEmailVerified();
   }, []);
 
+  // Redirigir a la página de registro de tarjeta si el correo está confirmado
   useEffect(() => {
     if (emailVerified) {
-      goTo("/register-card");
+      navigate("/register-card");
     }
-  }, [emailVerified, goTo]);
+  }, [emailVerified, navigate]);
 
   return (
-    <DefaultLayout>
-      {!!errorResponse && <div className="error-alert">{errorResponse}</div>}
-      {!!successResponse && <div className="success-alert">{successResponse}</div>}
-
-      <form className="form" onSubmit={handleSubmit}>
-        <h1>Regístrate</h1>
-
-        <label htmlFor="nombre">Nombre</label>
-        <input id="nombre" type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} required />
-
-        <label htmlFor="apellido">Apellido</label>
-        <input id="apellido" type="text" value={apellido} onChange={(e) => setApellido(e.target.value)} required />
-
-        <label htmlFor="usuario">Usuario</label>
-        <input id="usuario" type="text" value={usuario} onChange={(e) => setUsuario(e.target.value)} required />
-
-        <label htmlFor="correo">Correo</label>
-        <input id="correo" type="email" value={correo} onChange={(e) => setCorreo(e.target.value)} required />
-
-        <label htmlFor="contraseña">Contraseña</label>
-        <input id="contraseña" type="password" value={contraseña} onChange={(e) => setContraseña(e.target.value)} required />
-
-        <label htmlFor="genero">Género</label>
-        <select id="genero" value={genero} onChange={(e) => setGenero(e.target.value)} required>
-          <option value="">Seleccione su género</option>
-          <option value="masculino">Masculino</option>
-          <option value="femenino">Femenino</option>
-          <option value="otro">Otro</option>
-        </select>
-
-        <button type="submit">Siguiente</button>
-      </form>
-    </DefaultLayout>
+    <div
+      className="d-flex align-items-center justify-content-center vh-100"
+      style={{
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <div
+        className="card shadow-lg p-4"
+        style={{ maxWidth: "500px", width: "100%", backgroundColor: "rgba(255, 255, 255, 0.9)" }}
+      >
+        <h3 className="text-center mb-4">Crea tu cuenta</h3>
+        {errorResponse && (
+          <div className="alert alert-danger text-center" role="alert">
+            {errorResponse}
+          </div>
+        )}
+        {successResponse && (
+          <div className="alert alert-success text-center" role="alert">
+            {successResponse}
+          </div>
+        )}
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <label htmlFor="nombre" className="form-label fw-bold">Nombre</label>
+            <input
+              id="nombre"
+              type="text"
+              className="form-control"
+              placeholder="Ingresa tu nombre"
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="apellido" className="form-label fw-bold">Apellido</label>
+            <input
+              id="apellido"
+              type="text"
+              className="form-control"
+              placeholder="Ingresa tu apellido"
+              value={apellido}
+              onChange={(e) => setApellido(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="usuario" className="form-label fw-bold">Usuario</label>
+            <input
+              id="usuario"
+              type="text"
+              className="form-control"
+              placeholder="Crea tu usuario"
+              value={usuario}
+              onChange={(e) => setUsuario(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="correo" className="form-label fw-bold">Correo</label>
+            <input
+              id="correo"
+              type="email"
+              className="form-control"
+              placeholder="Ingresa tu correo"
+              value={correo}
+              onChange={(e) => setCorreo(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="contraseña" className="form-label fw-bold">Contraseña</label>
+            <div className="input-group">
+              <input
+                id="contraseña"
+                type={mostrarContraseña ? "text" : "password"}
+                className="form-control"
+                placeholder="Crea una contraseña"
+                value={contraseña}
+                onChange={(e) => setContraseña(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="btn btn-outline-secondary"
+                onClick={togglePasswordVisibility}
+                aria-label="Mostrar/Ocultar Contraseña"
+              >
+                <i className={mostrarContraseña ? "bi bi-eye-slash" : "bi bi-eye"}></i>
+              </button>
+            </div>
+          </div>
+          <div className="mb-3">
+            <label htmlFor="genero" className="form-label fw-bold">Género</label>
+            <select
+              id="genero"
+              className="form-select"
+              value={genero}
+              onChange={(e) => setGenero(e.target.value)}
+              required
+            >
+              <option value="">Seleccione su género</option>
+              <option value="masculino">Masculino</option>
+              <option value="femenino">Femenino</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
+          <button type="submit" className="btn btn-primary w-100">Siguiente</button>
+        </form>
+      </div>
+    </div>
   );
 }

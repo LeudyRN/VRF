@@ -1,71 +1,140 @@
+import { Link } from "react-router-dom";
+import CryptoJS from "crypto-js"; // Importa correctamente el paquete
 import { useState } from "react";
-import DefaultLayout from "../layout/DefaultLayout";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider";
-import { Navigate, useNavigate } from "react-router-dom";
-import { API_URL } from "../auth/constants";
-import { AuthResponseError } from "../types/types";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 export default function Login() {
   const [usuario, setUsuario] = useState<string>("");
   const [contraseña, setContraseña] = useState<string>("");
+  const [mostrarContraseña, setMostrarContraseña] = useState<boolean>(false);
+  const [errorResponse, setErrorResponse] = useState<string>("");
+  const navigate = useNavigate();
   const auth = useAuth();
-  const goTo = useNavigate();
-  const [errorResponse, setErrorResponse] = useState("");
 
+  // Cambiar visibilidad de la contraseña
+  const togglePasswordVisibility = () => {
+    setMostrarContraseña(!mostrarContraseña);
+  };
+
+  // Función para manejar inicio de sesión
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${API_URL}/login`, {
+      // Cifrar la contraseña
+      const encryptedPassword = CryptoJS.AES.encrypt(
+        contraseña,
+        "clave_secreta" // Clave que será utilizada para cifrar; reemplázala con una clave segura
+      ).toString();
+
+      const response = await fetch("http://localhost:3100/api/login", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ usuario, contraseña }),
+        body: JSON.stringify({ usuario, contraseña: encryptedPassword }),
       });
 
       if (response.ok) {
         const json = await response.json();
-        auth.login(json.accessToken);
-        setErrorResponse("");
-        goTo("/dashboard");
+
+        // Guardar los tokens
+        localStorage.setItem("accessToken", json.accessToken); // Guarda el accessToken
+        localStorage.setItem("refreshToken", json.refreshToken); // Guarda el refreshToken
+
+        // Redirigir según el estado de la tarjeta
+        if (json.redirectToRegisterCard) {
+          navigate("/register-card"); // Redirige al registro de tarjeta si no está registrada
+        } else {
+          auth.login(json.accessToken); // Usa el Access Token en el contexto de autenticación
+          setErrorResponse("");
+          navigate("/dashboard"); // Redirige al dashboard si ya tiene tarjeta registrada
+        }
       } else {
-        const json = (await response.json()) as AuthResponseError;
-        setErrorResponse(json.body.error);
+        const json = await response.json();
+        setErrorResponse(json.message || "Error al iniciar sesión");
       }
     } catch (error) {
-      console.log(error);
+      setErrorResponse("Hubo un problema con el servidor. Inténtalo de nuevo.");
     }
-  }
-  if(auth.isAuthenticated){
-    return <Navigate to="/Dashboard" />
   }
 
   return (
-    <DefaultLayout>
-      <form className="form" onSubmit={handleSubmit}>
-        <h1>Iniciar Sesión</h1>
-        {!! errorResponse && <div className="errorMessage">{errorResponse}</div>}
-        <label htmlFor="usuario">Usuario</label>
-        <input
-          id="usuario"
-          type="text"
-          value={usuario}
-          onChange={(e) => setUsuario(e.target.value)}
-          required
-        />
+    <div
+      className="d-flex align-items-center justify-content-center vh-100"
+      style={{
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <div
+        className="card shadow-lg p-4"
+        style={{ maxWidth: "400px", width: "100%", backgroundColor: "rgba(255, 255, 255, 0.9)" }}
+      >
+        <h3 className="text-center mb-4">VRF</h3>
 
-        <label htmlFor="contraseña">Contraseña</label>
-        <input
-          id="contraseña"
-          type="password"
-          value={contraseña}
-          onChange={(e) => setContraseña(e.target.value)}
-          required
-        />
-
-        <button type="submit">Iniciar Sesión</button>
-      </form>
-    </DefaultLayout>
+        <form onSubmit={handleSubmit}>
+          {errorResponse && (
+            <div className="alert alert-danger text-center" role="alert">
+              {errorResponse}
+            </div>
+          )}
+          <div className="mb-3">
+            <label htmlFor="usuario" className="form-label fw-bold">
+              Usuario
+            </label>
+            <input
+              id="usuario"
+              type="text"
+              className="form-control"
+              placeholder="Ingresa tu usuario"
+              value={usuario}
+              onChange={(e) => setUsuario(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="contraseña" className="form-label fw-bold">
+              Contraseña
+            </label>
+            <div className="input-group">
+              <input
+                id="contraseña"
+                type={mostrarContraseña ? "text" : "password"}
+                className="form-control"
+                placeholder="Ingresa tu contraseña"
+                value={contraseña}
+                onChange={(e) => setContraseña(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="btn btn-outline-secondary"
+                onClick={togglePasswordVisibility}
+                aria-label="Mostrar/Ocultar Contraseña"
+              >
+                <i className={mostrarContraseña ? "bi bi-eye-slash" : "bi bi-eye"}></i>
+              </button>
+            </div>
+          </div>
+          <button type="submit" className="btn btn-primary w-100">
+            Iniciar Sesión
+          </button>
+        </form>
+        <div className="mt-4 text-center">
+          <Link to="/forgot-password" className="text-decoration-none text-primary">
+            ¿Olvidaste tu usuario o contraseña?
+          </Link>
+          <div className="mt-2">
+            <Link to="/sing" className="text-decoration-none text-primary">
+              ¿No tienes cuenta? Regístrate aquí.
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
