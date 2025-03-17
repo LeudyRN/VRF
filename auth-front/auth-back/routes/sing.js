@@ -27,16 +27,16 @@ router.post("/", async (req, res) => {
         const contraseña_hash = await bcrypt.hash(contraseña, salt);
         const token = crypto.randomBytes(32).toString("hex");
 
-        const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3100"; // Usamos FRONTEND_URL
-        const confirmUrl = `${FRONTEND_URL}/email-confirmation?token=${token}`; // Construimos la URL con FRONTEND_URL
+        const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3100";
 
-        console.log("FRONTEND_URL:", process.env.FRONTEND_URL); // Verificar la variable de entorno
-        console.log("URL de confirmación:", confirmUrl); // Verificar la URL generada
+        // Construir URL de confirmación correctamente
+        const confirmUrl = new URL(`/api/user/confirm-email`, BACKEND_URL);
+        confirmUrl.searchParams.append("token", token);
 
         const htmlContent = `
-        <h1>Hola ${nombre},</h1>
-        <p>Gracias por registrarte. Por favor confirma tu correo haciendo clic en el enlace:</p>
-        <a href="${confirmUrl}">Confirmar correo</a>
+          <h1>Hola ${nombre},</h1>
+          <p>Gracias por registrarte. Por favor confirma tu correo haciendo clic en el enlace:</p>
+          <a href="${confirmUrl.href}">Confirmar correo</a>
         `;
 
         try {
