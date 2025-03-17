@@ -6,6 +6,8 @@ const CryptoJS = require("crypto-js");
 const router = express.Router();
 require("dotenv").config();
 
+// login.js (backend)
+
 router.post("/", async (req, res) => {
   const { usuario, contraseña } = req.body;
 

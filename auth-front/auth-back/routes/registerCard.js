@@ -2,8 +2,8 @@ const express = require("express");
 const pool = require("../config/db");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
+const jwt = require("jsonwebtoken");
 const router = express.Router();
-
 
 const algorithm = "aes-256-cbc";
 const key = crypto.randomBytes(32);
@@ -21,32 +21,48 @@ async function hashCvv(cvv) {
   return await bcrypt.hash(cvv, salt);
 }
 
-router.get("/", async (req, res) => {
-  const { userId } = req.query;
+const verifyToken = (req, res, next) => {
+  const token = req.header("Authorization");
 
-  if (!userId) {
-    return res.status(400).json({ error: "El ID del usuario es requerido." });
+  if (!token) {
+    return res.status(401).json({ error: "Acceso denegado" });
   }
 
   try {
-    // Verifica si el usuario tiene una tarjeta registrada
-    const [result] = await pool.query(
-      "SELECT COUNT(*) AS count FROM credit_cards WHERE user_id = ?",
-      [userId]
-    );
+    const verified = jwt.verify(token.split(" ")[1], process.env.JWT_SECRET);
+    req.user = verified;
+    next();
+  } catch (error) {
+    res.status(400).json({ error: "Token inválido" });
+  }
+};
 
-    if (result[0].count > 0) {
-      return res.status(200).json({ tarjetaRegistrada: true });
+router.get("/", verifyToken, async (req, res) => {
+  const { userId } = req.query;
+
+  if (!userId) {
+    return res.status(400).json({ error: "El usuario no está autenticado. Por favor, inicie sesión." });
+  }
+
+  try {
+    // Verificar si el usuario existe
+    const [userResult] = await pool.query("SELECT id, tarjeta_registrada FROM usuarios WHERE id = ?", [userId]);
+
+    if (userResult.length === 0) {
+      return res.status(404).json({ error: "Usuario no encontrado en el sistema." });
     }
 
-    res.status(200).json({ tarjetaRegistrada: false });
+    // Verificar si el usuario tiene tarjeta registrada
+    const tieneTarjeta = userResult[0].tarjeta_registrada === 1;
+
+    return res.status(200).json({ tarjetaRegistrada: tieneTarjeta });
   } catch (error) {
-    console.error("Error verificando el estado de la tarjeta:", error);
-    res.status(500).json({ error: "Error en el servidor." });
+    console.error("Error verificando al usuario:", error);
+    return res.status(500).json({ error: "Error interno del servidor." });
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", verifyToken, async (req, res) => {
   const { userId, cardNumber, expiryDate, cvv } = req.body;
 
   if (!userId || !cardNumber || !expiryDate || !cvv) {
@@ -54,18 +70,22 @@ router.post("/", async (req, res) => {
   }
 
   try {
-    // Verifica si el usuario existe
-    const [result] = await pool.query("SELECT email_verified FROM usuarios WHERE id = ?", [userId]);
+    // Verifica si el usuario existe y su estado de correo
+    const [userResult] = await pool.query("SELECT email_verified, tarjeta_registrada FROM usuarios WHERE id = ?", [userId]);
 
-    if (result.length === 0) {
+    if (userResult.length === 0) {
       return res.status(404).json({ error: "Usuario no encontrado." });
     }
 
-    if (!result[0].email_verified) {
+    if (!userResult[0].email_verified) {
       return res.status(403).json({ error: "Debes confirmar tu correo antes de continuar." });
     }
 
-    // Verificar y validar expiryDate (YYYY-MM-DD)
+    if (userResult[0].tarjeta_registrada === 1) {
+      return res.status(400).json({ error: "El usuario ya tiene una tarjeta registrada." });
+    }
+
+    // Valida la fecha de expiración
     if (!/^\d{4}-\d{2}-\d{2}$/.test(expiryDate)) {
       return res.status(400).json({ error: "El formato de la fecha de expiración es inválido." });
     }
@@ -82,10 +102,16 @@ router.post("/", async (req, res) => {
       [userId, encrypted, expiryDate, hashedCvv, iv]
     );
 
+    // Actualizar el estado de `tarjeta_registrada` del usuario
+    await pool.query(
+      "UPDATE usuarios SET tarjeta_registrada = 1 WHERE id = ?",
+      [userId]
+    );
+
     res.status(201).json({ message: "Tarjeta registrada exitosamente." });
   } catch (error) {
     console.error("Error registrando la tarjeta de crédito:", error);
-    res.status(500).json({ error: "Error en el servidor." });
+    res.status(500).json({ error: "Error interno del servidor." });
   }
 });
 

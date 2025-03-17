@@ -6,8 +6,8 @@ const router = express.Router();
 router.post("/", async (req, res) => {
   const { refreshToken } = req.body;
 
-  if (!refreshToken) {
-    return res.status(401).json({ error: "Token de refresco requerido" });
+  if (!refreshToken || typeof refreshToken !== "string") {
+    return res.status(400).json({ error: "Token de refresco inválido o ausente" });
   }
 
   try {
@@ -15,21 +15,34 @@ router.post("/", async (req, res) => {
     const [user] = await pool.query("SELECT id FROM usuarios WHERE refresh_token = ?", [refreshToken]);
 
     if (user.length === 0) {
-      return res.status(403).json({ error: "Refresh token inválido" });
+      return res.status(403).json({ error: "Refresh token no válido o no registrado" });
     }
 
-    // Verifica la validez del token
-    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
-      if (err) {
-        return res.status(403).json({ error: "Refresh token expirado o inválido" });
-      }
+    // Verifica la validez del token de forma sincrónica
+    let decoded;
+    try {
+      decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    } catch (err) {
+      return res.status(403).json({ error: "Refresh token expirado o inválido" });
+    }
 
-      // Genera un nuevo access token
-      const accessToken = jwt.sign({ id: decoded.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15m" });
+    // Genera un nuevo accessToken
+    const accessToken = jwt.sign(
+      { id: decoded.id },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "15m" }
+    );
 
-      res.json({ accessToken });
-    });
+    // Opcional: Generar y actualizar un nuevo refreshToken
+    const newRefreshToken = jwt.sign(
+      { id: decoded.id },
+      process.env.REFRESH_TOKEN_SECRET,
+      { expiresIn: "7d" }
+    );
 
+    await pool.query("UPDATE usuarios SET refresh_token = ? WHERE id = ?", [newRefreshToken, decoded.id]);
+
+    res.json({ accessToken, refreshToken: newRefreshToken });
   } catch (error) {
     console.error("Error al refrescar token:", error);
     res.status(500).json({ error: "Error en el servidor" });

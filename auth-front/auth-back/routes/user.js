@@ -4,28 +4,37 @@ const pool = require("../config/db");
 const sendMail = require("../config/email");
 require("dotenv").config();
 const router = express.Router();
+const jwt = require("jsonwebtoken");
 
 // Confirmar correo
 router.get("/confirm-email", async (req, res) => {
   const { token } = req.query;
 
   if (!token) {
-    return res.status(400).json({ error: "Token no proporcionado." });
+      return res.status(400).send("Token no proporcionado.");
   }
 
   try {
-    const [user] = await pool.query("SELECT id FROM usuarios WHERE token = ?", [token]);
+      const [user] = await pool.query("SELECT id FROM usuarios WHERE token = ?", [token]);
 
-    if (!user || user.length === 0) {
-      return res.status(400).json({ error: "El enlace de confirmación es inválido o ya fue utilizado." });
-    }
+      if (!user || user.length === 0) {
+          return res.redirect("http://localhost:5173/email-confirmation-failed");
+      }
 
-    await pool.query("UPDATE usuarios SET email_verified = true, token = NULL WHERE id = ?", [user[0].id]);
+      const refreshToken = jwt.sign(
+          { id: user[0].id },
+          process.env.REFRESH_TOKEN_SECRET,
+          { expiresIn: "7d" }
+      );
 
-    res.json({ message: "Correo confirmado exitosamente." });
+      await pool.query("UPDATE usuarios SET email_verified = true, token = NULL, refresh_token = ? WHERE id = ?",
+          [refreshToken, user[0].id]
+      );
+
+      return res.redirect("http://localhost:5173/email-confirmation-success");
   } catch (error) {
-    console.error("Error al confirmar el correo:", error);
-    res.status(500).json({ error: "Error interno del servidor." });
+      console.error("Error al confirmar el correo:", error);
+      return res.redirect("http://localhost:5173/email-confirmation-failed");
   }
 });
 

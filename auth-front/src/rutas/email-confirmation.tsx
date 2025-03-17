@@ -5,13 +5,11 @@ import { API_URL } from "../auth/constants"; // URL del backend
 export default function EmailConfirmation() {
   const [errorResponse, setErrorResponse] = useState("");
   const [loading, setLoading] = useState(false);
-  const [resendLoading, setResendLoading] = useState(false);
-  const [emailSent, setEmailSent] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     async function checkEmailVerified() {
-      setLoading(true);
+      setLoading(true); // Indicador de carga
       try {
         const userId = localStorage.getItem("userId");
 
@@ -21,6 +19,7 @@ export default function EmailConfirmation() {
           return;
         }
 
+        // Verificar estado del correo en el backend
         const response = await fetch(`${API_URL}/user/status?userId=${userId}`);
 
         if (!response.ok) {
@@ -47,46 +46,13 @@ export default function EmailConfirmation() {
     return () => clearInterval(interval);
   }, [navigate]);
 
-  // Función para reenviar el correo de confirmación
-  async function resendConfirmationEmail() {
-    setResendLoading(true);
-    setErrorResponse("");
-    setEmailSent(false);
-
-    try {
-      const userId = localStorage.getItem("userId");
-
-      if (!userId) {
-        setErrorResponse("No se pudo reenviar el correo. Inténtalo más tarde.");
-        setResendLoading(false);
-        return;
-      }
-
-      const response = await fetch(`${API_URL}/user/resend-confirmation`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Error al reenviar el correo.");
-      }
-
-      setEmailSent(true);
-    } catch (error) {
-      console.error("Error al reenviar el correo:", error);
-      setErrorResponse("No se pudo reenviar el correo. Inténtalo más tarde.");
-    } finally {
-      setResendLoading(false);
-    }
-  }
-
   return (
     <div
       className="d-flex align-items-center justify-content-center vh-100"
-      style={{ backgroundSize: "cover", backgroundPosition: "center" }}
+      style={{
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
     >
       <div
         className="card shadow-lg p-4"
@@ -102,18 +68,6 @@ export default function EmailConfirmation() {
             {errorResponse}
           </div>
         )}
-        {emailSent && (
-          <div className="alert alert-success text-center" role="alert">
-            Correo de confirmación reenviado con éxito.
-          </div>
-        )}
-        <button
-          className="btn btn-primary w-100 mt-3"
-          onClick={resendConfirmationEmail}
-          disabled={resendLoading}
-        >
-          {resendLoading ? "Reenviando..." : "Reenviar correo de confirmación"}
-        </button>
       </div>
     </div>
   );

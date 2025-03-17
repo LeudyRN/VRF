@@ -8,10 +8,11 @@ import RegisterCreditCard from "./rutas/RegisterCreditCard.tsx";
 import ProtectedRoute from "./rutas/ProtectedRoute.tsx";
 import { AuthProvider } from "./auth/AuthProvider.tsx";
 import EmailConfirmation from "./rutas/email-confirmation.tsx";
+import EmailConfirmationSuccess from "./rutas/EmailConfirmationSuccess.tsx";
+import EmailConfirmationFailed from "./rutas/EmailConfirmationFailed.tsx";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap-icons/font/bootstrap-icons.css";
-
 
 const router = createBrowserRouter([
   // Ruta de Login
@@ -28,6 +29,15 @@ const router = createBrowserRouter([
   {
     path: "/email-confirmation",
     element: <EmailConfirmation />,
+  },
+  // Rutas de éxito y fallo en la confirmación de email
+  {
+    path: "/email-confirmation-success",
+    element: <EmailConfirmationSuccess />,
+  },
+  {
+    path: "/email-confirmation-failed",
+    element: <EmailConfirmationFailed />,
   },
   // Ruta de registro de tarjeta
   {

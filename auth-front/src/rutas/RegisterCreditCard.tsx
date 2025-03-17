@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../auth/constants";
-import CryptoJS from "crypto-js"; // Importar CryptoJS para el cifrado
+import CryptoJS from "crypto-js";
 
 export default function RegisterCreditCard() {
   const navigate = useNavigate();
@@ -10,34 +10,30 @@ export default function RegisterCreditCard() {
 
   useEffect(() => {
     async function checkAccess() {
+      const token = localStorage.getItem("authToken");
+      console.log("Token en localStorage:", token); // Depuración
+
+      if (!token) {
+        console.warn("No hay token, pero permitimos acceso a esta pantalla");
+        return; // No redirigimos de inmediato
+      }
+
       try {
-        const userId = localStorage.getItem("userId");
+        const response = await fetch(`${API_URL}/verify-access`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        });
 
-        if (!userId) {
-          console.error("Usuario no encontrado en localStorage. Redirigiendo...");
-          navigate("/sing");
-          return;
-        }
-
-        // Verificar si el usuario tiene acceso para registrar la tarjeta
-        const response = await fetch(`${API_URL}/register-card?userId=${userId}`);
-
-        if (response.status === 403) {
-          console.error("Correo no confirmado. Redirigiendo a /email-confirmation");
-          navigate("/email-confirmation");
-        } else if (!response.ok) {
-          throw new Error("Error al verificar el acceso");
-        }
+        if (!response.ok) throw new Error("Error al verificar el acceso.");
 
         const data = await response.json();
-
-        if (data.tarjetaRegistrada) {
-          navigate("/dashboard"); // Redirige al dashboard si ya tiene tarjeta
-        }
+        if (!data.success) navigate("/dashboard", { replace: true });
       } catch (err) {
         console.error("Error verificando acceso:", err);
-        setError("Hubo un problema al verificar el acceso. Inténtalo nuevamente.");
-        navigate("/sing"); // Redirige al registro si ocurre un problema grave
+        setError("Hubo un problema al verificar el acceso.");
       } finally {
         setLoading(false);
       }
@@ -53,6 +49,7 @@ export default function RegisterCreditCard() {
       const userId = localStorage.getItem("userId");
       if (!userId) {
         setError("Usuario no encontrado en el sistema.");
+        navigate("/login");
         return;
       }
 
@@ -73,9 +70,16 @@ export default function RegisterCreditCard() {
       // Convertir fecha a formato YYYY-MM-DD
       const formattedDate = `20${year}-${month}-01`;
 
+      // Validar que los campos no estén vacíos
+      if (!cardNumber || !cardHolder || !cvv) {
+        setError("Todos los campos son obligatorios.");
+        return;
+      }
+
       // Cifrar datos sensibles
-      const encryptedCardNumber = CryptoJS.AES.encrypt(cardNumber, "clave_secreta").toString();
-      const encryptedCvv = CryptoJS.AES.encrypt(cvv, "clave_secreta").toString();
+      const secretKey = "clave_secreta"; // Podrías usar un mejor enfoque para manejar claves
+      const encryptedCardNumber = CryptoJS.AES.encrypt(cardNumber, secretKey).toString();
+      const encryptedCvv = CryptoJS.AES.encrypt(cvv, secretKey).toString();
 
       const response = await fetch(`${API_URL}/register-card`, {
         method: "POST",
@@ -112,13 +116,7 @@ export default function RegisterCreditCard() {
   }
 
   return (
-    <div
-      className="d-flex align-items-center justify-content-center vh-100"
-      style={{
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
+    <div className="d-flex align-items-center justify-content-center vh-100" style={{ backgroundSize: "cover", backgroundPosition: "center" }}>
       <div className="card shadow-lg p-4" style={{ maxWidth: "500px", width: "100%", backgroundColor: "rgba(255, 255, 255, 0.9)" }}>
         <h3 className="text-center mb-4">Registrar tarjeta de crédito</h3>
         {error && (
@@ -131,27 +129,13 @@ export default function RegisterCreditCard() {
             <label htmlFor="cardNumber" className="form-label fw-bold">
               Número de tarjeta
             </label>
-            <input
-              id="cardNumber"
-              name="cardNumber"
-              type="text"
-              className="form-control"
-              placeholder="Ingresa tu número de tarjeta"
-              required
-            />
+            <input id="cardNumber" name="cardNumber" type="text" className="form-control" placeholder="Ingresa tu número de tarjeta" required />
           </div>
           <div className="mb-3">
             <label htmlFor="cardHolder" className="form-label fw-bold">
               Nombre del titular
             </label>
-            <input
-              id="cardHolder"
-              name="cardHolder"
-              type="text"
-              className="form-control"
-              placeholder="Ingresa el nombre del titular"
-              required
-            />
+            <input id="cardHolder" name="cardHolder" type="text" className="form-control" placeholder="Ingresa el nombre del titular" required />
           </div>
           <div className="mb-3">
             <label htmlFor="expirationDate" className="form-label fw-bold">
@@ -163,7 +147,7 @@ export default function RegisterCreditCard() {
               type="text"
               className="form-control"
               placeholder="MM/AA"
-              pattern="^(0[1-9]|1[0-2])\/\d{2}$" // Validar formato MM/AA
+              pattern="^(0[1-9]|1[0-2])\/\d{2}$"
               required
             />
           </div>
@@ -171,14 +155,7 @@ export default function RegisterCreditCard() {
             <label htmlFor="cvv" className="form-label fw-bold">
               CVV
             </label>
-            <input
-              id="cvv"
-              name="cvv"
-              type="password"
-              className="form-control"
-              placeholder="Código de seguridad"
-              required
-            />
+            <input id="cvv" name="cvv" type="password" className="form-control" placeholder="Código de seguridad" required />
           </div>
           <button type="submit" className="btn btn-primary w-100">
             Registrar
