@@ -47,11 +47,11 @@ export default function Login() {
 
         // Redirigir según el estado de la tarjeta
         if (json.redirectToRegisterCard) {
-          navigate("/register-card"); // Redirige al registro de tarjeta si no está registrada
+          navigate("/register-card");
         } else {
-          auth.login(json.accessToken); // Usa el Access Token en el contexto de autenticación
+          auth.login(json.accessToken, json.refreshToken); // Pasa el refreshToken también
           setErrorResponse("");
-          navigate("/dashboard"); // Redirige al dashboard si ya tiene tarjeta registrada
+          navigate("/dashboard");
         }
       } else {
         const json = await response.json();

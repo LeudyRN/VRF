@@ -5,11 +5,13 @@ import { API_URL } from "../auth/constants"; // URL del backend
 export default function EmailConfirmation() {
   const [errorResponse, setErrorResponse] = useState("");
   const [loading, setLoading] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [resendMessage, setResendMessage] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     async function checkEmailVerified() {
-      setLoading(true); // Indicador de carga
+      setLoading(true);
       try {
         const userId = localStorage.getItem("userId");
 
@@ -19,7 +21,6 @@ export default function EmailConfirmation() {
           return;
         }
 
-        // Verificar estado del correo en el backend
         const response = await fetch(`${API_URL}/user/status?userId=${userId}`);
 
         if (!response.ok) {
@@ -46,6 +47,41 @@ export default function EmailConfirmation() {
     return () => clearInterval(interval);
   }, [navigate]);
 
+  const resendVerificationEmail = async () => {
+    setResendLoading(true);
+    setResendMessage("");
+    setErrorResponse("");
+
+    try {
+      const userId = localStorage.getItem("userId");
+
+      if (!userId) {
+        setErrorResponse("No se encontró el usuario. Por favor, regístrate nuevamente.");
+        setResendLoading(false);
+        return;
+      }
+
+      const response = await fetch(`${API_URL}/user/resend-verification`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Error al reenviar el código de verificación.");
+      }
+
+      setResendMessage("Correo de verificación reenviado con éxito. Revisa tu bandeja de entrada o spam.");
+    } catch (error) {
+      console.error("Error reenviando el correo:", error);
+      setErrorResponse("Hubo un problema reenviando el correo. Inténtalo nuevamente.");
+    } finally {
+      setResendLoading(false);
+    }
+  };
+
   return (
     <div
       className="d-flex align-items-center justify-content-center vh-100"
@@ -68,6 +104,20 @@ export default function EmailConfirmation() {
             {errorResponse}
           </div>
         )}
+        {!!resendMessage && (
+          <div className="alert alert-success text-center" role="alert">
+            {resendMessage}
+          </div>
+        )}
+        <div className="text-center mt-3">
+          <button
+            className="btn btn-primary"
+            onClick={resendVerificationEmail}
+            disabled={resendLoading}
+          >
+            {resendLoading ? "Reenviando..." : "Reenviar código"}
+          </button>
+        </div>
       </div>
     </div>
   );

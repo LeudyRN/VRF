@@ -21,47 +21,32 @@ async function hashCvv(cvv) {
   return await bcrypt.hash(cvv, salt);
 }
 
+// Middleware para verificar el token
 const verifyToken = (req, res, next) => {
-  const token = req.header("Authorization");
+  const authHeader = req.header("Authorization");
 
-  if (!token) {
-    return res.status(401).json({ error: "Acceso denegado" });
+  if (!authHeader) {
+    return res.status(401).json({ error: "Acceso denegado. No se proporcionó el token." });
   }
 
+  const tokenParts = authHeader.split(" ");
+  if (tokenParts.length !== 2 || tokenParts[0] !== "Bearer") {
+    return res.status(401).json({ error: "El formato del token es inválido. Debe ser 'Bearer <token>'." });
+  }
+
+  const token = tokenParts[1];
+
   try {
-    const verified = jwt.verify(token.split(" ")[1], process.env.JWT_SECRET);
-    req.user = verified;
+    const verified = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = verified; // Agregar datos del usuario
     next();
   } catch (error) {
-    res.status(400).json({ error: "Token inválido" });
+    console.error("Error verificando el token:", error.message);
+    res.status(401).json({ error: "Token inválido o expirado." });
   }
 };
 
-router.get("/", verifyToken, async (req, res) => {
-  const { userId } = req.query;
-
-  if (!userId) {
-    return res.status(400).json({ error: "El usuario no está autenticado. Por favor, inicie sesión." });
-  }
-
-  try {
-    // Verificar si el usuario existe
-    const [userResult] = await pool.query("SELECT id, tarjeta_registrada FROM usuarios WHERE id = ?", [userId]);
-
-    if (userResult.length === 0) {
-      return res.status(404).json({ error: "Usuario no encontrado en el sistema." });
-    }
-
-    // Verificar si el usuario tiene tarjeta registrada
-    const tieneTarjeta = userResult[0].tarjeta_registrada === 1;
-
-    return res.status(200).json({ tarjetaRegistrada: tieneTarjeta });
-  } catch (error) {
-    console.error("Error verificando al usuario:", error);
-    return res.status(500).json({ error: "Error interno del servidor." });
-  }
-});
-
+// Rutas
 router.post("/", verifyToken, async (req, res) => {
   const { userId, cardNumber, expiryDate, cvv } = req.body;
 
@@ -70,7 +55,7 @@ router.post("/", verifyToken, async (req, res) => {
   }
 
   try {
-    // Verifica si el usuario existe y su estado de correo
+    // Verifica si el usuario existe y su estado
     const [userResult] = await pool.query("SELECT email_verified, tarjeta_registrada FROM usuarios WHERE id = ?", [userId]);
 
     if (userResult.length === 0) {
@@ -85,7 +70,7 @@ router.post("/", verifyToken, async (req, res) => {
       return res.status(400).json({ error: "El usuario ya tiene una tarjeta registrada." });
     }
 
-    // Valida la fecha de expiración
+    // Validar fecha de expiración
     if (!/^\d{4}-\d{2}-\d{2}$/.test(expiryDate)) {
       return res.status(400).json({ error: "El formato de la fecha de expiración es inválido." });
     }
@@ -96,13 +81,13 @@ router.post("/", verifyToken, async (req, res) => {
     // Hashear el CVV
     const hashedCvv = await hashCvv(cvv);
 
-    // Guardar los datos de la tarjeta en la base de datos
+    // Guardar tarjeta en la base de datos
     await pool.query(
       "INSERT INTO credit_cards (user_id, card_number, expiry_date, cvv, iv) VALUES (?, ?, ?, ?, ?)",
       [userId, encrypted, expiryDate, hashedCvv, iv]
     );
 
-    // Actualizar el estado de `tarjeta_registrada` del usuario
+    // Actualizar estado del usuario
     await pool.query(
       "UPDATE usuarios SET tarjeta_registrada = 1 WHERE id = ?",
       [userId]
@@ -110,7 +95,7 @@ router.post("/", verifyToken, async (req, res) => {
 
     res.status(201).json({ message: "Tarjeta registrada exitosamente." });
   } catch (error) {
-    console.error("Error registrando la tarjeta de crédito:", error);
+    console.error("Error registrando la tarjeta:", error);
     res.status(500).json({ error: "Error interno del servidor." });
   }
 });
