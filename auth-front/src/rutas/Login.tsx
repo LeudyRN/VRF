@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import CryptoJS from "crypto-js"; // Importa correctamente el paquete
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider";
@@ -19,48 +18,66 @@ export default function Login() {
     setMostrarContraseña(!mostrarContraseña);
   };
 
+  // Validar entrada antes del envío
+  const validateInput = (): boolean => {
+    if (!usuario.trim()) {
+      setErrorResponse("El campo usuario es obligatorio.");
+      return false;
+    }
+    if (contraseña.length < 8) {
+      setErrorResponse("La contraseña debe tener al menos 8 caracteres.");
+      return false;
+    }
+    return true;
+  };
+
   // Función para manejar inicio de sesión
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    try {
-      // Cifrar la contraseña
-      const encryptedPassword = CryptoJS.AES.encrypt(
-        contraseña,
-        "clave_secreta" // Clave que será utilizada para cifrar; reemplázala con una clave segura
-      ).toString();
+    if (!validateInput()) {
+      return;
+    }
 
+    try {
       const response = await fetch("http://localhost:3100/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ usuario, contraseña: encryptedPassword }),
+        body: JSON.stringify({ usuario, contraseña }),
       });
 
       if (response.ok) {
         const json = await response.json();
 
         // Guardar los tokens
-        localStorage.setItem("accessToken", json.accessToken); // Guarda el accessToken
-        localStorage.setItem("refreshToken", json.refreshToken); // Guarda el refreshToken
+        localStorage.setItem("accessToken", json.accessToken);
+        localStorage.setItem("refreshToken", json.refreshToken);
 
         // Redirigir según el estado de la tarjeta
-        if (json.redirectToRegisterCard) {
+        if (json.redirectToRegisterCreditCard) {
           navigate("/register-card");
+          setErrorResponse("Por favor, completa tu registro de tarjeta.");
+
         } else {
-          auth.login(json.accessToken, json.refreshToken); // Pasa el refreshToken también
+          auth.login(json.accessToken, json.refreshToken);
           setErrorResponse("");
           navigate("/dashboard");
         }
       } else {
-        const json = await response.json();
-        setErrorResponse(json.message || "Error al iniciar sesión");
+//
+        setErrorResponse("Usuario o contraseña incorrectos.");
       }
     } catch (error) {
-      setErrorResponse("Hubo un problema con el servidor. Inténtalo de nuevo.");
-    }
+  if (error instanceof Error) {
+    setErrorResponse("Hubo un problema con el servidor. Inténtalo de nuevo.");
+  } else {
+    setErrorResponse("Error desconocido. Inténtalo de nuevo.");
   }
+
+  }
+}
 
   return (
     <div

@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import DefaultLayout from "../layout/DefaultLayout";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../auth/constants";
 
@@ -10,10 +9,9 @@ export default function Sing() {
   const [usuario, setUsuario] = useState<string>("");
   const [correo, setCorreo] = useState<string>("");
   const [contraseña, setContraseña] = useState<string>("");
-  const [mostrarContraseña, setMostrarContraseña] = useState<boolean>(false); // Estado para "mostrar/ocultar" contraseña
+  const [mostrarContraseña, setMostrarContraseña] = useState<boolean>(false); // Mostrar/ocultar contraseña
   const [errorResponse, setErrorResponse] = useState<string>("");
   const [successResponse, setSuccessResponse] = useState<string>("");
-  const [emailVerified, setEmailVerified] = useState<boolean>(false);
   const navigate = useNavigate();
 
   // Limpiar mensajes de éxito y error automáticamente después de 5 segundos
@@ -27,11 +25,39 @@ export default function Sing() {
     }
   }, [errorResponse, successResponse]);
 
+  // Validar entrada antes del envío
+  const validateInput = (): boolean => {
+    if (!nombre || !apellido || !usuario || !correo || !contraseña || !genero) {
+      setErrorResponse("Todos los campos son obligatorios.");
+      return false;
+    }
+
+    if (contraseña.length < 8) {
+      setErrorResponse("La contraseña debe tener al menos 8 caracteres.");
+      return false;
+    }
+
+    if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(correo)) {
+      setErrorResponse("El formato del correo es inválido.");
+      return false;
+    }
+
+    if (!["masculino", "femenino", "otro"].includes(genero)) {
+      setErrorResponse("Selecciona un género válido.");
+      return false;
+    }
+
+    return true;
+  };
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
+    if (!validateInput()) {
+      return;
+    }
+
     try {
-      // Enviar datos al backend
       const response = await fetch(`${API_URL}/sing`, {
         method: "POST",
         headers: {
@@ -77,34 +103,6 @@ export default function Sing() {
   const togglePasswordVisibility = () => {
     setMostrarContraseña(!mostrarContraseña);
   };
-
-  // Verificar si el correo ha sido confirmado
-  useEffect(() => {
-    async function checkEmailVerified() {
-      try {
-        const userId = localStorage.getItem("userId");
-        if (!userId) return;
-
-        const response = await fetch(`${API_URL}/user/status?userId=${userId}`);
-        const data = await response.json();
-
-        if (data.email_verified) {
-          setEmailVerified(true);
-        }
-      } catch (error) {
-        console.error("Error verificando el correo:", error);
-      }
-    }
-
-    checkEmailVerified();
-  }, []);
-
-  // Redirigir a la página de registro de tarjeta si el correo está confirmado
-  useEffect(() => {
-    if (emailVerified) {
-      navigate("/register-card");
-    }
-  }, [emailVerified, navigate]);
 
   return (
     <div
@@ -216,6 +214,7 @@ export default function Sing() {
             </select>
           </div>
           <button type="submit" className="btn btn-primary w-100">Siguiente</button>
+
         </form>
       </div>
     </div>

@@ -20,7 +20,7 @@ const router = createBrowserRouter([
     path: "/login",
     element: <Login />,
   },
-  // Ruta de Registro (Sing)
+  // Ruta de Registro (Signup)
   {
     path: "/sing",
     element: <Sing />,
@@ -42,16 +42,22 @@ const router = createBrowserRouter([
   // Ruta de registro de tarjeta
   {
     path: "/register-card",
-    element: <RegisterCreditCard />,
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "",
+        element: <RegisterCreditCard />,
+      },
+    ],
   },
   // Rutas protegidas
   {
-    path: "/",
-    element: <ProtectedRoute />, // Este componente protege las rutas
+    path: "/dashboard",
+    element: <ProtectedRoute />,
     children: [
       {
-        path: "dashboard",
-        element: <Dashboard />, // Dashboard solo accesible con sesión activa
+        path: "",
+        element: <Dashboard />,
       },
     ],
   },

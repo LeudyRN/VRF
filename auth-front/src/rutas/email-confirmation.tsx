@@ -9,18 +9,29 @@ export default function EmailConfirmation() {
   const [resendMessage, setResendMessage] = useState("");
   const navigate = useNavigate();
 
+  // Función para obtener el userId de localStorage
+  const getUserId = (): string | null => {
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      setErrorResponse("No se encontró el usuario. Por favor, regístrate nuevamente.");
+      return null;
+    }
+    return userId;
+  };
+
   useEffect(() => {
     async function checkEmailVerified() {
       setLoading(true);
+      setErrorResponse("");
+
+      const userId = getUserId();
+      if (!userId) {
+        setLoading(false);
+        navigate("/sing");
+        return;
+      }
+
       try {
-        const userId = localStorage.getItem("userId");
-
-        if (!userId) {
-          setErrorResponse("No se pudo verificar el usuario. Por favor, regístrate nuevamente.");
-          setLoading(false);
-          return;
-        }
-
         const response = await fetch(`${API_URL}/user/status?userId=${userId}`);
 
         if (!response.ok) {
@@ -33,7 +44,7 @@ export default function EmailConfirmation() {
           console.log("Correo confirmado. Redirigiendo...");
           navigate("/register-card");
         } else {
-          console.log("Correo no confirmado. Verificando de nuevo...");
+          console.log("Correo no confirmado. Permanece en la página de verificación.");
         }
       } catch (error) {
         console.error("Error verificando el correo:", error);
@@ -43,8 +54,7 @@ export default function EmailConfirmation() {
       }
     }
 
-    const interval = setInterval(checkEmailVerified, 10000);
-    return () => clearInterval(interval);
+    checkEmailVerified();
   }, [navigate]);
 
   const resendVerificationEmail = async () => {
@@ -52,16 +62,14 @@ export default function EmailConfirmation() {
     setResendMessage("");
     setErrorResponse("");
 
+    const userId = getUserId();
+    if (!userId) {
+      setResendLoading(false);
+      return;
+    }
+
     try {
-      const userId = localStorage.getItem("userId");
-
-      if (!userId) {
-        setErrorResponse("No se encontró el usuario. Por favor, regístrate nuevamente.");
-        setResendLoading(false);
-        return;
-      }
-
-      const response = await fetch(`${API_URL}/user/resend-verification`, {
+      const response = await fetch(`${API_URL}/user/resend-confirmation`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -115,7 +123,14 @@ export default function EmailConfirmation() {
             onClick={resendVerificationEmail}
             disabled={resendLoading}
           >
-            {resendLoading ? "Reenviando..." : "Reenviar código"}
+            {resendLoading ? (
+              <span>
+                <i className="spinner-border spinner-border-sm me-2" role="status" />
+                Reenviando...
+              </span>
+            ) : (
+              "Reenviar código"
+            )}
           </button>
         </div>
       </div>

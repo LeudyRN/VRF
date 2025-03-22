@@ -1,26 +1,26 @@
 const router = require("express").Router();
 
+// Función para configurar encabezados de eliminación de caché
+const setNoCacheHeaders = (res) => {
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, private");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+};
+
 router.post("/", (req, res) => {
   if (req.session) {
-    req.session.destroy(err => {
+    req.session.destroy((err) => {
       if (err) {
-        return res.status(500).json({ message: "Error cerrando sesión" });
+        console.error("Error destruyendo la sesión:", err.message);
+        return res.status(500).json({ error: "Error cerrando sesión. Inténtalo nuevamente." });
       } else {
-        res.clearCookie("connect.sid"); // Limpia la cookie de la sesión
-
-        // Agregar encabezados para asegurarse de que la caché sea eliminada
-        res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, private");
-        res.setHeader("Pragma", "no-cache"); // Compatibilidad con navegadores antiguos
-        res.setHeader("Expires", "0"); // Evita que haya caché en el cliente
-
-        return res.status(200).json({ message: "Sesión cerrada correctamente y caché del servidor eliminado." });
+        res.clearCookie("connect.sid"); // Limpia la cookie de sesión
+        setNoCacheHeaders(res); // Configura encabezados para eliminar caché
+        return res.status(200).json({ message: "Sesión cerrada correctamente y caché eliminado." });
       }
     });
   } else {
-    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, private");
-    res.setHeader("Pragma", "no-cache");
-    res.setHeader("Expires", "0");
-
+    setNoCacheHeaders(res); // Configura encabezados para eliminar caché
     res.status(200).json({ message: "No había sesión activa." });
   }
 });

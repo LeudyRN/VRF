@@ -34,7 +34,7 @@ export default function DefaultLayout({ children }: DefaultLayoutProps) {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to="/Sing" className="nav-link text-light">
+                <Link to="/sing" className="nav-link text-light">
                   <i className="bi bi-person-plus-fill me-2"></i> Regístrate
                 </Link>
               </li>

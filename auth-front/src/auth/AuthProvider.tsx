@@ -18,8 +18,9 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [accessToken, setAccessToken] = useState<string | null>(localStorage.getItem("accessToken"));
-  const [refreshTokenValue, setRefreshTokenValue] = useState<string | null>(localStorage.getItem("refreshToken"));
+  const [refreshTokenValue, setRefreshTokenValue] = useState<string | null>(sessionStorage.getItem("refreshToken"));
 
+  // Sincronizar tokens en almacenamiento persistente
   useEffect(() => {
     if (accessToken) {
       localStorage.setItem("accessToken", accessToken);
@@ -28,45 +29,54 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
 
     if (refreshTokenValue) {
-      localStorage.setItem("refreshToken", refreshTokenValue);
+      sessionStorage.setItem("refreshToken", refreshTokenValue);
     } else {
-      localStorage.removeItem("refreshToken");
+      sessionStorage.removeItem("refreshToken");
     }
   }, [accessToken, refreshTokenValue]);
 
-  // Método para refrescar el accessToken
+  // Renovar el token de acceso
   const refreshToken = async (): Promise<string | null> => {
-    if (!refreshTokenValue) return null;
+    if (!refreshTokenValue) {
+      logout(); // Salir si no hay refreshToken
+      return null;
+    }
 
     try {
       const response = await fetch(`${API_URL}/refreshToken`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ refreshToken: refreshTokenValue }),
+        credentials: "include", // Si usas cookies httpOnly
       });
 
-      if (!response.ok) throw new Error("Error al refrescar el token");
+      if (!response.ok) throw new Error("No se pudo refrescar el token");
 
       const data = await response.json();
       setAccessToken(data.accessToken);
-      setRefreshTokenValue(data.refreshToken); // Almacenar el nuevo refreshToken
+      setRefreshTokenValue(data.refreshToken);
 
       return data.accessToken;
     } catch (error) {
-      console.error("Error refrescando el token:", error);
+      console.error("Error al refrescar el token:", error);
       logout();
       return null;
     }
   };
 
+  // Iniciar sesión
   const login = (newAccessToken: string, newRefreshToken: string) => {
     setAccessToken(newAccessToken);
     setRefreshTokenValue(newRefreshToken);
   };
 
+  // Cerrar sesión
   const logout = () => {
     setAccessToken(null);
     setRefreshTokenValue(null);
+    localStorage.removeItem("accessToken");
+    sessionStorage.removeItem("refreshToken");
+    // Aquí puedes redirigir al usuario o manejar estados adicionales
   };
 
   return (
@@ -76,10 +86,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   );
 }
 
+// Hook para usar la autenticación
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error("useAuth debe ser usado dentro de un AuthProvider");
   }
   return context;
 };
