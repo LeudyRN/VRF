@@ -10,6 +10,13 @@ import { AuthProvider } from "./auth/AuthProvider.tsx";
 import EmailConfirmation from "./rutas/email-confirmation.tsx";
 import EmailConfirmationSuccess from "./rutas/EmailConfirmationSuccess.tsx";
 import EmailConfirmationFailed from "./rutas/EmailConfirmationFailed.tsx";
+import UnidadInterior from "./rutas/UnidadInterior.tsx";
+import UnidadExterior from "./rutas/UnidadExterior.tsx";
+import Tuberia from "./rutas/Tuberia.tsx";
+import Alambrado from "./rutas/Alambrado.tsx";
+import ControlCentral from "./rutas/ControlCentral.tsx";
+import Reportes from "./rutas/Reportes.tsx";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -58,6 +65,30 @@ const router = createBrowserRouter([
       {
         path: "",
         element: <Dashboard />,
+      },
+      {
+        path: "unidad-interior", // Subruta de "Dashboard"
+        element: <UnidadInterior />,
+      },
+      {
+        path: "unidad-exterior", // Subruta de "Dashboard"
+        element: <UnidadExterior />,
+      },
+      {
+        path: "tubería", // Subruta de "Dashboard"
+        element: <Tuberia />,
+      },
+      {
+        path: "alambrado", // Subruta de "Dashboard"
+        element: <Alambrado />,
+      },
+      {
+        path: "control-central", // Subruta de "Dashboard"
+        element: <ControlCentral />,
+      },
+      {
+        path: "reportes", // Subruta de "Dashboard"
+        element: <Reportes />,
       },
     ],
   },

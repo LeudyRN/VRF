@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import fondo from "../assets/fondo.jpg";
 
 export default function Login() {
   const [usuario, setUsuario] = useState<string>("");
@@ -50,25 +51,22 @@ export default function Login() {
 
       if (response.ok) {
         const json = await response.json();
+        console.log(json); // Verifica qué está recibiendo el frontend
 
-        // Guardar los tokens
         localStorage.setItem("accessToken", json.accessToken);
         localStorage.setItem("refreshToken", json.refreshToken);
 
-        // Redirigir según el estado de la tarjeta
-        if (json.redirectToRegisterCreditCard) {
-          navigate("/register-card");
-          setErrorResponse("Por favor, completa tu registro de tarjeta.");
-
-        } else {
-          auth.login(json.accessToken, json.refreshToken);
-          setErrorResponse("");
-          navigate("/dashboard");
+        if (json.redirectToRegisterCard === true) {
+            navigate("/register-card");
+            return;
         }
-      } else {
-//
+
+        auth.login(json.accessToken, json.refreshToken);
+        navigate("/dashboard");
+    } else {
         setErrorResponse("Usuario o contraseña incorrectos.");
-      }
+    }
+
     } catch (error) {
   if (error instanceof Error) {
     setErrorResponse("Hubo un problema con el servidor. Inténtalo de nuevo.");
@@ -83,6 +81,7 @@ export default function Login() {
     <div
       className="d-flex align-items-center justify-content-center vh-100"
       style={{
+        backgroundImage: `url(${fondo})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}

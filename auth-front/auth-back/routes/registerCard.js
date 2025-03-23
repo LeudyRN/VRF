@@ -46,6 +46,30 @@ const verifyToken = (req, res, next) => {
     res.status(401).json({ error: "Token inválido o expirado." });
   }
 };
+    router.get("/", async (req, res) => {
+      const { userId } = req.query;
+
+      if (!userId) {
+        return res.status(400).json({ error: "El ID del usuario es requerido." });
+      }
+
+      try {
+        // Verifica si el usuario tiene una tarjeta registrada
+        const [result] = await pool.query(
+          "SELECT COUNT(*) AS count FROM credit_cards WHERE user_id = ?",
+          [userId]
+        );
+
+        if (result[0].count > 0) {
+          return res.status(200).json({ tarjetaRegistrada: true });
+        }
+
+        res.status(200).json({ tarjetaRegistrada: false });
+      } catch (error) {
+        console.error("Error verificando el estado de la tarjeta:", error);
+        res.status(500).json({ error: "Error en el servidor." });
+      }
+    });
 
 // Procesar pagos con Azul
 async function processPayment(cardNumber, expiryDate, cvv, amount) {
@@ -61,7 +85,7 @@ async function processPayment(cardNumber, expiryDate, cvv, amount) {
       transactionType: "Sale",
     });
 
-    if (response.data.errorCode) {
+    if (response.data && response.data.errorCode) {
       console.error("Error de Azul:", response.data.errorMessage);
       return { success: false, error: response.data.errorMessage };
     }
@@ -82,14 +106,49 @@ const validateCardData = (req, res, next) => {
   if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(expiryDate)) {
     return res.status(400).json({ error: "Fecha de expiración inválida (formato MM/YY)." });
   }
-  if (!/^[0-9]{3,4}$/.test(cvv)) {
-    return res.status(400).json({ error: "CVV inválido." });
+  if (!/^\d{3,4}$/.test(cvv)) {
+    return res.status(400).json({ error: "CVV inválido. Debe tener 3 o 4 dígitos." });
   }
   if (!/^[0-9]{13,19}$/.test(cardNumber)) {
     return res.status(400).json({ error: "Número de tarjeta inválido." });
   }
   next();
 };
+
+router.post("/register-card", async (req, res) => {
+  const { userId, cardNumber, expiryDate, cvv } = req.body;
+
+  if (!userId || !cardNumber || !expiryDate || !cvv) {
+    return res.status(400).json({ error: "Todos los campos son obligatorios." });
+  }
+
+  try {
+
+    const [result] = await pool.query("SELECT email_verified FROM usuarios WHERE id = ?", [userId]);
+
+    if (result.length === 0) {
+      return res.status(404).json({ error: "Usuario no encontrado." });
+    }
+
+    if (!result[0].email_verified) {
+      return res.status(403).json({ error: "Debes confirmar tu correo antes de continuar." });
+    }
+
+    const { encrypted, iv } = encryptCardNumber(cardNumber);
+
+    const hashedCvv = await hashCvv(cvv);
+
+    await pool.query(
+      "INSERT INTO credit_cards (user_id, card_number, expiry_date, cvv, iv) VALUES (?, ?, ?, ?, ?)",
+      [userId, encrypted, expiryDate, hashedCvv, iv]
+    );
+
+    res.status(201).json({ message: "Tarjeta registrada exitosamente." });
+  } catch (error) {
+    console.error("Error registrando la tarjeta de crédito:", error);
+    res.status(500).json({ error: "Error en el servidor." });
+  }
+});
 
 // Ruta para procesar pagos
 router.post("/processPayment", verifyToken, validateCardData, async (req, res) => {
@@ -147,7 +206,7 @@ router.post("/", verifyToken, validateCardData, async (req, res) => {
 
     res.status(201).json({ message: "Tarjeta registrada exitosamente." });
   } catch (error) {
-    console.error("Error registrando la tarjeta:", error.message);
+    console.error("Error detallado:", error);
     res.status(500).json({ error: "Error interno del servidor." });
   }
 });

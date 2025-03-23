@@ -8,7 +8,7 @@ const GENERIC_ERROR_MESSAGE = "Credenciales inválidas.";
 
 // Generar nuevo access token
 const generateAccessToken = (userId) => {
-  return jwt.sign({ id: userId }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15m" });
+  return jwt.sign({ id: userId }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "35m" });
 };
 
 // Generar nuevo refresh token

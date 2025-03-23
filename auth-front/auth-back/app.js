@@ -31,12 +31,13 @@ app.use(express.json());
 // Registro de rutas
 app.use("/api/sing", require("./routes/sing"));
 app.use("/api/login", require("./routes/login"));
+app.use("/api/register-card", require("./routes/registerCard"));
 app.use("/api/user", require("./routes/user"));
 app.use("/api/todos", require("./routes/todos"));
 app.use("/api/refreshToken", require("./routes/refreshToken"));
 app.use("/api/singout", require("./routes/singout"));
-app.use("/api/registercard", require("./routes/registerCard"));
 app.use("/api/payment", require("./routes/paymentRoutes"));
+app.use("/api/files", require("./routes/files"));
 
 // Ruta de prueba para conexión
 app.get("/", (req, res) => {

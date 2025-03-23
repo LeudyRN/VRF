@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { API_URL } from "../auth/constants"; // URL del backend
+import { API_URL } from "../auth/constants";
+import fondo from "../assets/fondo.jpg";
 
 export default function EmailConfirmation() {
   const [errorResponse, setErrorResponse] = useState("");
@@ -94,6 +95,7 @@ export default function EmailConfirmation() {
     <div
       className="d-flex align-items-center justify-content-center vh-100"
       style={{
+        backgroundImage: `url(${fondo})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}

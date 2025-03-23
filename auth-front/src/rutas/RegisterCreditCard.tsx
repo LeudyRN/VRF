@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { API_URL } from "../auth/constants";
 import { useAuth } from "../auth/AuthProvider";
 import CryptoJS from "crypto-js";
-
+import fondo from "../assets/fondo.jpg";
 
 export default function RegisterCreditCard() {
   const navigate = useNavigate();
@@ -15,34 +15,49 @@ export default function RegisterCreditCard() {
 
   useEffect(() => {
     async function checkAccess() {
+      setLoading(true); // Mostrar estado de carga
       const token = accessToken || (await refreshToken());
+
       if (!token) {
         navigate("/login");
         return;
       }
 
+      const userId = localStorage.getItem("userId");
+      if (!userId) {
+        setError("No se encuentra el identificador de usuario.");
+        navigate("/login");
+        return;
+      }
+
       try {
+        // Llamada a la API para verificar el estado del registro
         const response = await fetch(`${API_URL}/register-card`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Se asegura de que el token se envíe correctamente
+            Authorization: `Bearer ${token}`,
           },
+          body: JSON.stringify({ userId }),
         });
 
-        if (!response.ok) throw new Error();
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Error al registrar la tarjeta.");
+        }
+
         const data = await response.json();
         if (!data.success) navigate("/dashboard", { replace: true });
-      } catch {
+      } catch (error) {
+        console.error(error);
         setError("No has completado el registro de usuario.");
       } finally {
-        setLoading(false);
+        setLoading(false); // Finaliza el estado de carga
       }
     }
 
     checkAccess();
   }, [navigate, accessToken, refreshToken]);
-
 
   const detectCardType = (cardNumber: string) => {
     const cleanNumber = cardNumber.replace(/\D/g, "");
@@ -74,7 +89,11 @@ export default function RegisterCreditCard() {
 
     try {
       const userId = localStorage.getItem("userId");
-      if (!userId) return navigate("/login");
+      if (!userId) {
+        console.error("userId es null. Redirigiendo a login...");
+        navigate("/login");
+        return;
+      }
 
       const form = e.currentTarget;
       const cardNumber = (form.elements.namedItem("cardNumber") as HTMLInputElement).value.replace(/\s/g, "");
@@ -89,13 +108,11 @@ export default function RegisterCreditCard() {
       }
 
       const [month, year] = expirationDate.split("/");
-      if (!month || !year) {
-        setError("La fecha de expiración no es válida.");
+      if (!month || !year || month.length !== 2 || year.length !== 2) {
+        setError("Fecha de expiración inválida.");
         return;
       }
-
       const formattedDate = `20${year}-${month}-01`;
-
       // Solicitud al servidor para procesar el pago
       const paymentResponse = await fetch(`${API_URL}/payment/processPayment`, {
         method: "POST",
@@ -110,10 +127,13 @@ export default function RegisterCreditCard() {
         }),
       }).then((res) => res.json());
 
+      console.log(localStorage.getItem("userId"));
+
       if (!paymentResponse.success) {
         setError("El pago no fue aprobado.");
         return;
       }
+
 
       // Encriptar CVV y enviar a Azul
       const encryptedCvv = CryptoJS.AES.encrypt(cvv, "secretKey").toString();
@@ -121,8 +141,15 @@ export default function RegisterCreditCard() {
       const token = accessToken || (await refreshToken());
       if (!token) return navigate("/login");
 
+      const storedUserId = localStorage.getItem("userId");
+
+      if (!storedUserId) {
+        setError("No se encontró el usuario. Intenta registrarte nuevamente.");
+        return;
+      }
+
       const azulPayload = {
-        userId,
+        userId: storedUserId,
         amount: 250.0,
         cardNumber,
         cardHolder,
@@ -160,8 +187,15 @@ export default function RegisterCreditCard() {
     );
 
   return (
-    <div className="d-flex align-items-center justify-content-center vh-100" style={{ backgroundSize: "cover", backgroundPosition: "center" }}>
-      <div className="card shadow-lg p-4" style={{ maxWidth: "500px", width: "100%", backgroundColor: "rgba(255, 255, 255, 0.85)", color: "#fff" }}>
+    <div className="d-flex align-items-center justify-content-center vh-100"
+    style={{
+      backgroundImage: `url(${fondo})`,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+    }}
+
+    >
+      <div className="card shadow-lg p-4" style={{ maxWidth: "500px", width: "100%", color: "#fff" }}>
         <h2 className="text-center fw-bold mb-4" style={{color: "#000000"}}>PLAN DE 250 PESOS</h2>
         {error && <div className="alert alert-danger text-center">{error}</div>}
         <h3 className="text-center mb-4" style={{color: "#000000"}} >Registrar tarjeta de crédito</h3>

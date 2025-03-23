@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../auth/constants";
+import fondo from "../assets/fondo.jpg";
 
 export default function Sing() {
   const [nombre, setNombre] = useState<string>("");
@@ -108,6 +109,7 @@ export default function Sing() {
     <div
       className="d-flex align-items-center justify-content-center vh-100"
       style={{
+        backgroundImage: `url(${fondo})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
