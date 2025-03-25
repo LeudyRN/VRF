@@ -16,13 +16,14 @@ import Tuberia from "./rutas/Tuberia.tsx";
 import Alambrado from "./rutas/Alambrado.tsx";
 import ControlCentral from "./rutas/ControlCentral.tsx";
 import Reportes from "./rutas/Reportes.tsx";
+import Layout from "./rutas/Layaout.tsx";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import "../src/rutas/custom.css";
 
 const router = createBrowserRouter([
-  // Ruta de Login
   {
     path: "/login",
     element: <Login />,
@@ -57,40 +58,30 @@ const router = createBrowserRouter([
       },
     ],
   },
-  // Rutas protegidas
+  // Rutas protegidas bajo Dashboard
   {
     path: "/dashboard",
-    element: <ProtectedRoute />,
+    element: <ProtectedRoute />, // Protege el Dashboard
     children: [
       {
         path: "",
-        element: <Dashboard />,
-      },
-      {
-        path: "unidad-interior", // Subruta de "Dashboard"
-        element: <UnidadInterior />,
-      },
-      {
-        path: "unidad-exterior", // Subruta de "Dashboard"
-        element: <UnidadExterior />,
-      },
-      {
-        path: "tubería", // Subruta de "Dashboard"
-        element: <Tuberia />,
-      },
-      {
-        path: "alambrado", // Subruta de "Dashboard"
-        element: <Alambrado />,
-      },
-      {
-        path: "control-central", // Subruta de "Dashboard"
-        element: <ControlCentral />,
-      },
-      {
-        path: "reportes", // Subruta de "Dashboard"
-        element: <Reportes />,
+        element: <Layout />, // Layout como contenedor principal
+        children: [
+          { path: "", element: <Dashboard /> }, // Página principal del Dashboard
+          { path: "unidad-interior", element: <UnidadInterior /> },
+          { path: "unidad-exterior", element: <UnidadExterior /> },
+          { path: "tuberia", element: <Tuberia /> },
+          { path: "alambrado", element: <Alambrado /> },
+          { path: "control-central", element: <ControlCentral /> },
+          { path: "reportes", element: <Reportes /> },
+        ],
       },
     ],
+  },
+  // Ruta por defecto: redirige a Login si no coincide con ninguna ruta
+  {
+    path: "*",
+    element: <Navigate to="/login" replace />,
   },
   // Redirigir cualquier ruta no encontrada al login
   {

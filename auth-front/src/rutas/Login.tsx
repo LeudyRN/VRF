@@ -2,8 +2,6 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import fondo from "../assets/fondo.jpg";
 
 export default function Login() {
@@ -51,7 +49,6 @@ export default function Login() {
 
       if (response.ok) {
         const json = await response.json();
-        console.log(json); // Verifica qué está recibiendo el frontend
 
         localStorage.setItem("accessToken", json.accessToken);
         localStorage.setItem("refreshToken", json.refreshToken);
@@ -140,11 +137,11 @@ export default function Login() {
             Iniciar Sesión
           </button>
         </form>
-        <div className="mt-4 text-center">
+        <div className="mt-5 text-center">
           <Link to="/forgot-password" className="text-decoration-none text-primary">
             ¿Olvidaste tu usuario o contraseña?
           </Link>
-          <div className="mt-2">
+          <div className="mt-3">
             <Link to="/sing" className="text-decoration-none text-primary">
               ¿No tienes cuenta? Regístrate aquí.
             </Link>

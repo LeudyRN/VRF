@@ -120,12 +120,18 @@ export default function RegisterCreditCard() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          cardNumber,  // Número de tarjeta
-          expirationDate: formattedDate,  // Fecha de expiración
-          cvv,  // CVV
-          amount: 250,  // Monto
+          userId,              // Asegúrate de incluir userId
+          amount: 250,         // Monto fijo
+          cardNumber,          // Enviado como está o encriptado, según lo que prefieras
+          cardHolder,          // Nombre del titular
+          expiryDate: formattedDate, // Fecha en formato YYYY-MM-DD
+          cvv,
         }),
+
       }).then((res) => res.json());
+
+      console.log("Payload enviado al backend:", paymentResponse);
+
 
       console.log(localStorage.getItem("userId"));
 
@@ -133,7 +139,6 @@ export default function RegisterCreditCard() {
         setError("El pago no fue aprobado.");
         return;
       }
-
 
       // Encriptar CVV y enviar a Azul
       const encryptedCvv = CryptoJS.AES.encrypt(cvv, "secretKey").toString();
@@ -186,43 +191,129 @@ export default function RegisterCreditCard() {
       </div>
     );
 
-  return (
-    <div className="d-flex align-items-center justify-content-center vh-100"
-    style={{
-      backgroundImage: `url(${fondo})`,
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-    }}
+    if (loading)
+      return (
+        <div className="d-flex align-items-center justify-content-center vh-100">
+          <p>Cargando...</p>
+        </div>
+      );
 
-    >
-      <div className="card shadow-lg p-4" style={{ maxWidth: "500px", width: "100%", color: "#fff" }}>
-        <h2 className="text-center fw-bold mb-4" style={{color: "#000000"}}>PLAN DE 250 PESOS</h2>
-        {error && <div className="alert alert-danger text-center">{error}</div>}
-        <h3 className="text-center mb-4" style={{color: "#000000"}} >Registrar tarjeta de crédito</h3>
-        <form onSubmit={handleRegisterCreditCard}>
-          <div className="mb-3">
-            <label htmlFor="cardNumber" className="form-label fw-bold" style={{color: "#000000"}} >Número de tarjeta</label>
-            <input id="cardNumber" name="cardNumber" type="text" className="form-control" placeholder="1234 5678 9012 3456" required onChange={formatCardNumber} />
-            {cardType && <small className="text-muted" style={{color: "#000000"}} >Tipo de tarjeta: {cardType}</small>}
-          </div>
-          <div className="mb-3">
-            <label htmlFor="cardHolder" className="form-label fw-bold" style={{color: "#000000"}}>Nombre del titular</label>
-            <input id="cardHolder" name="cardHolder" type="text" className="form-control" placeholder="Nombre en la tarjeta" required />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="expirationDate" className="form-label fw-bold" style={{color: "#000000"}} >Fecha de expiración</label>
-            <input id="expirationDate" name="expirationDate" type="text" className="form-control" placeholder="MM/AA" pattern="^(0[1-9]|1[0-2])\/\d{2}$" required onChange={formatExpirationDate} />
-          </div>
-          <div className="mb-5">
-            <label htmlFor="cvv" className="form-label fw-bold" style={{color: "#000000"}} >CVV</label>
-            <div className="input-group">
-              <input id="cvv" name="cvv" type={showCvv ? "text" : "password"} className="form-control" placeholder="Código de seguridad" required />
-              <button type="button" className="btn btn-outline-secondary" onClick={() => setShowCvv(!showCvv)}>{showCvv ? "Ocultar" : "Mostrar"}</button>
+    return (
+      <div
+        className="d-flex align-items-center justify-content-center vh-100"
+        style={{
+          backgroundImage: `url(${fondo})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div
+          className="card shadow-lg p-4"
+          style={{
+            maxWidth: "500px",
+            width: "100%",
+            backgroundColor: "#fff",
+            borderRadius: "10px",
+            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          {/* Paso y título */}
+          <p className="fw-bold mb-5">PASO 3 DE 3</p>
+          <h1 className="mb-3 fw-bold">Configura tu tarjeta de crédito o débito</h1>
+
+          {/* Mensaje de error */}
+          {error && <div className="alert alert-danger text-center mb-5">{error}</div>}
+
+          {/* Formulario */}
+          <form onSubmit={handleRegisterCreditCard}>
+            <div className="mb-3">
+              <label htmlFor="cardNumber" className="form-label fw-bold">
+                Número de tarjeta
+              </label>
+              <input
+                id="cardNumber"
+                name="cardNumber"
+                type="text"
+                className="form-control"
+                placeholder="1234 5678 9012 3456"
+                required
+                onChange={formatCardNumber}
+              />
+              {cardType && <small className="text-muted">Tipo de tarjeta: {cardType}</small>}
             </div>
+
+            <div className="mb-3 d-flex justify-content-between gap-3">
+              <div style={{ flex: 1 }}>
+                <label htmlFor="expirationDate" className="form-label fw-bold">
+                  Fecha de vencimiento
+                </label>
+                <input
+                  id="expirationDate"
+                  name="expirationDate"
+                  type="text"
+                  className="form-control"
+                  placeholder="MM/AA"
+                  pattern="^(0[1-9]|1[0-2])\/\d{2}$"
+                  required
+                  onChange={formatExpirationDate}
+                />
+              </div>
+              <div style={{ flex: 1 }}>
+                <label htmlFor="cvv" className="form-label fw-bold">
+                  CVV
+                </label>
+                <div className="input-group">
+                  <input
+                    id="cvv"
+                    name="cvv"
+                    type={showCvv ? "text" : "password"}
+                    className="form-control"
+                    placeholder="Código de seguridad"
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary"
+                    onClick={() => setShowCvv(!showCvv)}
+                  >
+                    {showCvv ? "Ocultar" : "Mostrar"}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="cardHolder" className="form-label fw-bold">
+                Nombre en la tarjeta
+              </label>
+              <input
+                id="cardHolder"
+                name="cardHolder"
+                type="text"
+                className="form-control"
+                placeholder="Nombre completo"
+                required
+              />
+            </div>
+
+            <button type="submit" className="btn btn-primary w-100 fw-bold">
+              Iniciar membresía
+            </button>
+          </form>
+
+          {/* Plan debajo del formulario */}
+          <div
+            className="mt-3 p-2 text-center"
+            style={{
+              border: "1px solid #ddd",
+              borderRadius: "5px",
+              backgroundColor: "#f9f9f9",
+            }}
+          >
+            <p className="fw-bold mb-0">250 PESOS</p>
+            <p className="text-muted">Plan actual</p>
           </div>
-          <button type="submit" className="btn btn-primary w-100">Continuar</button>
-        </form>
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }

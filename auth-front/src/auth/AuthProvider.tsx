@@ -19,8 +19,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: AuthProviderProps) {
   const [accessToken, setAccessToken] = useState<string | null>(localStorage.getItem("accessToken"));
   const [refreshTokenValue, setRefreshTokenValue] = useState<string | null>(sessionStorage.getItem("refreshToken"));
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!accessToken); // Estado de autenticación
-  const [authChecking, setAuthChecking] = useState<boolean>(true); // Verificación inicial de autenticación
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!accessToken);
+  const [authChecking, setAuthChecking] = useState<boolean>(true);
 
   // Sincronizar tokens con almacenamiento persistente
   useEffect(() => {
@@ -42,32 +42,44 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // Verificar y renovar token al inicializar el contexto
   useEffect(() => {
     const verifyAuth = async () => {
-      if (!accessToken && refreshTokenValue) {
-        try {
-          console.log("Intentando renovar token al inicializar...");
-          const newToken = await refreshToken();
-          if (newToken) {
-            console.log("Token renovado exitosamente:", newToken);
-            setIsAuthenticated(true);
-          } else {
-            console.log("No se pudo renovar el token.");
-          }
-        } catch (error) {
-          console.error("Error al verificar autenticación:", error);
+      if (accessToken && !isTokenExpired(accessToken)) {
+        console.log("Access token válido. Usuario autenticado.");
+        setIsAuthenticated(true);
+      } else if (refreshTokenValue) {
+        console.log("Intentando renovar token al inicializar...");
+        const newToken = await refreshToken();
+        if (newToken) {
+          console.log("Token renovado exitosamente:", newToken);
+          setIsAuthenticated(true);
+        } else {
+          console.log("No se pudo renovar el token. Cerrando sesión...");
           logout();
         }
+      } else {
+        console.log("Sin tokens válidos. Cerrando sesión...");
+        logout();
       }
-      setAuthChecking(false); // Finaliza la verificación inicial
+      setAuthChecking(false);
     };
 
     verifyAuth();
   }, []); // Ejecutar solo al cargar
 
-  // Renovar token
+  // Verificar si el token ha expirado
+  const isTokenExpired = (token: string): boolean => {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1])); // Decodifica el payload del JWT
+      return payload.exp * 1000 < Date.now(); // Verifica si el tiempo de expiración ha pasado
+    } catch (error) {
+      console.error("Error al verificar la expiración del token:", error);
+      return true; // Si algo falla, asumimos que el token es inválido
+    }
+  };
+
   const refreshToken = async (): Promise<string | null> => {
     if (!refreshTokenValue) {
-      console.error("No se encontró refreshToken. Cerrando sesión...");
-      logout();
+      console.error("No se encontró refreshToken en el cliente. Cerrando sesión...");
+      logout(); // Cierra sesión si no hay refreshToken
       return null;
     }
 
@@ -75,20 +87,33 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const response = await fetch(`${API_URL}/refreshToken`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refreshToken: refreshTokenValue }),
-        credentials: "include",
+        body: JSON.stringify({ refreshToken: refreshTokenValue }), // Enviar refreshToken al backend
+        credentials: "include", // Incluir cookies si el backend las requiere
       });
 
-      if (!response.ok) throw new Error(`Error al renovar token: ${response.status}`);
+      // Manejo de errores de respuesta
+      if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          console.error("Refresh token inválido o expirado. Cerrando sesión...");
+          logout(); // Cierra la sesión si el token no es válido
+        }
+        throw new Error(`Error al renovar token: ${response.status} - ${response.statusText}`);
+      }
 
+      // Procesar respuesta exitosa
       const data = await response.json();
+
+      // Actualizar los tokens en el estado y almacenamiento
       setAccessToken(data.accessToken);
       setRefreshTokenValue(data.refreshToken);
+      localStorage.setItem("token", data.accessToken); // Guardar accessToken
+      sessionStorage.setItem("refreshToken", data.refreshToken); // Guardar refreshToken
 
-      return data.accessToken;
+      console.log("Nuevo accessToken obtenido:", data.accessToken);
+      return data.accessToken; // Retorna el nuevo accessToken
     } catch (error) {
-      console.error("Error al renovar el token:", error);
-      logout();
+      console.error("Error al renovar el token:", error || error);
+      logout(); // Cierra sesión en caso de error crítico
       return null;
     }
   };
@@ -97,9 +122,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const login = (newAccessToken: string, newRefreshToken: string) => {
     setAccessToken(newAccessToken);
     setRefreshTokenValue(newRefreshToken);
-    setIsAuthenticated(true);
+    localStorage.setItem("token", newAccessToken); // Guardar en localStorage
+    sessionStorage.setItem("refreshToken", newRefreshToken); // Guardar en sessionStorage
+    setIsAuthenticated(true); // Actualiza inmediatamente el estado de autenticación
+    console.log("Inicio de sesión completado. Usuario autenticado.");
   };
-
   // Cerrar sesión
   const logout = () => {
     setAccessToken(null);
@@ -120,7 +147,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         logout,
       }}
     >
-      {!authChecking && children} {/* Solo renderizar después de verificar autenticación */}
+      {!authChecking ? children : <p>Verificando autenticación...</p>}
     </AuthContext.Provider>
   );
 }

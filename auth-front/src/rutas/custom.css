@@ -1,0 +1,12 @@
+.my-custom-blue {
+  background-color: #0d6efd; /* Azul específico */
+  color: #fff; /* Texto blanco */
+  border: 1px solid #0d6efd; /* Borde azul */
+  transition: background-color 0.3s ease; /* Efecto suave al interactuar */
+}
+
+.my-custom-blue:disabled {
+  background-color: hsl(208, 63%, 45%); /* Gris para botones deshabilitados */
+  border-color: hsl(208, 86%, 30%);; /* Borde gris */
+  color: #fff; /* Asegura que el texto siga siendo blanco */
+}
