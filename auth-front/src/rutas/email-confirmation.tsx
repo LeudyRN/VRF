@@ -102,7 +102,7 @@ export default function EmailConfirmation() {
     >
       <div
         className="card shadow-lg p-4"
-        style={{ maxWidth: "500px", width: "100%", backgroundColor: "rgba(255, 255, 255, 0.9)" }}
+        style={{ maxWidth: "30vh", width: "100%", backgroundColor: "rgba(255, 255, 255, 0.9)" }}
       >
         <h3 className="text-center mb-4">Confirma tu correo</h3>
         <p className="text-center">

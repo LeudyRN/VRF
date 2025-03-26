@@ -116,9 +116,10 @@ export default function Sing() {
     >
       <div
         className="card shadow-lg p-4"
-        style={{ maxWidth: "500px", width: "100%", backgroundColor: "rgba(255, 255, 255, 0.9)" }}
+        style={{ maxWidth: "35vh", width: "100%", backgroundColor: "rgba(255, 255, 255, 0.9)" }}
       >
-        <h3 className="text-center mb-4">Crea tu cuenta</h3>
+        <p className="fw-bold mb-5">PASO 1 DE 3</p>
+        <h3 className="text-center mb-5">Crea tu cuenta</h3>
         {errorResponse && (
           <div className="alert alert-danger text-center" role="alert">
             {errorResponse}
@@ -204,7 +205,7 @@ export default function Sing() {
             <label htmlFor="genero" className="form-label fw-bold">Género</label>
             <select
               id="genero"
-              className="form-select"
+              className="form-select mb-3"
               value={genero}
               onChange={(e) => setGenero(e.target.value)}
               required
@@ -215,7 +216,7 @@ export default function Sing() {
               <option value="otro">Otro</option>
             </select>
           </div>
-          <button type="submit" className="btn btn-primary w-100">Siguiente</button>
+          <button type="submit" className="btn btn-primary w-100 ">Siguiente</button>
 
         </form>
       </div>

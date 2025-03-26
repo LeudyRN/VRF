@@ -54,40 +54,62 @@ export default function Login() {
         localStorage.setItem("refreshToken", json.refreshToken);
 
         if (json.redirectToRegisterCard === true) {
-            navigate("/register-card");
-            return;
+          navigate("/register-card");
+          return;
         }
 
         auth.login(json.accessToken, json.refreshToken);
         navigate("/dashboard");
-    } else {
+      } else {
         setErrorResponse("Usuario o contraseña incorrectos.");
-    }
-
+      }
     } catch (error) {
-  if (error instanceof Error) {
-    setErrorResponse("Hubo un problema con el servidor. Inténtalo de nuevo.");
-  } else {
-    setErrorResponse("Error desconocido. Inténtalo de nuevo.");
+      if (error instanceof Error) {
+        setErrorResponse("Hubo un problema con el servidor. Inténtalo de nuevo.");
+      } else {
+        setErrorResponse("Error desconocido. Inténtalo de nuevo.");
+      }
+    }
   }
-
-  }
-}
 
   return (
     <div
-      className="d-flex align-items-center justify-content-center vh-100"
+      className="d-flex align-items-center justify-content-center"
       style={{
         backgroundImage: `url(${fondo})`,
         backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
         backgroundPosition: "center",
+        width: "100vw",
+        height: "100vh",
+        overflowX: "hidden",
+        overflowY: "auto",
       }}
     >
       <div
         className="card shadow-lg p-4"
-        style={{ maxWidth: "400px", width: "100%", backgroundColor: "rgba(255, 255, 255, 0.9)" }}
+        style={{
+          maxWidth: "30vh",
+          width: "100%",
+          backgroundColor: "rgba(255, 255, 255, 0.9)",
+          borderRadius: "2vh",
+          overflow: "hidden",
+        }}
       >
-        <h3 className="text-center mb-4">VRF</h3>
+     <h3
+        className="text-center mt-3"
+        style={{
+          fontSize: "2rem",
+          fontWeight: "bold",
+          color: "rgba(0, 123, 255, 1)",
+          textTransform: "uppercase",
+          letterSpacing: "2px",
+          padding: "2vh",
+          marginBottom: "2vh",
+        }}
+      >
+        Portal de Sistemas VRF
+      </h3>
 
         <form onSubmit={handleSubmit}>
           {errorResponse && (

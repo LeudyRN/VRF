@@ -3,13 +3,13 @@
 }
 
 .sidebar {
-  width: 250px;
+  width: 20vh;
   min-width: 200px;
 }
 
 .dashboard-content {
   flex-grow: 1;
-  padding: 20px;
+  padding: 2vh;
   background-color: #f8f9fa;
   overflow-y: auto; /* Scroll en caso de contenido largo */
 }
@@ -20,7 +20,7 @@
   }
 
   .dashboard-content {
-    padding: 10px; /* Ajustar márgenes internos en pantallas más pequeñas */
+    padding: 2vh; /* Ajustar márgenes internos en pantallas más pequeñas */
   }
 }
 

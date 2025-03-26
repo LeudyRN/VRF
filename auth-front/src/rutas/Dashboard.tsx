@@ -110,64 +110,308 @@ export default function Dashboard() {
     }
   };
 
-  return (
-    <div className="d-flex flex-column" style={{ height: "100vh", margin: 0, padding: 0 }}>
-    <h1 className="container" style={{ margin: 0, padding: "10px" }}>Dashboard</h1>
+  // Modal state
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState("");
 
-    <section
+  const handleOpenModal = (content: string) => {
+    setModalContent(content);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalContent("");
+  };
+
+  return (
+    <div
       className="d-flex flex-column"
-      style={{
-        flexGrow: 1,
-        padding: "20px",
-        margin: 0,
-        overflowY: "auto", // Scroll solo dentro del contenido dinámico
-      }}
+      style={{ height: "100vh", margin: 0, padding: 0 }}
     >
-      <h2 className="h5 mb-5 text-center">Archivos Recientes</h2>
-      {loading ? (
-        <p className="text-center">Cargando archivos...</p>
-      ) : (
-        <div>
+      <h1
+        className="container mt-5"
+        style={{
+          margin: 0,
+          padding: "1vh",
+          marginTop: "5vh",
+          fontWeight: "bold",
+        }}
+      >
+        Dashboard
+      </h1>
+
+      {/* Cuadros de opciones directamente en el Dashboard */}
+      <div
+          className="d-flex justify-content-start align-items-stretch gap-4" // Cambié justify-content-center por justify-content-start
+          style={{ margin: "3vh 0" }}
+        >
+
+          {/* Cuadro: Nuevo Proyecto */}
           <div
-            className="list-group"
+            className="border p-4 rounded shadow d-flex flex-column align-items-center"
             style={{
-             // Limita la altura máxima
-              overflowY: "auto", // Scroll dentro de la lista si excede la altura
+              width: "25vh",
+              marginLeft: "1vh",
+              height: "11vh",
+              backgroundColor: "#f8f9fa",
             }}
           >
-            {files.map((file, index) => (
-              <div
-                key={index}
-                className="list-group-item d-flex justify-content-between align-items-center"
+            <h3 style={{ color: "#0d6efd", fontWeight: "bold" }}>Nuevo Proyecto</h3>
+            <button className="btn btn-primary w-100 mt-1"
+                style={{
+                  borderRadius: "1vh",
+                  backgroundColor: "#0d6efd",
+                  color: "#ffffff",
+                  padding: "1vh 1vh",
+                  border: "none",
+                  boxShadow: "0vh 0.4vh 0.6vh rgba(0, 0, 0, 0.1)",
+                  fontWeight: "bold",
+                  fontSize: "1vh",
+                  transition: "all 0.3s ease-in-out",
+                }}
+                onClick={() => handleOpenModal("Nuevo Proyecto")}
+                onMouseEnter={(e) => {
+                  const target = e.target as HTMLButtonElement;
+                  target.style.transform = "scale(1.05)";
+                  target.style.boxShadow = "0vh 0.6vh 1vh rgba(0, 0, 0, 0.2)";
+                }}
+                onMouseLeave={(e) => {
+                  const target = e.target as HTMLButtonElement;
+                  target.style.transform = "scale(1)";
+                  target.style.boxShadow = "0vh 0.4vh 0.6vh rgba(0, 0, 0, 0.1)";
+                }}
               >
-                <span>📄 {file.name}</span>
-                <small className="text-muted">{file.date}</small>
-              </div>
-            ))}
+                Crear
+              </button>
+
           </div>
-          <div className="d-flex flex-column align-items-center mt-4">
-            <div className="d-flex justify-content-between w-50 mb-4">
+
+          {/* Cuadro: Abrir Proyecto */}
+          <div
+            className="border p-4 rounded shadow d-flex flex-column align-items-center mb-3"
+            style={{
+              width: "25vh",
+              height: "11vh",
+              backgroundColor: "#f8f9fa",
+            }}
+          >
+            <h3 style={{ color: "#0d6efd", fontWeight: "bold" }}>Abrir Proyecto</h3>
+            <button className="btn btn-secondary w-100 mt-1"
+                style={{
+                  borderRadius: "1vh",
+                  backgroundColor: "#0d6efd",
+                  color: "#ffffff",
+                  padding: "1vh 1vh",
+                  border: "none",
+                  boxShadow: "0vh 0.4vh 0.6vh rgba(0, 0, 0, 0.1)",
+                  fontWeight: "bold",
+                  fontSize: "1vh",
+                  transition: "all 0.3s ease-in-out",
+                }}
+                onClick={() => handleOpenModal("Abrir Proyecto")}
+                onMouseEnter={(e) => {
+                  const target = e.target as HTMLButtonElement;
+                  target.style.transform = "scale(1.05)";
+                  target.style.boxShadow = "0vh 0.6vh 1vh rgba(0, 0, 0, 0.2)";
+                }}
+                onMouseLeave={(e) => {
+                  const target = e.target as HTMLButtonElement;
+                  target.style.transform = "scale(1)";
+                  target.style.boxShadow = "0vh 0.4vh 0.6vh rgba(0, 0, 0, 0.1)";
+                }}
+              >
+                Seleccionar
+              </button>
+          </div>
+
+          <div
+            className="border p-4 rounded shadow d-flex flex-column align-items-center"
+            style={{
+              width: "25vh",
+              height: "11vh",
+              backgroundColor: "#f8f9fa",
+            }}
+          >
+            <h3 style={{ color: "#0d6efd", fontWeight: "bold" }}>Proyectos</h3>
+            <button className="btn btn-primary w-100 mt-1"
+              style={{
+                borderRadius: "1vh",
+                backgroundColor: "#0d6efd",
+                color: "#ffffff",
+                padding: "1vh 1vh",
+                border: "none",
+                boxShadow: "0vh 0.4vh 0.6vh rgba(0, 0, 0, 0.1)",
+                fontWeight: "bold",
+                fontSize: "1vh",
+                transition: "all 0.3s ease-in-out",
+              }}
+              onClick={() => handleOpenModal("Proyectos")}
+              onMouseEnter={(e) => {
+                const target = e.target as HTMLButtonElement;
+                target.style.transform = "scale(1.05)";
+                target.style.boxShadow = "0vh 0.6vh 1vh rgba(0, 0, 0, 0.2)";
+              }}
+              onMouseLeave={(e) => {
+                const target = e.target as HTMLButtonElement;
+                target.style.transform = "scale(1)";
+                target.style.boxShadow = "0vh 0.4vh 0.6vh rgba(0, 0, 0, 0.1)";
+              }}
+            >
+              Ver mis proyectos
+            </button>
+          </div>
+
+        </div>
+
+      {/* Modal Popup para funcionalidad */}
+      {showModal && (
+        <div
+          className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
+          style={{
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: 1050,
+          }}
+        >
+          <div
+            className="bg-white p-4 rounded shadow"
+            style={{
+              width: "30vh",
+              textAlign: "center",
+            }}
+          >
+            <h3 className="mb-4" style={{ color: "#0d6efd", fontWeight: "bold" }}>
+              {modalContent}
+            </h3>
+            <p>Funcionalidad para "{modalContent}"</p>
+            <button
+              className="btn btn-secondary w-100 mt-3"
+              style={{
+                borderRadius: "8px",
+              }}
+              onClick={handleCloseModal}
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
+
+      <section
+        className="d-flex flex-column align-items-center justify-content-center"
+        style={{
+          padding: "2vh",
+          margin: 0,
+          overflowX: "auto",
+          minHeight: "50vh",
+        }}
+       >
+        <h2 className="h5 mb-3 text-start fw-bold w-100"
+        style={{
+          fontWeight: "bold",
+        }}
+        >Archivos Recientes</h2>
+        {loading ? (
+          <p className="text-center">Cargando archivos...</p>
+        ) : (
+          <div className="w-100 w-md-75"
+          style={{
+          //  fontWeight: "bold",
+            marginLeft: "-1vh",
+          }}
+
+          >
+            <div className="list-group">
+              {files.map((file, index) => (
+                <div
+                  key={index}
+                  className="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <span>📄 {file.name}</span>
+                  <small className="text-muted">{file.date}</small>
+                </div>
+              ))}
+            </div>
+            <div className="d-flex flex-column align-items-center mt-4">
+            <div className="d-flex flex-wrap justify-content-center gap-3 mb-4">
               <button
-                className="btn my-custom-blue"
+                className="btn"
                 onClick={handlePrevPage}
                 disabled={currentPage === 1}
+                style={{
+                  backgroundColor: currentPage === 1 ? "#d6d6d6" : "#0d6efd",
+                  color: currentPage === 1 ? "#a1a1a1" : "#ffffff",
+                  padding: "10px 20px",
+                  borderRadius: "8px",
+                  border: "none",
+                  boxShadow: currentPage === 1 ? "none" : "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                  cursor: currentPage === 1 ? "not-allowed" : "pointer",
+                  fontWeight: "bold",
+                  fontSize: "16px",
+                  transition: "all 0.2s ease-in-out",
+                }}
+                onMouseEnter={(e) => {
+                  const target = e.target as HTMLButtonElement;
+                  if (currentPage !== 1) {
+                    target.style.transform = "scale(1.05)";
+                    target.style.boxShadow = "0px 6px 10px rgba(0, 0, 0, 0.2)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  const target = e.target as HTMLButtonElement;
+                  if (currentPage !== 1) {
+                    target.style.transform = "scale(1)";
+                    target.style.boxShadow = "0px 4px 6px rgba(0, 0, 0, 0.1)";
+                  }
+                }}
               >
                 Página Anterior
               </button>
               <button
-                className="btn my-custom-blue"
+                className="btn"
                 onClick={handleNextPage}
                 disabled={currentPage === totalPages}
+                style={{
+                  backgroundColor: currentPage === totalPages ? "#d6d6d6" : "#0d6efd",
+                  color: currentPage === totalPages ? "#a1a1a1" : "#ffffff",
+                  padding: "10px 20px",
+                  borderRadius: "8px",
+                  border: "none",
+                  boxShadow: currentPage === totalPages ? "none" : "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                  cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+                  fontWeight: "bold",
+                  fontSize: "16px",
+                  transition: "all 0.2s ease-in-out",
+                }}
+                onMouseEnter={(e) => {
+                  const target = e.target as HTMLButtonElement; // Conversión explícita
+                  if (currentPage !== totalPages) {
+                    target.style.transform = "scale(1.05)";
+                    target.style.boxShadow = "0px 6px 10px rgba(0, 0, 0, 0.2)";
+                  }
+                }}
+
+                onMouseLeave={(e) => {
+                  const target = e.target as HTMLButtonElement; // Conversión explícita
+                  if (currentPage !== totalPages) {
+                    target.style.transform = "scale(1)";
+                    target.style.boxShadow = "0px 4px 6px rgba(0, 0, 0, 0.1)";
+                  }
+                }}
+
               >
                 Página Siguiente
               </button>
-            </div>
-            <span style={{ marginTop: "10px" }}>Página {currentPage} de {totalPages}</span>
+              </div>
+             <span style={{ marginTop: "1vh", fontSize: "14px", color: "#6c757d" }}>
+              Página {currentPage} de {totalPages}
+            </span>
+           </div>
           </div>
-        </div>
-      )}
-    </section>
-  </div>
+        )}
+      </section>
+    </div>
+
   );
 
 }

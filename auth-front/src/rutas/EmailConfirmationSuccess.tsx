@@ -11,7 +11,7 @@ export default function EmailConfirmationSuccess() {
           }}
 
         >
-            <div className="card shadow-lg p-4 text-center" style={{ maxWidth: "500px", backgroundColor: "rgba(255, 255, 255, 0.9)"}}>
+            <div className="card shadow-lg p-4 text-center" style={{ maxWidth: "50vh", backgroundColor: "rgba(255, 255, 255, 0.9)"}}>
                 <h3 className="mb-3">¡Correo confirmado con éxito!</h3>
                 <p>Tu cuenta ha sido verificada correctamente. Ahora puedes continuar con el registro de tu tarjeta para completar tu cuenta.</p>
                 <div className="mt-3">

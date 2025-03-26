@@ -4,7 +4,7 @@ const router = express.Router(); // Cambiar a `router`
 // Ruta para obtener archivos con paginación
 router.get("/", (req, res) => { // Nota: Cambié "/api/files" a "/"
   const { page = 1, limit = 10 } = req.query; // Parámetros de paginación
-  const totalFiles = 50; // Total de archivos (ejemplo estático)
+  const totalFiles = 30; // Total de archivos (ejemplo estático)
 
   // Archivos ficticios (puedes reemplazar esto con datos de tu base de datos)
   const files = Array.from({ length: totalFiles }, (_, index) => ({

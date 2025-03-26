@@ -17,6 +17,7 @@ import Alambrado from "./rutas/Alambrado.tsx";
 import ControlCentral from "./rutas/ControlCentral.tsx";
 import Reportes from "./rutas/Reportes.tsx";
 import Layout from "./rutas/Layaout.tsx";
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet"></link>
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";

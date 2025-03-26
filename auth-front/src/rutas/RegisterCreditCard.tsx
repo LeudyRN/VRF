@@ -120,9 +120,9 @@ export default function RegisterCreditCard() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId,              // Asegúrate de incluir userId
-          amount: 250,         // Monto fijo
-          cardNumber,          // Enviado como está o encriptado, según lo que prefieras
+          userId,
+          amount: 4.99,         // Monto fijo
+          cardNumber,         // Numero de T.
           cardHolder,          // Nombre del titular
           expiryDate: formattedDate, // Fecha en formato YYYY-MM-DD
           cvv,
@@ -155,7 +155,7 @@ export default function RegisterCreditCard() {
 
       const azulPayload = {
         userId: storedUserId,
-        amount: 250.0,
+        amount: 4.99,
         cardNumber,
         cardHolder,
         expiryDate: formattedDate,
@@ -210,10 +210,10 @@ export default function RegisterCreditCard() {
         <div
           className="card shadow-lg p-4"
           style={{
-            maxWidth: "500px",
+            maxWidth: "30vh",
             width: "100%",
             backgroundColor: "#fff",
-            borderRadius: "10px",
+            borderRadius: "2vh",
             boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
           }}
         >
@@ -310,7 +310,7 @@ export default function RegisterCreditCard() {
               backgroundColor: "#f9f9f9",
             }}
           >
-            <p className="fw-bold mb-0">250 PESOS</p>
+            <p className="fw-bold mb-0">4.99 US</p>
             <p className="text-muted">Plan actual</p>
           </div>
         </div>
