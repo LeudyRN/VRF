@@ -1,10 +1,10 @@
 const express = require("express");
-const router = express.Router(); // Cambiar a `router`
+const router = express.Router();
 
-// Ruta para obtener archivos con paginación
-router.get("/", (req, res) => { // Nota: Cambié "/api/files" a "/"
-  const { page = 1, limit = 10 } = req.query; // Parámetros de paginación
-  const totalFiles = 30; // Total de archivos (ejemplo estático)
+// Ruta para obtener archivos con paginación y búsqueda
+router.get("/", (req, res) => {
+  const { page = 1, limit = 10, search = "" } = req.query;
+  const totalFiles = 30;
 
   // Archivos ficticios (puedes reemplazar esto con datos de tu base de datos)
   const files = Array.from({ length: totalFiles }, (_, index) => ({
@@ -12,17 +12,25 @@ router.get("/", (req, res) => { // Nota: Cambié "/api/files" a "/"
     date: `2025-03-1${index % 10}`,
   }));
 
+  // Lógica de búsqueda
+  let filteredFiles = files;
+  if (search) {
+    filteredFiles = files.filter((file) =>
+      file.name.toLowerCase().includes(search.toLowerCase())
+    );
+  }
+
   // Lógica de paginación
   const start = (page - 1) * limit;
   const end = start + parseInt(limit);
-  const paginatedFiles = files.slice(start, end);
+  const paginatedFiles = filteredFiles.slice(start, end);
 
   res.json({
     files: paginatedFiles,
-    total: totalFiles,
+    total: filteredFiles.length, // Usar la longitud de los archivos filtrados
     page: parseInt(page),
     limit: parseInt(limit),
   });
 });
 
-module.exports = router; // Exporta el router
+module.exports = router;

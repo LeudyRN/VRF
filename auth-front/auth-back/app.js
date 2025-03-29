@@ -15,7 +15,7 @@ app.use(
         callback(new Error("Origen no permitido por CORS"));
       }
     },
-    credentials: true, // Habilita el manejo de cookies
+    credentials: true,
   })
 );
 
@@ -38,6 +38,7 @@ app.use("/api/refreshToken", require("./routes/refreshToken"));
 app.use("/api/singout", require("./routes/singout"));
 app.use("/api/payment", require("./routes/paymentRoutes"));
 app.use("/api/files", require("./routes/files"));
+app.use("/api/unidad-interior", require("./routes/unidadInterior"));
 
 // Ruta de prueba para conexión
 app.get("/", (req, res) => {

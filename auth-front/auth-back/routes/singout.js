@@ -14,13 +14,13 @@ router.post("/", (req, res) => {
         console.error("Error destruyendo la sesión:", err.message);
         return res.status(500).json({ error: "Error cerrando sesión. Inténtalo nuevamente." });
       } else {
-        res.clearCookie("connect.sid"); // Limpia la cookie de sesión
-        setNoCacheHeaders(res); // Configura encabezados para eliminar caché
+        res.clearCookie("connect.sid");
+        setNoCacheHeaders(res);
         return res.status(200).json({ message: "Sesión cerrada correctamente y caché eliminado." });
       }
     });
   } else {
-    setNoCacheHeaders(res); // Configura encabezados para eliminar caché
+    setNoCacheHeaders(res);
     res.status(200).json({ message: "No había sesión activa." });
   }
 });

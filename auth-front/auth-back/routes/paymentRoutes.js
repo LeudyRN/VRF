@@ -32,12 +32,12 @@ router.post("/processPayment", async (req, res) => {
 
     // Realizar la solicitud a la API de Azul
     const response = await axios.post(
-      "https://pruebas.azul.com.do/webservices/JSON/Default.aspx", // Endpoint de la API Azul
+      "https://pruebas.azul.com.do/webservices/JSON/Default.aspx",
       azulPayload,
       {
         headers: {
           "Content-Type": "application/json",
-          "Auth1": "", // Enviar vacío si no tienes una clave (o prueba con "TEST")
+          "Auth1": "",
         },
       }
     );

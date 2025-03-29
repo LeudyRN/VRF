@@ -21,7 +21,7 @@ router.post("/", async (req, res) => {
     );
 
     if (users.length === 0) {
-      return res.status(401).json({ error: "Credenciales inválidas." }); // Mensaje genérico
+      return res.status(401).json({ error: "Credenciales inválidas." });
     }
 
     const user = users[0];
@@ -30,7 +30,7 @@ router.post("/", async (req, res) => {
     const validPassword = await bcrypt.compare(contraseña, user.contraseña_hash);
 
     if (!validPassword) {
-      return res.status(401).json({ error: "Credenciales inválidas." }); // Mensaje genérico
+      return res.status(401).json({ error: "Credenciales inválidas." });
     }
 
     // Si la autenticación es exitosa, genera y devuelve los tokens

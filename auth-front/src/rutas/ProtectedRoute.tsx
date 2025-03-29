@@ -34,7 +34,7 @@ export default function ProtectedRoute() {
 
   // Mostrar indicador de carga mientras se verifica autenticación
   if (checkingAuth) {
-    return <p>Cargando...</p>; // Spinner o mensaje de carga
+    return <p>Cargando...</p>;
   }
 
   // Redirigir al login si no está autenticado

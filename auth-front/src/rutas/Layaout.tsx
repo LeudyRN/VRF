@@ -12,13 +12,13 @@ const Layout = () => {
   };
 
   const menuItems = [
-    { name: "Dashboard", path: "/dashboard" },
-    { name: "Unidad Interior", path: "/dashboard/unidad-interior" },
-    { name: "Unidad Exterior", path: "/dashboard/unidad-exterior" },
-    { name: "Tubería", path: "/dashboard/tuberia" },
-    { name: "Alambrado", path: "/dashboard/alambrado" },
-    { name: "Control Central", path: "/dashboard/control-central" },
-    { name: "Reportes", path: "/dashboard/reportes" },
+    { name: "Dashboard", path: "/dashboard", icon: "bi-speedometer2" },
+    { name: "Unidad Interior", path: "/dashboard/unidad-interior", icon: "bi-building" },
+    { name: "Unidad Exterior", path: "/dashboard/unidad-exterior", icon: "bi-house-door" },
+    { name: "Tubería", path: "/dashboard/tuberia", icon: "bi-tools" },
+    { name: "Alambrado", path: "/dashboard/alambrado", icon: "bi-lightning" },
+    { name: "Control Central", path: "/dashboard/control-central", icon: "bi-gear" },
+    { name: "Reportes", path: "/dashboard/reportes", icon: "bi-file-earmark-text" },
   ];
 
   return (
@@ -66,36 +66,44 @@ const Layout = () => {
                 marginBottom: item.name === "Dashboard" ? "1vh" : "1vh",
                 borderBottom: item.name === "Dashboard" ? "4px solid #0d6efd" : "none",
               }}
-
-              className={item.name === "Dashboard" ? "dashboard-item py-4" : "menu-item py-2"}
+              className={item.name === "Dashboard" ? "dashboard-item py-4 d-flex align-items-center" : "menu-item py-2 d-flex align-items-center"}
             >
               <Link
                 to={item.path}
-                className={`text-decoration-none px-3 py-2 d-block ${
-                  location.pathname === item.path ? "bg-primary text-white" : "text-white"
-                }`}
-                style={{ borderRadius: "2vh" }}
+                className={`text-decoration-none px-3 py-2 d-block d-flex align-items-center ${location.pathname === item.path ? "active-item bg-primary text-white" : "text-white"}`}
+                style={{
+                  borderRadius: "3vh",
+               //   height: "6vh",
+                  display: "flex",
+                  alignItems: "center",
+                  transition: "background-color 0.3s ease, color 0.3s ease", // Transición suave
+                }}
               >
+                <i className={`${item.icon} me-2`} style={{ fontSize: "2vh" }}></i>
                 {item.name}
               </Link>
             </li>
           ))}
           <li
-            className="py-4"
+            className="py-4 d-flex align-items-center"
             style={{
-              borderTop: "4px solid #0d6efd", // Línea divisoria encima de Cerrar sesión
+              borderTop: "4px solid #0d6efd",
               paddingTop: "1vh",
             }}
           >
             <button
               onClick={handleLogout}
-              className="text-decoration-none px-3 py-2 d-block text-white btn btn-link"
+              className="text-decoration-none px-3 py-2 d-block text-white btn btn-link d-flex align-items-center"
               style={{
                 borderRadius: "2vh",
-              //  fontWeight: "bold",
                 fontSize: "1.2vh",
+               // height: "6vh", // Tamaño uniforme
+                display: "flex",
+                alignItems: "center",
+                transition: "background-color 0.3s ease, color 0.9s ease", // Transición suave
               }}
             >
+              <i className="bi-box-arrow-right me-2" style={{ fontSize: "1.5rem" }}></i>
               Cerrar sesión
             </button>
           </li>

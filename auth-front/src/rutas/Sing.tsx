@@ -96,7 +96,7 @@ export default function Sing() {
         setErrorResponse(alert.error || "Ocurrió un error inesperado.");
       }
     } catch (error) {
-      setErrorResponse("Error de conexión con el servidor.");
+      setErrorResponse(`Error de conexión con el servidor: ${(error as Error).message}`);
     }
   }
 

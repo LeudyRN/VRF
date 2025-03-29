@@ -17,12 +17,23 @@ import Alambrado from "./rutas/Alambrado.tsx";
 import ControlCentral from "./rutas/ControlCentral.tsx";
 import Reportes from "./rutas/Reportes.tsx";
 import Layout from "./rutas/Layaout.tsx";
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet"></link>
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../src/rutas/custom.css";
+
+// eslint-disable-next-line react-refresh/only-export-components, @typescript-eslint/no-unused-vars
+function App() {
+  return (
+    <AuthProvider>
+      <ToastContainer />
+      <RouterProvider router={router} />
+    </AuthProvider>
+  );
+}
 
 const router = createBrowserRouter([
   {
@@ -78,11 +89,6 @@ const router = createBrowserRouter([
         ],
       },
     ],
-  },
-  // Ruta por defecto: redirige a Login si no coincide con ninguna ruta
-  {
-    path: "*",
-    element: <Navigate to="/login" replace />,
   },
   // Redirigir cualquier ruta no encontrada al login
   {
