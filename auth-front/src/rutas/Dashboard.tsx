@@ -270,7 +270,7 @@ export default function Dashboard() {
       <div className="container ">
         <input
           type="text"
-          className="form-control mb-1"
+          className="form-control"
           placeholder="Buscar archivos..."
           value={searchTerm}
           onChange={handleSearchChange}

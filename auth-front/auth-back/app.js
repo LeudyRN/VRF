@@ -3,6 +3,7 @@ const cors = require("cors");
 require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 3100;
+const path = require("path");
 
 // Configuración de CORS
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || ["http://localhost:5173"];
@@ -39,6 +40,8 @@ app.use("/api/singout", require("./routes/singout"));
 app.use("/api/payment", require("./routes/paymentRoutes"));
 app.use("/api/files", require("./routes/files"));
 app.use("/api/unidad-interior", require("./routes/unidadInterior"));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 
 // Ruta de prueba para conexión
 app.get("/", (req, res) => {

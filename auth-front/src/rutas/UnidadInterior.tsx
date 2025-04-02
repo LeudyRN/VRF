@@ -6,6 +6,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
+
 interface UnidadInterior {
   id: number;
   unitName: string;
@@ -132,31 +133,63 @@ const UnidadInterior = () => {
     }
   };
 
-  return (
-    <div className="container mt-5" style={{ margin: 0, padding: "5vh", marginTop: "5vh", position: "relative" }}>
-      <h1 style={{ margin: 0, padding: "1vh", marginTop: "1vh", fontWeight: "bold", marginLeft: "-3vh" }}>
-        Unidad Interior
-      </h1>
-      <p style={{ fontSize: "1rem", color: "#6c757d", marginBottom: "3vh", marginLeft: "-1.6vh", fontWeight: "bold" }}>
-        Explora las especificaciones y modelos de la Unidad Interior.
-      </p>
 
-      <div className="row g-4">
-        <div className="col-md-8">
-          <div style={{ maxHeight: "400px", overflowY: "auto" }}>
+
+  return ( <div className="container mt-5" style={{
+  margin: 0,
+  padding: "5vh",
+  marginTop: "5vh",
+  position: "relative" }}
+  >
+
+
+      <h1 style={{
+        margin: 0,
+        padding: "1vh",
+        marginTop: "1vh",
+        fontWeight: "bold",
+        marginLeft: "-3vh" }}
+
+        >
+
+        Unidad Interior </h1> <p style={{
+        fontSize: "1rem",
+        color: "#6c757d",
+        marginBottom: "3vh",
+        marginLeft: "-1.6vh",
+        fontWeight: "bold" }}
+
+        >
+
+    Explora las especificaciones y modelos de la Unidad Interior. </p>
+
+      <div className="row">
+        <div className="col-md-8 w-100 mt-4">
+          <div style={{ maxHeight: '35vh', overflowY: 'auto', marginBottom: '20px' }}>
             {loading ? (
               <p>Cargando datos...</p>
             ) : error ? (
               <p className="text-danger">Error: {error}</p>
             ) : (
               equiposDisponibles.map((equipo) => (
+
                 <div key={equipo.id} className="card shadow-sm mb-3">
                   <div className="card-body">
-                    <img src={equipo.image_url} alt={equipo.unitName} className="img-fluid rounded mb-3 shadow" style={{ maxHeight: "150px" }} />
+                  <img
+                    src={`http://localhost:3100${equipo.image_url}`} // Usa la URL completa
+                    alt={equipo.unitName}
+
+                    className="img-fluid rounded mb-3 shadow"
+                    style={{ maxHeight: "150px" }}
+                  />
                     <h5 className="card-title text-primary">{equipo.unitName}</h5>
                     <p className="card-text">{equipo.model}</p>
                     <div className="d-flex justify-content-between">
-                      <button className="btn btn-primary" onClick={() => añadirEquipo(equipo)} disabled={equiposSeleccionados.some((e) => e.id === equipo.id)}>
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => añadirEquipo(equipo)}
+                        disabled={equiposSeleccionados.some((e) => e.id === equipo.id)}
+                      >
                         <i className="bi bi-plus-circle me-1"></i> Añadir
                       </button>
                       <button className="btn btn-outline-secondary" onClick={() => verDetalles(equipo)}>
@@ -169,8 +202,45 @@ const UnidadInterior = () => {
             )}
           </div>
         </div>
-        {showModal && datosEditados && (
-        <div className="modal fade show" style={{ display: "block" }}>
+        <div className="card shadow-sm"
+          style={{
+            position: 'absolute',
+            top: '17.9vh',
+            right: '-30vh',
+            width: '400px',
+          }}
+        >
+          <div className="card-body">
+            {equipoDetalles ? (
+              <>
+                <h4 className="text-primary mb-3">Detalles del Equipo</h4>
+                <ul className="list-unstyled">
+                  <li className="mb-2">
+                    <strong>Nombre:</strong> {equipoDetalles.unitName}
+                  </li>
+                  <li className="mb-2">
+                    <strong>Modelo:</strong> {equipoDetalles.model}
+                  </li>
+                  <li className="mb-2">
+                    <strong>DBT/RH (Cooling):</strong> {equipoDetalles.dbt_rh_cooling}
+                  </li>
+                  <li className="mb-2">
+                    <strong>DBT (Heating):</strong> {equipoDetalles.dbt_heating}
+                  </li>
+                  <li className="mb-2">
+                    <strong>Ruido:</strong> {equipoDetalles.noise} dB(A)
+                  </li>
+                </ul>
+              </>
+            ) : (
+              <p className="text-muted">Selecciona un equipo para ver los detalles.</p>
+            )}
+          </div>
+         </div>
+      </div>
+
+      {showModal && datosEditados && (
+        <div className="modal fade show" style={{ display: 'block' }}>
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
@@ -179,46 +249,126 @@ const UnidadInterior = () => {
               </div>
               <div className="modal-body">
                 <div className="mb-3">
-                  <label htmlFor="unitName" className="form-label">Unit Name:</label>
-                  <input type="text" className="form-control" id="unitName" value={datosEditados.unitName} onChange={(e) => handleInputChange(e, "unitName")} />
+                  <label htmlFor="unitName" className="form-label">
+                    Unit Name:
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="unitName"
+                    value={datosEditados.unitName}
+                    onChange={(e) => handleInputChange(e, 'unitName')}
+                  />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="remark" className="form-label">Remark:</label>
-                  <input type="text" className="form-control" id="remark" value={datosEditados.remark || ""} onChange={(e) => handleInputChange(e, "remark")} />
+                  <label htmlFor="remark" className="form-label">
+                    Remark:
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="remark"
+                    value={datosEditados.remark || ''}
+                    onChange={(e) => handleInputChange(e, 'remark')}
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label htmlFor="model" className="form-label">
+                    Model:
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="model"
+                    value={datosEditados.model}
+                    onChange={(e) => handleInputChange(e, 'model')}
+                  />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="model" className="form-label">Model:</label>
-                  <input type="text" className="form-control" id="model" value={datosEditados.model} onChange={(e) => handleInputChange(e, "model")} />
+                  <label htmlFor="dryBulbTempCooling" className="form-label">
+                    Dry Bulb Temp. (Cooling):
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="dryBulbTempCooling"
+                    value={datosEditados.dryBulbTempCooling || 0}
+                    onChange={(e) => handleInputChange(e, 'dryBulbTempCooling')}
+                  />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="dryBulbTempCooling" className="form-label">Dry Bulb Temp. (Cooling):</label>
-                  <input type="number" className="form-control" id="dryBulbTempCooling" value={datosEditados.dryBulbTempCooling || 0} onChange={(e) => handleInputChange(e, "dryBulbTempCooling")} />
+                  <label htmlFor="wetBulbTempCooling" className="form-label">
+                    Wet Bulb Temp. (Cooling):
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="wetBulbTempCooling"
+                    value={datosEditados.wetBulbTempCooling || 0}
+                    onChange={(e) => handleInputChange(e, 'wetBulbTempCooling')}
+                  />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="wetBulbTempCooling" className="form-label">Wet Bulb Temp. (Cooling):</label>
-                  <input type="number" className="form-control" id="wetBulbTempCooling" value={datosEditados.wetBulbTempCooling || 0} onChange={(e) => handleInputChange(e, "wetBulbTempCooling")} />
+                  <label htmlFor="relativeHumCooling" className="form-label">
+                    Relative HUM (Cooling):
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="relativeHumCooling"
+                    value={datosEditados.relativeHumCooling || 0}
+                    onChange={(e) => handleInputChange(e, 'relativeHumCooling')}
+                  />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="relativeHumCooling" className="form-label">Relative HUM (Cooling):</label>
-                  <input type="number" className="form-control" id="relativeHumCooling" value={datosEditados.relativeHumCooling || 0} onChange={(e) => handleInputChange(e, "relativeHumCooling")} />
+                  <label htmlFor="dryBulbTempHeating" className="form-label">
+                    Dry Bulb Temp. (Heating):
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="dryBulbTempHeating"
+                    value={datosEditados.dryBulbTempHeating || 0}
+                    onChange={(e) => handleInputChange(e, 'dryBulbTempHeating')}
+                  />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="dryBulbTempHeating" className="form-label">Dry Bulb Temp. (Heating):</label>
-                  <input type="number" className="form-control" id="dryBulbTempHeating" value={datosEditados.dryBulbTempHeating || 0} onChange={(e) => handleInputChange(e, "dryBulbTempHeating")} />
+                  <label htmlFor="totalCooling" className="form-label">
+                    Total Cooling:
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="totalCooling"
+                    value={datosEditados.totalCooling || 0}
+                    onChange={(e) => handleInputChange(e, 'totalCooling')}
+                  />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="totalCooling" className="form-label">Total Cooling:</label>
-                  <input type="number" className="form-control" id="totalCooling" value={datosEditados.totalCooling || 0} onChange={(e) => handleInputChange(e, "totalCooling")} />
+                  <label htmlFor="heating" className="form-label">
+                    Heating:
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="heating"
+                    value={datosEditados.heating || 0}
+                    onChange={(e) => handleInputChange(e, 'heating')}
+                  />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="heating" className="form-label">Heating:</label>
-                  <input type="number" className="form-control" id="heating" value={datosEditados.heating || 0} onChange={(e) => handleInputChange(e, "heating")} />
+                  <label htmlFor="heightDifferenceToODU" className="form-label">
+                    Height Difference to ODU:
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="heightDifferenceToODU"
+                    value={datosEditados.heightDifferenceToODU || 0}
+                    onChange={(e) => handleInputChange(e, 'heightDifferenceToODU')}
+                  />
                 </div>
-                <div className="mb-3">
-                  <label htmlFor="heightDifferenceToODU" className="form-label">Height Difference to ODU:</label>
-                  <input type="number" className="form-control" id="heightDifferenceToODU" value={datosEditados.heightDifferenceToODU || 0} onChange={(e) => handleInputChange(e, "heightDifferenceToODU")} />
-                </div>
-                {/* Agrega aquí los demás campos según tu necesidad */}
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={handleCloseModal}>
@@ -232,30 +382,8 @@ const UnidadInterior = () => {
           </div>
         </div>
       )}
-        <div className="col-md-4">
-          <div className="card shadow-sm" style={{ marginLeft: "50px" }}>
-            <div className="card-body">
-              {equipoDetalles ? (
-                <>
-                  <h4 className="text-primary mb-3">Detalles del Equipo</h4>
-                  <ul className="list-unstyled">
-                    <li className="mb-2"><strong>Nombre:</strong> {equipoDetalles.unitName}</li>
-                    <li className="mb-2"><strong>Modelo:</strong> {equipoDetalles.model}</li>
-                    <li className="mb-2"><strong>DBT/RH (Cooling):</strong> {equipoDetalles.dbt_rh_cooling}</li>
-                    <li className="mb-2"><strong>DBT (Heating):</strong> {equipoDetalles.dbt_heating}</li>
-                    <li className="mb-2"><strong>Ruido:</strong> {equipoDetalles.noise} dB(A)</li>
-                  </ul>
-                </>
-              ) : (
-                <p className="text-muted">Selecciona un equipo para ver los detalles.</p>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <h2 className="mt-5 text-primary">Tabla de Unidades Seleccionadas</h2>
-      <div className="table-responsive mt-1" style={{ maxHeight: "300px", overflowY: "auto" }}>
+      <h2 className="mt-2 text-primary">Tabla de Unidades Seleccionadas</h2>
+      <div className="table-responsive mt-1" style={{ maxHeight: '300px', overflowY: 'auto' }}>
         <table className="table table-bordered table-striped text-center">
           <thead className="table-primary">
             <tr>
@@ -282,7 +410,10 @@ const UnidadInterior = () => {
                   </div>
                 </td>
                 <td>
-                  <button className="btn btn-danger btn-sm" onClick={() => setEquiposSeleccionados((prev) => prev.filter((e) => e.id !== equipo.id))}>
+                  <button
+                    className="btn btn-danger btn-sm"
+                    onClick={() => setEquiposSeleccionados((prev) => prev.filter((e) => e.id !== equipo.id))}
+                  >
                     <i className="bi bi-trash me-1"></i> Eliminar
                   </button>
                 </td>
@@ -291,9 +422,14 @@ const UnidadInterior = () => {
           </tbody>
         </table>
       </div>
-
       <div className="d-flex justify-content-end mt-5">
-        <button className="btn btn-success" onClick={() => toast.success("Información enviada a la siguiente pantalla")}>
+        <button
+          className="btn btn-success"
+          onClick={() => toast.success('Información enviada a la siguiente pantalla')}
+          style={{
+            marginTop: "-2vh"
+          }}
+        >
           Siguiente <i className="bi bi-arrow-right-circle ms-1"></i>
         </button>
       </div>
