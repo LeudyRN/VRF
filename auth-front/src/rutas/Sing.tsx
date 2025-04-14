@@ -116,17 +116,17 @@ export default function Sing() {
     >
       <div
         className="card shadow-lg p-4"
-        style={{ maxWidth: "35vh", width: "100%", backgroundColor: "rgba(255, 255, 255, 0.9)" }}
+        style={{ maxWidth: "450px", width: "90%", backgroundColor: "rgba(255, 255, 255, 0.9)", borderRadius: "10px" }}
       >
-        <p className="fw-bold mb-5">PASO 1 DE 3</p>
-        <h3 className="text-center mb-5">Crea tu cuenta</h3>
+        <p className="fw-bold mb-3 text-muted small">PASO 1 DE 3</p>
+        <h3 className="text-center mb-4">Crea tu cuenta</h3>
         {errorResponse && (
-          <div className="alert alert-danger text-center" role="alert">
+          <div className="alert alert-danger text-center mb-3" role="alert">
             {errorResponse}
           </div>
         )}
         {successResponse && (
-          <div className="alert alert-success text-center" role="alert">
+          <div className="alert alert-success text-center mb-3" role="alert">
             {successResponse}
           </div>
         )}
@@ -216,7 +216,7 @@ export default function Sing() {
               <option value="otro">Otro</option>
             </select>
           </div>
-          <button type="submit" className="btn btn-primary w-100 ">Siguiente</button>
+          <button type="submit" className="btn btn-primary w-100 py-2">Siguiente</button>
 
         </form>
       </div>

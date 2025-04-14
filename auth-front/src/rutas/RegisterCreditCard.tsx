@@ -121,7 +121,7 @@ export default function RegisterCreditCard() {
         },
         body: JSON.stringify({
           userId,
-          amount: 4.99,         // Monto fijo
+          amount: 195,         // Monto fijo
           cardNumber,         // Numero de T.
           cardHolder,          // Nombre del titular
           expiryDate: formattedDate, // Fecha en formato YYYY-MM-DD
@@ -155,7 +155,7 @@ export default function RegisterCreditCard() {
 
       const azulPayload = {
         userId: storedUserId,
-        amount: 4.99,
+        amount: 195,
         cardNumber,
         cardHolder,
         expiryDate: formattedDate,
@@ -310,7 +310,7 @@ export default function RegisterCreditCard() {
               backgroundColor: "#f9f9f9",
             }}
           >
-            <p className="fw-bold mb-0">4.99 US</p>
+            <p className="fw-bold mb-0">195 US</p>
             <p className="text-muted">Plan actual</p>
           </div>
         </div>

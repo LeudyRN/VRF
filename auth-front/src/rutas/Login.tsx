@@ -89,31 +89,31 @@ export default function Login() {
       <div
         className="card shadow-lg p-4"
         style={{
-          maxWidth: "30vh",
-          width: "100%",
+          maxWidth: "400px", // Aumenté el maxWidth para pantallas más grandes
+          width: "90%", // Permite que la tarjeta se ajuste en pantallas pequeñas
           backgroundColor: "rgba(255, 255, 255, 0.9)",
-          borderRadius: "2vh",
+          borderRadius: "10px", // Un radio de borde más común y suave
           overflow: "hidden",
         }}
       >
-     <h3
-        className="text-center mt-3"
-        style={{
-          fontSize: "2rem",
-          fontWeight: "bold",
-          color: "rgba(0, 123, 255, 1)",
-          textTransform: "uppercase",
-          letterSpacing: "2px",
-          padding: "2vh",
-          marginBottom: "2vh",
-        }}
-      >
-        Portal de Sistemas VRF
-      </h3>
+        <h3
+          className="text-center mt-3"
+          style={{
+            fontSize: "2.2rem", // Un poco más grande para destacar
+            fontWeight: "bold",
+            color: "var(--bs-primary)", // Usando la variable de color primario de Bootstrap
+            textTransform: "uppercase",
+            letterSpacing: "1px", // Ligeramente reducido para mejor legibilidad
+            padding: "1.5rem", // Un poco más de espacio interno
+            marginBottom: "1.5rem", // Más espacio debajo del título
+          }}
+        >
+          Portal de Sistemas VRF
+        </h3>
 
         <form onSubmit={handleSubmit}>
           {errorResponse && (
-            <div className="alert alert-danger text-center" role="alert">
+            <div className="alert alert-danger text-center mb-3" role="alert"> {/* Añadí mb-3 */}
               {errorResponse}
             </div>
           )}
@@ -131,7 +131,7 @@ export default function Login() {
               required
             />
           </div>
-          <div className="mb-3">
+          <div className="mb-4">
             <label htmlFor="contraseña" className="form-label fw-bold">
               Contraseña
             </label>
@@ -155,15 +155,17 @@ export default function Login() {
               </button>
             </div>
           </div>
-          <button type="submit" className="btn btn-primary w-100">
-            Iniciar Sesión
-          </button>
+          <div className="d-flex justify-content-center">
+            <button type="submit" className="btn btn-primary w-75"> {/* Aumenté el ancho del botón */}
+              Iniciar Sesión
+            </button>
+          </div>
         </form>
-        <div className="mt-5 text-center">
+        <div className="mt-4 text-center">
           <Link to="/forgot-password" className="text-decoration-none text-primary">
             ¿Olvidaste tu usuario o contraseña?
           </Link>
-          <div className="mt-3">
+          <div className="mt-2">
             <Link to="/sing" className="text-decoration-none text-primary">
               ¿No tienes cuenta? Regístrate aquí.
             </Link>

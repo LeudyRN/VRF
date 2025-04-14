@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState, useEffect } from "react";
@@ -69,29 +70,38 @@ const UnidadInterior = () => {
     fetchUnidades();
   }, []);
 
-  const añadirEquipo = (equipo: UnidadInterior) => {
-    setDatosEditados({ ...equipo, cantidad: 1 });
-    setShowModal(true);
-  };
+      const [modalTipo, setModalTipo] = useState<"detalle" | "edicion" | null>(null);
 
-  const verDetalles = (equipo: UnidadInterior) => {
-    setEquipoDetalles(equipo);
-    setShowModal(true);
-  };
 
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setEquipoDetalles(null);
-    setDatosEditados(null);
-  };
+      const añadirEquipo = (equipo: UnidadInterior) => {
+        setDatosEditados({ ...equipo, cantidad: 1 });
+        setEquipoDetalles(null); // Limpiar por si acaso
+        setModalTipo("edicion");
+        setShowModal(true);
+      };
 
-  const ajustarCantidad = (id: number, incremento: number) => {
-    setEquiposSeleccionados((prev) =>
-      prev.map((equipo) =>
-        equipo.id === id ? { ...equipo, cantidad: Math.max(1, (equipo.cantidad || 1) + incremento) } : equipo
-      )
-    );
-  };
+      const verDetalles = (equipo: UnidadInterior) => {
+        setEquipoDetalles(equipo);
+        setDatosEditados(null); // Limpiar por si acaso
+        setModalTipo("detalle");
+        setShowModal(true);
+      };
+
+      const handleCloseModal = () => {
+        setShowModal(false);
+        setModalTipo(null);
+        setEquipoDetalles(null);
+        setDatosEditados(null);
+      };
+
+
+      const ajustarCantidad = (id: number, incremento: number) => {
+        setEquiposSeleccionados((prev) =>
+          prev.map((equipo) =>
+            equipo.id === id ? { ...equipo, cantidad: Math.max(1, (equipo.cantidad || 1) + incremento) } : equipo
+          )
+        );
+      };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>, key: keyof UnidadInterior) => {
     setDatosEditados((prevDatos) => {
@@ -137,7 +147,7 @@ const UnidadInterior = () => {
 
   return ( <div className="container mt-5" style={{
   margin: 0,
-  padding: "5vh",
+  padding: "4vh",
   marginTop: "5vh",
   position: "relative" }}
   >
@@ -155,7 +165,7 @@ const UnidadInterior = () => {
         Unidad Interior </h1> <p style={{
         fontSize: "1rem",
         color: "#6c757d",
-        marginBottom: "3vh",
+        marginBottom: "6vh",
         marginLeft: "-1.6vh",
         fontWeight: "bold" }}
 
@@ -163,80 +173,160 @@ const UnidadInterior = () => {
 
     Explora las especificaciones y modelos de la Unidad Interior. </p>
 
-      <div className="row">
-        <div className="col-md-8 w-100 mt-4">
-          <div style={{ maxHeight: '35vh', overflowY: 'auto', marginBottom: '20px' }}>
-            {loading ? (
-              <p>Cargando datos...</p>
-            ) : error ? (
+    <div className="row gy-2 gx-2 justify-content-center"  style={{ width: '130%' }}>
+      <div className="col-md-12 w-100 mt-3" style={{ overflowY: 'auto', maxHeight: '400px' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', gap: '10px', paddingBottom: '5px' }}>
+          {loading ? (
+             <p>Cargando datos...</p>
+          ) : error ? (
               <p className="text-danger">Error: {error}</p>
-            ) : (
-              equiposDisponibles.map((equipo) => (
-
-                <div key={equipo.id} className="card shadow-sm mb-3">
-                  <div className="card-body">
-                  <img
-                    src={`http://localhost:3100${equipo.image_url}`} // Usa la URL completa
-                    alt={equipo.unitName}
-
-                    className="img-fluid rounded mb-3 shadow"
-                    style={{ maxHeight: "150px" }}
-                  />
+           ) : (
+            equiposDisponibles.map((equipo) => (
+              <div
+                key={equipo.id}
+                style={{
+                  flex: '1 1 calc(25% - 15px)', // Cada tarjeta ocupa el 25% del ancho menos el gap
+                  maxWidth: 'calc(25% - 15px)', // Limitar el ancho máximo de cada tarjeta
+                  boxSizing: 'border-box',      // Asegurar que los márgenes no afecten el cálculo del ancho
+                  minHeight: '320px',           // Establecer una altura mínima para todas las tarjetas
+                }}
+              >
+                <div className="card shadow-sm h-100">
+                  <div className="card-body text-left">
+                    <img
+                      src={`http://localhost:3100${equipo.image_url}`}
+                      alt={equipo.unitName}
+                      className="img-fluid mb-3 shadow-sm"
+                      style={{
+                        width: "150px",
+                        height: "150px",
+                        objectFit: "contain",
+                      }}
+                    />
                     <h5 className="card-title text-primary">{equipo.unitName}</h5>
-                    <p className="card-text">{equipo.model}</p>
-                    <div className="d-flex justify-content-between">
+                    <p className="card-text text-secondary">{equipo.model}</p>
+                    <div
+                      className="d-flex justify-content-between"
+                      style={{ marginTop: '15px' }}
+                    >
                       <button
                         className="btn btn-primary"
+                        style={{ flex: '1', marginRight: '5px', minWidth: '90px' }}
                         onClick={() => añadirEquipo(equipo)}
                         disabled={equiposSeleccionados.some((e) => e.id === equipo.id)}
                       >
-                        <i className="bi bi-plus-circle me-1"></i> Añadir
+                        <i className="bi bi-plus-circle me-1"></i> Agregar
                       </button>
-                      <button className="btn btn-outline-secondary" onClick={() => verDetalles(equipo)}>
+                      <button
+                        className="btn btn-outline-secondary"
+                        style={{ flex: '1', marginRight: '5px', minWidth: '90px' }}
+                        onClick={() => verDetalles(equipo)}
+                      >
                         <i className="bi bi-info-circle me-1"></i> Detalles
+                      </button>
+                      <button
+                        className="btn btn-secondary"
+                        style={{ flex: '1', minWidth: '90px' }}
+                        onClick={() => verDetalles(equipo)}
+                      >
+                        <i className="bi bi-gear-fill me-1"></i> Equipos
                       </button>
                     </div>
                   </div>
                 </div>
-              ))
+              </div>
+            ))
             )}
           </div>
         </div>
-        <div className="card shadow-sm"
-          style={{
-            position: 'absolute',
-            top: '17.9vh',
-            right: '-30vh',
-            width: '400px',
-          }}
-        >
-          <div className="card-body">
-            {equipoDetalles ? (
-              <>
-                <h4 className="text-primary mb-3">Detalles del Equipo</h4>
+
+          {equipoDetalles && (
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100vh',
+              zIndex: 9999,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+            onClick={() => setEquipoDetalles(null)}
+          >
+            <div
+              className="card shadow-sm"
+              style={{
+                width: '50vh',
+                background: '#fff',
+                borderRadius: '8px',
+                padding: '20px',
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="card-body">
+                <h4 className="text-primary mb-3 text-center text-md-start">
+                  Detalles del Equipo
+                </h4>
                 <ul className="list-unstyled">
-                  <li className="mb-2">
-                    <strong>Nombre:</strong> {equipoDetalles.unitName}
+                  <li className="mb-2 d-flex flex-wrap">
+                    <strong className="me-2 text-sm">Nombre:</strong>
+                    <span className="text-sm">{equipoDetalles.unitName}</span>
                   </li>
-                  <li className="mb-2">
-                    <strong>Modelo:</strong> {equipoDetalles.model}
+                  <li className="mb-2 d-flex flex-wrap">
+                    <strong className="me-2 text-sm">Modelo:</strong>
+                    <span className="text-sm">{equipoDetalles.model}</span>
                   </li>
-                  <li className="mb-2">
-                    <strong>DBT/RH (Cooling):</strong> {equipoDetalles.dbt_rh_cooling}
-                  </li>
-                  <li className="mb-2">
-                    <strong>DBT (Heating):</strong> {equipoDetalles.dbt_heating}
-                  </li>
-                  <li className="mb-2">
-                    <strong>Ruido:</strong> {equipoDetalles.noise} dB(A)
-                  </li>
+                  {equipoDetalles.remark && (
+                    <li className="mb-2 d-flex flex-wrap">
+                      <strong className="me-2 text-sm">Observación:</strong>
+                      <span className="text-sm">{equipoDetalles.remark}</span>
+                    </li>
+                  )}
+                  {equipoDetalles.design_static_pressure !== undefined && (
+                    <li className="mb-2 d-flex flex-wrap">
+                      <strong className="me-2 text-sm">Presión Estática:</strong>
+                      <span className="text-sm">{equipoDetalles.design_static_pressure} Pa</span>
+                    </li>
+                  )}
+                  {equipoDetalles.static_pressure_range && (
+                    <li className="mb-2 d-flex flex-wrap">
+                      <strong className="me-2 text-sm">Rango de Presión Estática:</strong>
+                      <span className="text-sm">{equipoDetalles.static_pressure_range}</span>
+                    </li>
+                  )}
+                  {equipoDetalles.airflow && (
+                    <li className="mb-2 d-flex flex-wrap">
+                      <strong className="me-2 text-sm">Flujo de Aire:</strong>
+                      <span className="text-sm">{equipoDetalles.airflow}</span>
+                    </li>
+                  )}
+                  {equipoDetalles.noise && (
+                    <li className="mb-2 d-flex flex-wrap">
+                      <strong className="me-2 text-sm">Ruido:</strong>
+                      <span className="text-sm">{equipoDetalles.noise} dB</span>
+                    </li>
+                  )}
+                  {equipoDetalles.weight !== undefined && (
+                    <li className="mb-2 d-flex flex-wrap">
+                      <strong className="me-2 text-sm">Peso:</strong>
+                      <span className="text-sm">{equipoDetalles.weight} kg</span>
+                    </li>
+                  )}
                 </ul>
-              </>
-            ) : (
-              <p className="text-muted">Selecciona un equipo para ver los detalles.</p>
-            )}
+
+                <button
+                  className="btn btn-sm btn-outline-secondary mt-3"
+                  onClick={() => setEquipoDetalles(null)}
+                >
+                  Cerrar
+                </button>
+              </div>
+            </div>
           </div>
-         </div>
+        )}
+
       </div>
 
       {showModal && datosEditados && (
@@ -244,7 +334,7 @@ const UnidadInterior = () => {
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">Editar Detalles del Equipo</h5>
+                <h5 className="modal-title">Detalles del Equipo</h5>
                 <button type="button" className="btn-close" onClick={handleCloseModal}></button>
               </div>
               <div className="modal-body">
@@ -382,57 +472,87 @@ const UnidadInterior = () => {
           </div>
         </div>
       )}
-      <h2 className="mt-2 text-primary">Tabla de Unidades Seleccionadas</h2>
-      <div className="table-responsive mt-1" style={{ maxHeight: '300px', overflowY: 'auto' }}>
-        <table className="table table-bordered table-striped text-center">
-          <thead className="table-primary">
-            <tr>
-              <th>Unit name</th>
-              <th>Model</th>
-              <th>Cantidad</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {equiposSeleccionados.map((equipo) => (
-              <tr key={equipo.id}>
-                <td>{equipo.unitName}</td>
-                <td>{equipo.model}</td>
-                <td>
-                  <div className="d-flex justify-content-center align-items-center">
-                    <button className="btn btn-sm btn-outline-secondary" onClick={() => ajustarCantidad(equipo.id, -1)}>
-                      -
-                    </button>
-                    <span className="mx-2">{equipo.cantidad}</span>
-                    <button className="btn btn-sm btn-outline-secondary" onClick={() => ajustarCantidad(equipo.id, 1)}>
-                      +
-                    </button>
-                  </div>
-                </td>
-                <td>
-                  <button
-                    className="btn btn-danger btn-sm"
-                    onClick={() => setEquiposSeleccionados((prev) => prev.filter((e) => e.id !== equipo.id))}
-                  >
-                    <i className="bi bi-trash me-1"></i> Eliminar
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div className="d-flex justify-content-end mt-5">
-        <button
-          className="btn btn-success"
-          onClick={() => toast.success('Información enviada a la siguiente pantalla')}
-          style={{
-            marginTop: "-2vh"
-          }}
-        >
-          Siguiente <i className="bi bi-arrow-right-circle ms-1"></i>
-        </button>
-      </div>
+
+
+    <h2 className="mt-5 text-primary">Tabla de Unidades Seleccionadas</h2>
+    <div
+      className="table-responsive mt-1"
+      style={{
+        maxHeight: '270px',
+        overflowY: 'auto',
+        width: '130%',
+        margin: '0 auto',
+
+      }}
+    >
+      <table className="table table-bordered table-striped text-center"
+      style={{ width: '100%',
+              backgroundColor: '#f8f9fa',
+              borderCollapse: 'separate',
+              borderSpacing: '0 10px',
+
+      }}>
+    <thead className="table-primary">
+      <tr>
+        <th>Unit name</th>
+        <th>Model</th>
+        <th>Cantidad</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {equiposSeleccionados.map((equipo) => (
+        <tr key={equipo.id}
+        style={{
+            backgroundColor: 'white',
+            boxShadow: '0 2px 5px rgba(0, 45, 248, 0.1)',
+            borderRadius: '5px',
+          }}>
+          <td>{equipo.unitName}</td>
+          <td>{equipo.model}</td>
+          <td>
+            <div className="d-flex justify-content-center align-items-center">
+              <button
+                className="btn btn-sm btn-outline-secondary"
+                onClick={() => ajustarCantidad(equipo.id, -1)}
+              >
+                -
+              </button>
+              <span className="mx-2">{equipo.cantidad}</span>
+              <button
+                className="btn btn-sm btn-outline-secondary"
+                onClick={() => ajustarCantidad(equipo.id, 1)}
+              >
+                +
+              </button>
+            </div>
+          </td>
+          <td>
+            <button
+              className="btn btn-danger btn-sm"
+              onClick={() => setEquiposSeleccionados((prev) => prev.filter((e) => e.id !== equipo.id))}
+            >
+              <i className="bi bi-trash me-1"></i> Eliminar
+            </button>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+<div className="d-flex justify-content-center mt-5">
+  <button
+    className="btn btn-success"
+    onClick={() => toast.success('Información enviada a la siguiente pantalla')}
+    style={{
+      marginTop: "0",
+      marginLeft: "20vh"
+    }}
+  >
+    Siguiente <i className="bi bi-arrow-right-circle ms-2"></i>
+  </button>
+</div>
+
     </div>
   );
 };

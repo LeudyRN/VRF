@@ -63,16 +63,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
     };
 
     verifyAuth();
-  }, []); // Ejecutar solo al cargar
+  }, []);
 
   // Verificar si el token ha expirado
   const isTokenExpired = (token: string): boolean => {
     try {
-      const payload = JSON.parse(atob(token.split(".")[1])); // Decodifica el payload del JWT
-      return payload.exp * 1000 < Date.now(); // Verifica si el tiempo de expiración ha pasado
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      return payload.exp * 1000 < Date.now();
     } catch (error) {
       console.error("Error al verificar la expiración del token:", error);
-      return true; // Si algo falla, asumimos que el token es inválido
+      return true;
     }
   };
 
@@ -87,8 +87,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const response = await fetch(`${API_URL}/refreshToken`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refreshToken: refreshTokenValue }), // Enviar refreshToken al backend
-        credentials: "include", // Incluir cookies si el backend las requiere
+        body: JSON.stringify({ refreshToken: refreshTokenValue }),
+        credentials: "include",
       });
 
       // Manejo de errores de respuesta
@@ -106,14 +106,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Actualizar los tokens en el estado y almacenamiento
       setAccessToken(data.accessToken);
       setRefreshTokenValue(data.refreshToken);
-      localStorage.setItem("token", data.accessToken); // Guardar accessToken
-      sessionStorage.setItem("refreshToken", data.refreshToken); // Guardar refreshToken
+      localStorage.setItem("token", data.accessToken);
+      sessionStorage.setItem("refreshToken", data.refreshToken);
 
       console.log("Nuevo accessToken obtenido:", data.accessToken);
-      return data.accessToken; // Retorna el nuevo accessToken
+      return data.accessToken;
     } catch (error) {
       console.error("Error al renovar el token:", error || error);
-      logout(); // Cierra sesión en caso de error crítico
+      logout();
       return null;
     }
   };
