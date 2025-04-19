@@ -191,129 +191,129 @@ export default function RegisterCreditCard() {
       </div>
     );
 
-    if (loading)
-      return (
-        <div className="d-flex align-items-center justify-content-center vh-100">
-          <p>Cargando...</p>
-        </div>
-      );
-
+  if (loading)
     return (
-      <div
-        className="d-flex align-items-center justify-content-center vh-100"
-        style={{
-          backgroundImage: `url(${fondo})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div
-          className="card shadow-lg p-4"
-          style={{
-            maxWidth: "30vh",
-            width: "100%",
-            backgroundColor: "#fff",
-            borderRadius: "2vh",
-            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-          }}
-        >
-          {/* Paso y título */}
-          <p className="fw-bold mb-5">PASO 3 DE 3</p>
-          <h1 className="mb-3 fw-bold">Configura tu tarjeta de crédito o débito</h1>
-
-          {/* Mensaje de error */}
-          {error && <div className="alert alert-danger text-center mb-5">{error}</div>}
-
-          {/* Formulario */}
-          <form onSubmit={handleRegisterCreditCard}>
-            <div className="mb-3">
-              <label htmlFor="cardNumber" className="form-label fw-bold">
-                Número de tarjeta
-              </label>
-              <input
-                id="cardNumber"
-                name="cardNumber"
-                type="text"
-                className="form-control"
-                placeholder="1234 5678 9012 3456"
-                required
-                onChange={formatCardNumber}
-              />
-              {cardType && <small className="text-muted">Tipo de tarjeta: {cardType}</small>}
-            </div>
-
-            <div className="mb-3 d-flex justify-content-between gap-3">
-              <div style={{ flex: 1 }}>
-                <label htmlFor="expirationDate" className="form-label fw-bold">
-                  Fecha de vencimiento
-                </label>
-                <input
-                  id="expirationDate"
-                  name="expirationDate"
-                  type="text"
-                  className="form-control"
-                  placeholder="MM/AA"
-                  pattern="^(0[1-9]|1[0-2])\/\d{2}$"
-                  required
-                  onChange={formatExpirationDate}
-                />
-              </div>
-              <div style={{ flex: 1 }}>
-                <label htmlFor="cvv" className="form-label fw-bold">
-                  CVV
-                </label>
-                <div className="input-group">
-                  <input
-                    id="cvv"
-                    name="cvv"
-                    type={showCvv ? "text" : "password"}
-                    className="form-control"
-                    placeholder="Código de seguridad"
-                    required
-                  />
-                  <button
-                    type="button"
-                    className="btn btn-outline-secondary"
-                    onClick={() => setShowCvv(!showCvv)}
-                  >
-                    {showCvv ? "Ocultar" : "Mostrar"}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="mb-3">
-              <label htmlFor="cardHolder" className="form-label fw-bold">
-                Nombre en la tarjeta
-              </label>
-              <input
-                id="cardHolder"
-                name="cardHolder"
-                type="text"
-                className="form-control"
-                placeholder="Nombre completo"
-                required
-              />
-            </div>
-
-            <button type="submit" className="btn btn-primary w-100 fw-bold">
-              Iniciar membresía
-            </button>
-          </form>
-
-          {/* Plan debajo del formulario */}
-          <div
-            className="mt-3 p-2 text-center"
-            style={{
-              border: "1px solid #ddd",
-              borderRadius: "5px",
-              backgroundColor: "#f9f9f9",
-            }}
-          >
-            <p className="fw-bold mb-0">195 US</p>
-            <p className="text-muted">Plan actual</p>
-          </div>
-        </div>
+      <div className="d-flex align-items-center justify-content-center vh-100">
+        <p>Cargando...</p>
       </div>
     );
-  }
+
+  return (
+    <div
+      className="d-flex align-items-center justify-content-center vh-100"
+      style={{
+        backgroundImage: `url(${fondo})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <div
+        className="card shadow-lg p-4"
+        style={{
+          maxWidth: "40vh",
+          width: "100%",
+          backgroundColor: "rgba(255, 255, 255, 0.9)",
+          borderRadius: "2vh",
+          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        {/* Paso y título */}
+        <p className="fw-bold mb-5">PASO 3 DE 3</p>
+        <h1 className="mb-3 fw-bold">Configura tu tarjeta de crédito o débito</h1>
+
+        {/* Mensaje de error */}
+        {error && <div className="alert alert-danger text-center mb-5">{error}</div>}
+
+        {/* Formulario */}
+        <form onSubmit={handleRegisterCreditCard}>
+          <div className="mb-3">
+            <label htmlFor="cardNumber" className="form-label fw-bold">
+              Número de tarjeta
+            </label>
+            <input
+              id="cardNumber"
+              name="cardNumber"
+              type="text"
+              className="form-control"
+              placeholder="1234 5678 9012 3456"
+              required
+              onChange={formatCardNumber}
+            />
+            {cardType && <small className="text-muted">Tipo de tarjeta: {cardType}</small>}
+          </div>
+
+          <div className="mb-3 d-flex justify-content-between gap-3">
+            <div style={{ flex: 1 }}>
+              <label htmlFor="expirationDate" className="form-label fw-bold">
+                Fecha de vencimiento
+              </label>
+              <input
+                id="expirationDate"
+                name="expirationDate"
+                type="text"
+                className="form-control"
+                placeholder="MM/AA"
+                pattern="^(0[1-9]|1[0-2])\/\d{2}$"
+                required
+                onChange={formatExpirationDate}
+              />
+            </div>
+            <div style={{ flex: 1 }}>
+              <label htmlFor="cvv" className="form-label fw-bold">
+                CVV
+              </label>
+              <div className="input-group">
+                <input
+                  id="cvv"
+                  name="cvv"
+                  type={showCvv ? "text" : "password"}
+                  className="form-control"
+                  placeholder="Código de seguridad"
+                  required
+                />
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary"
+                  onClick={() => setShowCvv(!showCvv)}
+                >
+                  {showCvv ? "Ocultar" : "Mostrar"}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-3">
+            <label htmlFor="cardHolder" className="form-label fw-bold">
+              Nombre en la tarjeta
+            </label>
+            <input
+              id="cardHolder"
+              name="cardHolder"
+              type="text"
+              className="form-control"
+              placeholder="Nombre completo"
+              required
+            />
+          </div>
+
+          <button type="submit" className="btn btn-primary w-100 fw-bold">
+            Iniciar membresía
+          </button>
+        </form>
+
+        {/* Plan debajo del formulario */}
+        <div
+          className="mt-3 p-2 text-center"
+          style={{
+            border: "1px solid #ddd",
+            borderRadius: "5px",
+            backgroundColor: "#f9f9f9",
+          }}
+        >
+          <p className="fw-bold mb-0">195 DOP</p>
+          <p className="text-muted">Plan actual</p>
+        </div>
+      </div>
+    </div>
+  );
+}

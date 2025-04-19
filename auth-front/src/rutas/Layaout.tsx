@@ -41,20 +41,19 @@ const Layout = () => {
         }}
       >
         {menuOpen ? "X" : "≡"}
-     </button>
+      </button>
 
 
-     <div
-        className={`bg-dark text-white p-4 position-fixed d-flex flex-column transition ${
-          menuOpen ? "menu-visible" : "menu-hidden"
-        }`}
+      <div
+        className={`bg-dark text-white p-4 position-fixed d-flex flex-column transition ${menuOpen ? "menu-visible" : "menu-hidden"
+          }`}
         style={{
           width: "20vh",
           height: "100vh",
           overflowY: "auto",
           left: menuOpen ? "0" : "-20vh",
           transition: "left 0.3s ease-in-out",
-        //  fontWeight: "bold",
+          //  fontWeight: "bold",
           fontSize: "1.2vh",
         }}
       >
@@ -73,7 +72,7 @@ const Layout = () => {
                 className={`text-decoration-none px-3 py-2 d-block d-flex align-items-center ${location.pathname === item.path ? "active-item bg-primary text-white" : "text-white"}`}
                 style={{
                   borderRadius: "3vh",
-               //   height: "6vh",
+                  //   height: "6vh",
                   display: "flex",
                   alignItems: "center",
                   transition: "background-color 0.3s ease, color 0.3s ease", // Transición suave
@@ -97,7 +96,7 @@ const Layout = () => {
               style={{
                 borderRadius: "2vh",
                 fontSize: "1.2vh",
-               // height: "6vh", // Tamaño uniforme
+                // height: "6vh", // Tamaño uniforme
                 display: "flex",
                 alignItems: "center",
                 transition: "background-color 0.3s ease, color 0.9s ease", // Transición suave

@@ -32,6 +32,8 @@ app.use(express.json());
 // Registro de rutas
 app.use("/api/sing", require("./routes/sing"));
 app.use("/api/login", require("./routes/login"));
+app.use("/api/dashboard", require("./routes/dashboard"));
+app.use("/api/dashboard", require("./routes/files"));
 app.use("/api/register-card", require("./routes/registerCard"));
 app.use("/api/user", require("./routes/user"));
 app.use("/api/todos", require("./routes/todos"));

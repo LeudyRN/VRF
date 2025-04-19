@@ -78,10 +78,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const refreshToken = async (): Promise<string | null> => {
     if (!refreshTokenValue) {
-      console.error("No se encontró refreshToken en el cliente. Cerrando sesión...");
-      logout(); // Cierra sesión si no hay refreshToken
+      console.error("❌ No se encontró refreshToken en el cliente. Cerrando sesión...");
+      logout();
       return null;
     }
+
+    console.log("🚀 Intentando renovar token con refreshToken:", refreshTokenValue);
 
     try {
       const response = await fetch(`${API_URL}/refreshToken`, {
@@ -122,11 +124,27 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const login = (newAccessToken: string, newRefreshToken: string) => {
     setAccessToken(newAccessToken);
     setRefreshTokenValue(newRefreshToken);
-    localStorage.setItem("token", newAccessToken); // Guardar en localStorage
-    sessionStorage.setItem("refreshToken", newRefreshToken); // Guardar en sessionStorage
-    setIsAuthenticated(true); // Actualiza inmediatamente el estado de autenticación
-    console.log("Inicio de sesión completado. Usuario autenticado.");
+
+    // ✅ Extraer usuarioId desde el JWT (accessToken)
+    try {
+      const payload = JSON.parse(atob(newAccessToken.split(".")[1])); // Decodificar el payload
+      if (payload.id) {
+        localStorage.setItem("usuarioId", payload.id.toString()); // ✅ Guardamos usuarioId en localStorage
+        console.log("✅ Usuario ID extraído y guardado:", payload.id);
+      } else {
+        console.error("❌ Error: usuarioId no está presente en el token.");
+      }
+    } catch (error) {
+      console.error("❌ Error al obtener usuarioId desde el token:", error);
+    }
+
+    localStorage.setItem("accessToken", newAccessToken);
+    sessionStorage.setItem("refreshToken", newRefreshToken);
+    setIsAuthenticated(true);
+
+    console.log("✅ Inicio de sesión completado.");
   };
+
   // Cerrar sesión
   const logout = () => {
     setAccessToken(null);
