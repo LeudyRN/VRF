@@ -1,4 +1,3 @@
-// sing.js
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
@@ -7,7 +6,7 @@ const sendMail = require("../config/email");
 require("dotenv").config();
 const router = express.Router();
 
-// Validador de entradas
+// Validaciones de entrada
 const validateInput = ({ nombre, apellido, usuario, correo, contraseña, genero }) => {
   if (!nombre || !apellido || !usuario || !correo || !contraseña || !genero) {
     return "Todos los campos son obligatorios.";
@@ -17,7 +16,7 @@ const validateInput = ({ nombre, apellido, usuario, correo, contraseña, genero 
     return "La contraseña debe tener al menos 8 caracteres.";
   }
 
-  if (!/^[a-zA-Z0-9._-]+@[a-zAZ0-9.-]+\.[a-zA-Z]{2,6}$/.test(correo)) {
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) { // ✅ Expresión regular mejorada
     return "El formato del correo es inválido.";
   }
 
@@ -33,7 +32,7 @@ const validateInput = ({ nombre, apellido, usuario, correo, contraseña, genero 
   return null;
 };
 
-// Generar el enlace de confirmación
+// Generar enlace de confirmación
 const generateConfirmationEmail = (nombre, correo, token, baseUrl) => {
   const confirmUrl = new URL(`/api/user/confirm-email`, baseUrl);
   confirmUrl.searchParams.append("token", token);
@@ -58,12 +57,12 @@ router.post("/", async (req, res) => {
   }
 
   try {
-    const [existingUser] = await pool.query(
+    const [[existingUser]] = await pool.query(
       "SELECT id FROM usuarios WHERE usuario = ? OR correo = ?",
       [usuario, correo]
     );
 
-    if (existingUser.length > 0) {
+    if (existingUser) {
       return res.status(400).json({ error: "Usuario o correo ya registrado." });
     }
 
@@ -73,42 +72,35 @@ router.post("/", async (req, res) => {
     const tokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
     const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3100";
-    console.log("BACKEND_URL:", BACKEND_URL); // Depuración
+    console.log("BACKEND_URL:", BACKEND_URL);
 
-    // Generación del enlace de confirmación
     const confirmUrl = new URL(`/api/user/confirm-email`, BACKEND_URL);
     confirmUrl.searchParams.append("token", token);
-    console.log("Enlace de confirmación generado:", confirmUrl.href); // Depuración
+    console.log("Enlace de confirmación generado:", confirmUrl.href);
 
-    // HTML del correo
-    const htmlContent = `
-      <h1>Hola ${nombre},</h1>
-      <p>Gracias por registrarte. Por favor confirma tu correo haciendo clic en el enlace:</p>
-      <a href="${confirmUrl.href}">Confirmar correo</a>
-    `;
+    const htmlContent = generateConfirmationEmail(nombre, correo, token, BACKEND_URL);
 
-    // Enviar el correo de confirmación
     try {
       await sendMail("gmail", correo, "Confirma tu correo electrónico", htmlContent);
       console.log("Correo de confirmación enviado.");
     } catch (error) {
       console.error("Error al enviar el correo de confirmación:", error.message);
-      return res.status(500).json({ error: "Error al enviar el correo de confirmación." });
+      return res.status(500).json({ error: "Error al enviar el correo de confirmación.", details: error.message });
     }
 
-    // Insertar el nuevo usuario en la base de datos
     const [result] = await pool.query(
       "INSERT INTO usuarios (nombre, apellido, usuario, correo, contraseña_hash, genero, email_verified, token, token_expiry) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [nombre, apellido, usuario, correo, contraseña_hash, genero, false, token, tokenExpiry]
     );
 
-    res.status(201).json({
+    return res.status(201).json({
       message: "Usuario registrado exitosamente. Revisa tu correo para confirmar tu cuenta.",
       userId: result.insertId,
     });
+
   } catch (error) {
     console.error("Error en el servidor durante el registro:", error.message);
-    res.status(500).json({ error: "Hubo un problema al registrar el usuario. Intenta nuevamente." });
+    return res.status(500).json({ error: "Hubo un problema al registrar el usuario. Intenta nuevamente.", details: error.message });
   }
 });
 

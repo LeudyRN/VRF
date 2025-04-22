@@ -8,20 +8,20 @@ const setNoCacheHeaders = (res) => {
 };
 
 router.post("/", (req, res) => {
-  if (req.session) {
+  if (req.session && typeof req.session.destroy === "function") { // ✅ Validación adicional
     req.session.destroy((err) => {
       if (err) {
-        console.error("Error destruyendo la sesión:", err.message);
+        console.error("❌ Error destruyendo la sesión:", err); // ✅ Muestra el objeto completo del error
         return res.status(500).json({ error: "Error cerrando sesión. Inténtalo nuevamente." });
-      } else {
-        res.clearCookie("connect.sid");
-        setNoCacheHeaders(res);
-        return res.status(200).json({ message: "Sesión cerrada correctamente y caché eliminado." });
       }
+
+      res.clearCookie("connect.sid");
+      setNoCacheHeaders(res);
+      return res.status(200).json({ message: "✅ Sesión cerrada correctamente y caché eliminado." });
     });
   } else {
     setNoCacheHeaders(res);
-    res.status(200).json({ message: "No había sesión activa." });
+    return res.status(200).json({ message: "ℹ️ No había sesión activa." });
   }
 });
 

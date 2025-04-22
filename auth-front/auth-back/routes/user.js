@@ -40,25 +40,26 @@ const verifyToken = (req, res, next) => {
     req.user = jwt.verify(authHeader.split(" ")[1], process.env.JWT_SECRET);
     next();
   } catch (error) {
-    console.error("Error verificando token:", error.message);
-    res.status(401).json({ error: "Token inválido o expirado." });
+    console.error("Error verificando token:", error.message, error.stack); // 3️⃣ Manejo de errores detallado
+    res.status(401).json({ error: `Token inválido o expirado: ${error.message}` }); // 3️⃣ Manejo de errores detallado
   }
 };
 
 // Validar datos de entrada para tarjeta
 const validateCardData = (req, res, next) => {
   const { userId, cardNumber, expiryDate, cvv } = req.body;
-  if (!userId || !cardNumber || !expiryDate || !cvv) {
-    return res.status(400).json({ error: "Todos los campos son obligatorios." });
+  // 4️⃣ Refuerzo en la validación de entrada: Verificar que sean strings y no vacíos
+  if (typeof userId !== 'number' || isNaN(userId) || typeof cardNumber !== 'string' || !cardNumber.trim() || typeof expiryDate !== 'string' || !expiryDate.trim() || typeof cvv !== 'string' || !cvv.trim()) {
+    return res.status(400).json({ error: "❌ Todos los campos son obligatorios y deben ser válidos." });
   }
   if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(expiryDate)) {
-    return res.status(400).json({ error: "Fecha de expiración inválida (formato MM/YY)." });
+    return res.status(400).json({ error: "❌ Fecha de expiración inválida (formato MM/YY)." });
   }
   if (!/^[0-9]{3,4}$/.test(cvv)) {
-    return res.status(400).json({ error: "CVV inválido." });
+    return res.status(400).json({ error: "❌ CVV inválido." });
   }
   if (!/^[0-9]{13,19}$/.test(cardNumber)) {
-    return res.status(400).json({ error: "Número de tarjeta inválido." });
+    return res.status(400).json({ error: "❌ Número de tarjeta inválido." });
   }
   next();
 };
@@ -68,20 +69,23 @@ router.post("/register-card", verifyToken, validateCardData, async (req, res) =>
   const { userId, cardNumber, expiryDate, cvv } = req.body;
 
   try {
+    // 1️⃣ Evitar recibir metadata innecesaria en la consulta SQL:
     const [userResult] = await pool.query(
       "SELECT email_verified, tarjeta_registrada FROM usuarios WHERE id = ?",
       [userId]
     );
 
-    if (userResult.length === 0) {
+    const user = userResult[0]; // 1️⃣ Obtener los datos directamente
+
+    if (!user) {
       return res.status(404).json({ error: "Usuario no encontrado." });
     }
 
-    if (!userResult[0].email_verified) {
+    if (!user.email_verified) {
       return res.status(403).json({ error: "Debes confirmar tu correo antes de registrar una tarjeta." });
     }
 
-    if (userResult[0].tarjeta_registrada) {
+    if (user.tarjeta_registrada) {
       return res.status(400).json({ error: "El usuario ya tiene una tarjeta registrada." });
     }
 
@@ -97,78 +101,91 @@ router.post("/register-card", verifyToken, validateCardData, async (req, res) =>
 
     res.status(201).json({ message: "Tarjeta registrada exitosamente." });
   } catch (error) {
-    console.error("Error registrando tarjeta:", error.message);
-    res.status(500).json({ error: "Hubo un problema al registrar la tarjeta." });
+    // 3️⃣ Manejo de errores más detallado:
+    console.error("Error registrando tarjeta:", error.message, error.stack);
+    res.status(500).json({ error: `Hubo un problema al registrar la tarjeta: ${error.message}` });
   }
 });
 
 router.get("/confirm-email", async (req, res) => {
   const { token } = req.query;
 
-  if (!token) {
-    return res.status(400).send("Token no proporcionado.");
+  // 4️⃣ Refuerzo en la validación de entrada:
+  if (typeof token !== 'string' || !token.trim()) {
+    return res.status(400).send("❌ Token no proporcionado o inválido.");
   }
 
   try {
-      const [user] = await pool.query("SELECT id FROM usuarios WHERE token = ?", [token]);
+    // 1️⃣ Evitar recibir metadata innecesaria en la consulta SQL:
+    const [users] = await pool.query("SELECT id FROM usuarios WHERE token = ?", [token]);
+    const user = users[0]; // 1️⃣ Obtener los datos directamente
 
-      if (!user || user.length === 0) {
-          return res.redirect("http://localhost:5173/email-confirmation-failed");
-      }
-
-      const refreshToken = jwt.sign(
-          { id: user[0].id },
-          process.env.REFRESH_TOKEN_SECRET,
-          { expiresIn: "7d" }
-      );
-
-      await pool.query("UPDATE usuarios SET email_verified = true, token = NULL, refresh_token = ? WHERE id = ?",
-          [refreshToken, user[0].id]
-      );
-
-      return res.redirect("http://localhost:5173/email-confirmation-success");
-  } catch (error) {
-      console.error("Error al confirmar el correo:", error);
+    if (!user) {
       return res.redirect("http://localhost:5173/email-confirmation-failed");
+    }
+
+    const refreshToken = jwt.sign(
+      { id: user.id },
+      process.env.REFRESH_TOKEN_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    await pool.query("UPDATE usuarios SET email_verified = true, token = NULL, refresh_token = ? WHERE id = ?",
+      [refreshToken, user.id]
+    );
+
+    return res.redirect("http://localhost:5173/email-confirmation-success");
+  } catch (error) {
+    // 3️⃣ Manejo de errores más detallado:
+    console.error("Error al confirmar el correo:", error.message, error.stack);
+    return res.redirect(`http://localhost:5173/email-confirmation-failed?error=${encodeURIComponent(error.message)}`); // Incluir mensaje de error en la redirección
   }
 });
 
 router.get("/status", async (req, res) => {
   const { userId } = req.query;
 
-  if (!userId) {
-    return res.status(400).json({ error: "El ID de usuario es requerido." });
+  // 4️⃣ Refuerzo en la validación de entrada:
+  if (!userId || isNaN(parseInt(userId))) {
+    return res.status(400).json({ error: "❌ El ID de usuario es requerido y debe ser un número." });
   }
 
   try {
-    const [result] = await pool.query("SELECT email_verified FROM usuarios WHERE id = ?", [userId]);
+    // 1️⃣ Evitar recibir metadata innecesaria en la consulta SQL:
+    const [results] = await pool.query("SELECT email_verified FROM usuarios WHERE id = ?", [userId]);
+    const result = results[0]; // 1️⃣ Obtener los datos directamente
 
-    if (result.length === 0) {
+    if (!result) {
       return res.status(404).json({ error: "Usuario no encontrado." });
     }
 
-    res.json({ email_verified: result[0].email_verified });
+    res.json({ email_verified: result.email_verified });
   } catch (error) {
-    console.error("Error verificando el estado del correo:", error.message);
-    res.status(500).json({ error: "Error interno del servidor. Inténtalo nuevamente más tarde." });
+    // 3️⃣ Manejo de errores más detallado:
+    console.error("Error verificando el estado del correo:", error.message, error.stack);
+    res.status(500).json({ error: `Error interno del servidor: ${error.message}. Inténtalo nuevamente más tarde.` });
   }
 });
+
 // Reenviar correo de confirmación
 router.post("/resend-confirmation", async (req, res) => {
   const { userId } = req.body;
 
-  if (!userId) {
-    return res.status(400).json({ error: "El ID de usuario es requerido." });
+  // 4️⃣ Refuerzo en la validación de entrada:
+  if (!userId || isNaN(parseInt(userId))) {
+    return res.status(400).json({ error: "❌ El ID de usuario es requerido y debe ser un número." });
   }
 
   try {
-    const [user] = await pool.query("SELECT correo, email_verified FROM usuarios WHERE id = ?", [userId]);
+    // 1️⃣ Evitar recibir metadata innecesaria en la consulta SQL:
+    const [users] = await pool.query("SELECT correo, email_verified FROM usuarios WHERE id = ?", [userId]);
+    const user = users[0]; // 1️⃣ Obtener los datos directamente
 
-    if (user.length === 0) {
+    if (!user) {
       return res.status(404).json({ error: "Usuario no encontrado." });
     }
 
-    if (user[0].email_verified) {
+    if (user.email_verified) {
       return res.status(400).json({ error: "El correo ya ha sido confirmado." });
     }
 
@@ -179,19 +196,19 @@ router.post("/resend-confirmation", async (req, res) => {
     const confirmUrl = `${BACKEND_URL}/api/user/confirm-email?token=${token}`;
 
     const htmlContent = `
-    <h1>Confirma tu correo</h1>
-    <p>Haz clic en el siguiente enlace para confirmar tu correo:</p>
-    <a href="${confirmUrl}">Confirmar correo</a>
-  `;
+      <h1>Confirma tu correo</h1>
+      <p>Haz clic en el siguiente enlace para confirmar tu correo:</p>
+      <a href="${confirmUrl}">Confirmar correo</a>
+    `;
 
-  await sendMail("gmail", user[0].correo, "Confirma tu correo electrónico", htmlContent);
+    await sendMail("gmail", user.correo, "Confirma tu correo electrónico", htmlContent);
 
- res.json({ message: "Correo de confirmación reenviado exitosamente." });
-} catch (error) {
-  console.error("Error al reenviar el correo:", error);
-  res.status(500).json({ error: "Error en el servidor." });
-}
-
+    res.json({ message: "Correo de confirmación reenviado exitosamente." });
+  } catch (error) {
+    // 3️⃣ Manejo de errores más detallado:
+    console.error("Error al reenviar el correo:", error.message, error.stack);
+    res.status(500).json({ error: `Error en el servidor: ${error.message}` });
+  }
 });
 
 module.exports = router;

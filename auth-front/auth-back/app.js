@@ -22,7 +22,7 @@ app.use(
 
 // Middleware para registro de solicitudes
 app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  console.log("📡 Recibida solicitud:", req.method, req.url, "→ Datos:", req.body);
   next();
 });
 
@@ -32,8 +32,8 @@ app.use(express.json());
 // Registro de rutas
 app.use("/api/sing", require("./routes/sing"));
 app.use("/api/login", require("./routes/login"));
-app.use("/api/dashboard", require("./routes/dashboard"));
-app.use("/api/dashboard", require("./routes/files"));
+//app.use("/api/dashboard", require("./routes/dashboard"));
+app.use("/api/dashboard", require("./routes/dashboard"), require("./routes/files"));  // ✅ Ahora ambos están montados juntos
 app.use("/api/register-card", require("./routes/registerCard"));
 app.use("/api/user", require("./routes/user"));
 app.use("/api/todos", require("./routes/todos"));

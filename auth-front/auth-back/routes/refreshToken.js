@@ -28,11 +28,16 @@ router.post("/", async (req, res) => {
   try {
     console.log("🚀 Refresh token recibido:", refreshToken);
 
-    // Obtener todos los usuarios con un refresh_token
-    const [userResult] = await pool.query("SELECT id, refresh_token FROM usuarios WHERE refresh_token IS NOT NULL");
+    // Obtener el usuario con el refresh token específico
+    const [[validUser]] = await pool.query(
+      "SELECT id, refresh_token FROM usuarios WHERE refresh_token = ?",
+      [refreshToken]
+    );
 
-    // 🚀 Solución: Verificar todos los refreshTokens correctamente con `Promise.all()`
-    const validUser = userResult.find((u) => u.refresh_token === refreshToken);
+    if (!validUser) {
+      console.warn("❌ No se encontró un usuario válido para el refresh token.");
+      return res.status(403).json({ error: "Error: Refresh token inválido." });
+    }
 
     // Verificar validez del refresh token con JWT
     let decoded;

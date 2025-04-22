@@ -22,7 +22,8 @@ import ControlCentral from "./rutas/ControlCentral.tsx";
 import Reportes from "./rutas/Reportes.tsx";
 import Layout from "./rutas/Layaout.tsx";
 
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Estilo necesario para las notificaciones
 import "react-toastify/dist/ReactToastify.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
@@ -33,7 +34,13 @@ function App() {
   return (
     <ProyectoProvider>
       <AuthProvider>
-        <ToastContainer />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        closeButton={false}
+        style={{ zIndex: 9999 }} // 🔹 Forzar que el Toast esté arriba
+      />
         <RouterProvider router={router} />
       </AuthProvider>
     </ProyectoProvider>
@@ -73,6 +80,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <ProyectoProvider>
       <AuthProvider>
+        <ToastContainer position="bottom-right" autoClose={3000} hideProgressBar={false} closeButton={false} />
         <RouterProvider router={router} />
       </AuthProvider>
     </ProyectoProvider>

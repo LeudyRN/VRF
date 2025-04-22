@@ -1,8 +1,10 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
-interface Proyecto {
-  id: number;
-  nombre: string;
+import { Proyecto } from "../rutas/Dashboard";
+
+interface ProyectoContextType {
+  proyectoActivo: Proyecto | null;
+  setProyectoActivo: (proyecto: Proyecto | null) => void;
 }
 
 interface ProyectoContextType {
@@ -35,7 +37,12 @@ export const ProyectoProvider = ({ children }: ProyectoProviderProps) => {
     console.log("🔄 Proyecto activo actualizado:", proyectoActivo);
 
     if (proyectoActivo) {
-      localStorage.setItem("proyectoActivo", JSON.stringify(proyectoActivo));
+      const proyectoSeguro = {
+        ...proyectoActivo,
+        data: proyectoActivo.data ?? {}, // 🔹 Si `data` es undefined, usa un objeto vacío `{}`.
+      };
+
+      localStorage.setItem("proyectoActivo", JSON.stringify(proyectoSeguro));
     } else {
       localStorage.removeItem("proyectoActivo");
     }

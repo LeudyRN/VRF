@@ -6,6 +6,10 @@ import { toast } from "react-toastify";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import { useProyecto } from "../rutas/ProyectoContext.tsx";
+import { useNavigate } from "react-router-dom";
+import { API_URL } from "../auth/constants";  // ✅ Asegúrate de importar correctamente
+import { Proyecto } from "../rutas/Dashboard.tsx";
 
 interface UnidadInterior {
   id: number;
@@ -47,6 +51,110 @@ const UnidadInterior = () => {
   const [equiposRestantes, setEquiposRestantes] = useState<UnidadInterior[]>([]);
   const [showEquiposRestantesModal, setShowEquiposRestantesModal] = useState(false);
   const [equiposRelacionados, setEquiposRelacionados] = useState<UnidadInterior[]>([]);
+  const { proyectoActivo, setProyectoActivo } = useProyecto();
+  const goTo = useNavigate();
+  const navigate = useNavigate()
+
+
+  const actualizarProyectoConUnidades = async () => {
+    if (!proyectoActivo) {
+      console.error("❌ No hay un proyecto activo para actualizar.");
+      toast.error("❌ No hay un proyecto activo. Selecciona uno antes de actualizar.", {
+        position: "bottom-right",
+        autoClose: 3000,
+      });
+      return;
+    }
+
+    // ✅ Obtener `usuario_id` desde localStorage
+    const usuarioId = localStorage.getItem("usuarioId");
+    const fechaCreacion = new Date().toISOString().slice(0, 19).replace("T", " ");
+
+    // ✅ Asegurar que `unidadesInterior` tenga siempre un valor válido
+    const unidadesInteriorActual = Array.isArray(proyectoActivo.unidadesInterior)
+      ? proyectoActivo.unidadesInterior
+      : [];
+
+    // ✅ Fusionamos los nuevos equipos interiores con los existentes
+    const unidadesInteriorActualizada = equiposSeleccionados.map(equipo => ({
+      id: equipo.id,
+      nombre: equipo.unitName,
+      capacidad: equipo.reqH,
+      model: equipo.model,
+      dbt_rh_cooling: equipo.dbt_rh_cooling,
+      dbt_heating: equipo.dbt_heating,
+      reqTC: equipo.reqTC,
+      reqSC: equipo.reqSC,
+      reqH: equipo.reqH,
+      rtTC: equipo.rtTC,
+      rtH: equipo.rtH,
+      noise: equipo.noise,
+      airflow: equipo.airflow,
+      design_static_pressure: equipo.design_static_pressure,
+      static_pressure_range: equipo.static_pressure_range,
+      weight: equipo.weight,
+      image_url: equipo.image_url,
+      cantidad: equipo.cantidad || 1,
+      dryBulbTempCooling: equipo.dryBulbTempCooling || null,
+      wetBulbTempCooling: equipo.wetBulbTempCooling || null,
+      relativeHumCooling: equipo.relativeHumCooling || null,
+      dryBulbTempHeating: equipo.dryBulbTempHeating || null,
+      totalCooling: equipo.totalCooling || null,
+      heating: equipo.heating || null,
+      heightDifferenceToODU: equipo.heightDifferenceToODU || null,
+      visto: equipo.visto || false,
+    }));
+
+    // ✅ Crear `proyectoActualizado` con `unidadesInteriorActualizada`
+    const proyectoActualizado = {
+      ...proyectoActivo,
+      usuario_id: usuarioId,
+      fechaCreacion,
+      rutaArchivo: proyectoActivo.rutaArchivo ?? "default_path",
+      unidadesInterior: unidadesInteriorActualizada,
+    };
+
+    console.log("📡 Datos enviados al backend:", JSON.stringify(proyectoActualizado, null, 2));
+
+    try {
+      // ✅ Enviar los datos al backend para guardarlos en la DB
+      const response = await fetch(`${API_URL}/unidad-interior/guardar-proyecto`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(proyectoActualizado),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Error en la DB: ${errorData.error || "Sin detalles"}`);
+      }
+
+      console.log("✅ Datos guardados correctamente en la DB:", await response.json());
+
+      // 🚀 Mostrar notificación de éxito con el nombre del proyecto
+      toast.success(`🚀 Proyecto "${proyectoActivo.nombre}" actualizado en la base de datos!`, {
+        position: "bottom-right",
+        autoClose: 3000,
+      });
+
+      // ✅ Guardamos el proyecto en el estado global y localStorage
+      setProyectoActivo(proyectoActualizado);
+      localStorage.setItem("proyectoActivo", JSON.stringify(proyectoActualizado));
+
+    } catch (error) {
+      console.error("❌ Error al guardar en la DB:", error);
+
+      // 🔹 Verificamos si `error` es una instancia de `Error`
+      const mensajeError = error instanceof Error ? error.message : "Error desconocido";
+
+      toast.error(`❌ No se pudo guardar en la base de datos: ${mensajeError}`, {
+        position: "bottom-right",
+        autoClose: 3000,
+      });
+    }
+  };
 
   useEffect(() => {
     const fetchUnidades = async () => {
@@ -77,26 +185,53 @@ const UnidadInterior = () => {
 
 
   const añadirEquipo = (equipo: UnidadInterior) => {
-    setEquiposSeleccionados((prevEquipos) => {
-      const existe = prevEquipos.some((e) => e.id === equipo.id);
-      if (existe) {
-        return prevEquipos.map((e) =>
-          e.id === equipo.id ? { ...e, cantidad: (e.cantidad || 1) + 1 } : e
-        );
-      } else {
-        return [...prevEquipos, { ...equipo, cantidad: 1 }];
-      }
-    });
+    try {
+      setEquiposSeleccionados((prevEquipos) => {
+        const existe = prevEquipos.some((e) => e.id === equipo.id);
+        if (existe) {
+          return prevEquipos.map((e) =>
+            e.id === equipo.id ? { ...e, cantidad: (e.cantidad || 1) + 1 } : e
+          );
+        } else {
+          return [...prevEquipos, { ...equipo, cantidad: 1 }];
+        }
+      });
 
-    console.log("Equipo agregado:", equipo);
-    setShowEquiposRestantesModal(false);
+      console.log("✅ Equipo agregado:", equipo);
+      toast.success(`🚀 Equipo "${equipo.unitName}" agregado correctamente!`, {
+        position: "bottom-right",
+        autoClose: 3000,
+      });
+
+      setShowEquiposRestantesModal(false);
+    } catch (error) {
+      console.error("❌ Error al agregar el equipo:", error);
+      toast.error("❌ Hubo un problema al agregar el equipo.", {
+        position: "bottom-right",
+        autoClose: 3000,
+      });
+    }
   };
 
   const añadirEquipo1 = (equipo: UnidadInterior) => {
-    setDatosEditados({ ...equipo, cantidad: 1 });
-    setEquipoDetalles(null); // Limpiar por si acaso
-    setModalTipo("edicion");
-    setShowModal(true);
+    try {
+      setDatosEditados({ ...equipo, cantidad: 1 });
+      setEquipoDetalles(null); // Limpiar por si acaso
+      setModalTipo("edicion");
+      setShowModal(true);
+
+      console.log("✅ Equipo listo para edición:", equipo);
+      toast.success(`🚀 Equipo "${equipo.unitName}" listo para edición!`, {
+        position: "bottom-right",
+        autoClose: 3000,
+      });
+    } catch (error) {
+      console.error("❌ Error al preparar el equipo para edición:", error);
+      toast.error("❌ Hubo un problema al preparar el equipo.", {
+        position: "bottom-right",
+        autoClose: 3000,
+      });
+    }
   };
 
   const verDetalles = (equipo: UnidadInterior) => {
@@ -195,8 +330,6 @@ const UnidadInterior = () => {
     position: "relative"
   }}
   >
-
-
     <h1 style={{
       margin: 0,
       padding: "1vh",
@@ -204,9 +337,7 @@ const UnidadInterior = () => {
       fontWeight: "bold",
       marginLeft: "-3vh"
     }}
-
     >
-
       Unidad Interior </h1> <p style={{
         fontSize: "1rem",
         color: "#6c757d",
@@ -214,85 +345,86 @@ const UnidadInterior = () => {
         marginLeft: "-1.6vh",
         fontWeight: "bold"
       }}
-
       >
-
       Explora las especificaciones y modelos de la Unidad Interior. </p>
 
-    <div className="row gy-2 gx-2 justify-content-center" style={{ width: '130%' }}>
-      <div className="col-md-12 w-100 mt-3" style={{ overflowY: 'auto', maxHeight: '400px' }}>
-        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', gap: '10px', paddingBottom: '5px' }}>
-          {loading ? (
-            <p>Cargando datos...</p>
-          ) : error ? (
-            <p className="text-danger">Error: {error}</p>
-          ) : (
-            equiposDisponibles.map((equipo) => (
-              <div
-                key={equipo.id}
-                style={{
-                  flex: '1 1 calc(25% - 15px)', // Cada tarjeta ocupa el 25% del ancho menos el gap
-                  maxWidth: 'calc(25% - 15px)', // Limitar el ancho máximo de cada tarjeta
-                  boxSizing: 'border-box',      // Asegurar que los márgenes no afecten el cálculo del ancho
-                  minHeight: '320px',           // Establecer una altura mínima para todas las tarjetas
-                }}
-              >
-                <div className="card shadow-sm h-100">
-                  <div className="card-body text-left">
-                    <img
-                      src={`http://localhost:3100${equipo.image_url}`}
-                      alt={equipo.unitName}
-                      className="img-fluid mb-3 shadow-sm"
-                      style={{
-                        width: "150px",
-                        height: "150px",
-                        objectFit: "contain",
-                      }}
-                    />
-                    <h5 className="card-title text-primary">{equipo.unitName}</h5>
-                    <p className="card-text text-secondary">{equipo.model}</p>
-                    <div
-                      className="d-flex justify-content-between"
-                      style={{ marginTop: '15px' }}
-                    >
-                      <button
-                        className="btn btn-primary"
-                        style={{ flex: '1', marginRight: '5px', minWidth: '90px' }}
-                        onClick={() => añadirEquipo1(equipo)}
-                        disabled={equiposSeleccionados.some((e) => e.id === equipo.id)}
-                      >
-                        <i className="bi bi-plus-circle me-1"></i> Agregar
-                      </button>
-                      <button
-                        className="btn btn-outline-secondary"
-                        style={{ flex: '1', marginRight: '5px', minWidth: '90px' }}
-                        onClick={() => verDetalles(equipo)}
-                      >
-                        <i className="bi bi-info-circle me-1"></i> Detalles
-                      </button>
-                      <button
-                        className="btn btn-secondary"
-                        style={{ flex: '1', minWidth: '90px' }}
-                        onClick={() => {
-                          fetch(`http://localhost:3100/api/unidad-interior/relacionados/${encodeURIComponent(equipo.unitName)}`)
-                            .then((res) => res.json())
-                            .then((data) => {
-                              setEquiposRestantes(data); // Guarda los modelos relacionados en el estado
-                              setShowEquiposRestantesModal(true); // Muestra el modal
-                            })
-                            .catch((err) => console.error("Error al obtener modelos relacionados:", err));
-                        }}
-                      >
-                        <i className="bi bi-gear-fill me-1"></i> Equipos
-                      </button>
-                    </div>
-                  </div>
+      <div className="row gy-2 gx-2 justify-content-center" style={{ width: '130%' }}>
+  <div className="col-md-12 w-100 mt-3" style={{ overflowY: 'auto', maxHeight: '400px' }}>
+    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', gap: '10px', paddingBottom: '5px' }}>
+      {loading ? (
+        <p>Cargando datos...</p>
+      ) : error ? (
+        <p className="text-danger">Error: {error}</p>
+      ) : (
+        equiposDisponibles.map((equipo) => (
+          <div
+            key={equipo.id}
+            style={{
+              flex: '1 1 calc(25% - 15px)', // Cada tarjeta ocupa el 25% del ancho menos el gap
+              maxWidth: 'calc(25% - 15px)', // Limitar el ancho máximo de cada tarjeta
+              boxSizing: 'border-box',      // Asegurar que los márgenes no afecten el cálculo del ancho
+              height: '330px',              // Establecer una altura fija para todas las tarjetas
+            }}
+          >
+            <div className="card shadow-sm h-100">
+              <div className="card-body text-left d-flex flex-column justify-content-between"> {/* 🔹 Asegurar alineación uniforme */}
+                <img
+                  src={`http://localhost:3100${equipo.image_url}`}
+                  alt={equipo.unitName}
+                  className="img-fluid mb-3 shadow-sm"
+                  style={{
+                    width: "150px",
+                    height: "150px",
+                    objectFit: "contain",
+                  }}
+                />
+                <h5 className="card-title text-primary" style={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap' // 🔥 Limitar nombres largos
+                }}>
+                  {equipo.unitName}
+                </h5>
+                <p className="card-text text-secondary">{equipo.model}</p>
+                <div className="d-flex justify-content-between mt-3">
+                  <button
+                    className="btn btn-primary"
+                    style={{ flex: '1', marginRight: '5px', minWidth: '90px' }}
+                    onClick={() => añadirEquipo1(equipo)}
+                    disabled={equiposSeleccionados.some((e) => e.id === equipo.id)}
+                  >
+                    <i className="bi bi-plus-circle me-1"></i> Agregar
+                  </button>
+                  <button
+                    className="btn btn-outline-secondary"
+                    style={{ flex: '1', marginRight: '5px', minWidth: '90px' }}
+                    onClick={() => verDetalles(equipo)}
+                  >
+                    <i className="bi bi-info-circle me-1"></i> Detalles
+                  </button>
+                  <button
+                    className="btn btn-secondary"
+                    style={{ flex: '1', minWidth: '90px' }}
+                    onClick={() => {
+                      fetch(`http://localhost:3100/api/unidad-interior/relacionados/${encodeURIComponent(equipo.unitName)}`)
+                        .then((res) => res.json())
+                        .then((data) => {
+                          setEquiposRestantes(data); // Guarda los modelos relacionados en el estado
+                          setShowEquiposRestantesModal(true); // Muestra el modal
+                        })
+                        .catch((err) => console.error("Error al obtener modelos relacionados:", err));
+                    }}
+                  >
+                    <i className="bi bi-gear-fill me-1"></i> Equipos
+                  </button>
                 </div>
               </div>
-            ))
-          )}
-        </div>
-      </div>
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+  </div>
 
       {equipoDetalles && (
         <div
@@ -672,12 +804,30 @@ const UnidadInterior = () => {
                 </div>
               </td>
               <td>
-                <button
-                  className="btn btn-danger btn-sm"
-                  onClick={() => setEquiposSeleccionados((prev) => prev.filter((e) => e.id !== equipo.id))}
-                >
-                  <i className="bi bi-trash me-1"></i> Eliminar
-                </button>
+              <button
+                className="btn btn-danger btn-sm"
+                onClick={() => {
+                  try {
+                    setEquiposSeleccionados((prev) => prev.filter((e) => e.id !== equipo.id));
+
+                    // 🚀 Mostrar notificación de éxito
+                    toast.success(`✅ Equipo "${equipo.unitName}" eliminado correctamente!`, {
+                      position: "bottom-right",
+                      autoClose: 3000,
+                    });
+
+                    console.log("✅ Equipo eliminado:", equipo);
+                  } catch (error) {
+                    console.error("❌ Error al eliminar el equipo:", error);
+                    toast.error("❌ Hubo un problema al eliminar el equipo.", {
+                      position: "bottom-right",
+                      autoClose: 3000,
+                    });
+                  }
+                }}
+              >
+                <i className="bi bi-trash me-1"></i> Eliminar
+              </button>
               </td>
             </tr>
           ))}
@@ -686,14 +836,21 @@ const UnidadInterior = () => {
     </div>
     <div className="d-flex justify-content-center mt-5">
       <button
-        className="btn btn-success"
-        onClick={() => toast.success('Información enviada a la siguiente pantalla')}
+        className="btn"
+        onClick={actualizarProyectoConUnidades}
         style={{
+          backgroundColor: "blue",   /* 🔹 Fondo azul */
+          color: "white",            /* 🔹 Texto blanco */
+          fontWeight: "bold",        /* 🔹 Texto en negrita */
+          padding: "10px 15px",
+          borderRadius: "5px",
+          border: "none",
+          cursor: "pointer",
           marginTop: "0",
           marginLeft: "20vh"
         }}
       >
-        Siguiente <i className="bi bi-arrow-right-circle ms-2"></i>
+        Aplicar cambios <i className="bi bi-check-circle ms-2"></i>
       </button>
     </div>
 
