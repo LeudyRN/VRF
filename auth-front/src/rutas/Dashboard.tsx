@@ -60,6 +60,7 @@ export default function Dashboard() {
   const [totalPagesProyectos, setTotalPagesProyectos] = useState(0);
   const [limit, setLimit] = useState(10);
   const [filteredProyectosGuardados, setFilteredProyectosGuardados] = useState<Proyecto[]>(proyectosGuardados);
+  const { logout } = useAuth();
 
   const isTokenExpired = (token: string): boolean => {
     try {
@@ -73,12 +74,20 @@ export default function Dashboard() {
 
   const fetchFiles = async (page: number, search: string = "") => {
     setLoading(true);
+
     try {
-      let token = localStorage.getItem("token");
+      let token = localStorage.getItem("accessToken");
 
       if (!token || isTokenExpired(token)) {
+        console.warn("⚠️ Token expirado. Intentando renovarlo...");
+
         const newToken = await refreshToken();
-        if (!newToken) throw new Error("No autorizado.");
+        if (!newToken) {
+          console.error("❌ No se pudo renovar el token. Cierre de sesión necesario.");
+          logout(); // 🔥 Ahora cerramos sesión directamente si no hay nuevo token
+          return;
+        }
+
         token = newToken;
       }
 
@@ -92,6 +101,11 @@ export default function Dashboard() {
       });
 
       if (!response.ok) {
+        if (response.status === 401) {
+          console.error("❌ Sesión inválida. Cerrando sesión...");
+          logout();
+          return;
+        }
         throw new Error(`Error del servidor: ${response.status}`);
       }
 
@@ -99,9 +113,9 @@ export default function Dashboard() {
 
       if (!data.proyectos || data.proyectos.length === 0) {
         console.warn("⚠️ No se encontraron archivos recientes.");
-        setProyectosRecientes([]); // 🔹 Ahora afecta solo a archivos recientes
+        setProyectosRecientes([]);
       } else {
-        setProyectosRecientes(data.proyectos); // 🔹 Actualiza archivos recientes, NO proyectos guardados
+        setProyectosRecientes(data.proyectos);
         console.log("✅ Estado actualizado con archivos recientes:", data.proyectos);
       }
 
@@ -116,12 +130,20 @@ export default function Dashboard() {
 
   const fetchProyectos = async (page: number, limit: number = 10, search: string = "") => {
     setLoading(true);
+
     try {
-      let token = localStorage.getItem("token");
+      let token = localStorage.getItem("accessToken");
 
       if (!token || isTokenExpired(token)) {
+        console.warn("⚠️ Token expirado. Intentando renovarlo...");
+
         const newToken = await refreshToken();
-        if (!newToken) throw new Error("No autorizado.");
+        if (!newToken) {
+          console.error("❌ No se pudo renovar el token. Cerrando sesión...");
+          logout(); // 🔥 Ahora cerramos sesión directamente si no hay nuevo token
+          return;
+        }
+
         token = newToken;
       }
 
@@ -131,13 +153,18 @@ export default function Dashboard() {
       console.log("🚀 Solicitando proyectos a la API... Página:", page, "Búsqueda:", search);
 
       const response = await fetch(
-        `${API_URL}/dashboard/proyectos/${usuarioId}?page=${page}&limit=${limit}&search=${search}`, // 🔹 Incluye el término de búsqueda
+        `${API_URL}/dashboard/proyectos/${usuarioId}?page=${page}&limit=${limit}&search=${search}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
 
       if (!response.ok) {
+        if (response.status === 401) {
+          console.error("❌ Sesión inválida. Cerrando sesión...");
+          logout();
+          return;
+        }
         throw new Error(`Error del servidor: ${response.status}`);
       }
 
@@ -146,16 +173,15 @@ export default function Dashboard() {
       if (!data.proyectos || data.proyectos.length === 0) {
         console.warn("⚠️ No se encontraron proyectos.");
         setProyectosGuardados([]);
-        setFilteredProyectosGuardados([]); // 🔥 Vaciar la lista filtrada si no hay proyectos
+        setFilteredProyectosGuardados([]);
       } else {
         setProyectosGuardados(data.proyectos);
 
-        // 🔥 Aplicar el filtro de búsqueda en la respuesta de la API
-        const proyectosFiltrados = (data.proyectos as Proyecto[]).filter((proyecto: Proyecto) =>
+        const proyectosFiltrados = data.proyectos.filter((proyecto: Proyecto) =>
           proyecto.nombre.toLowerCase().includes(search.toLowerCase())
         );
 
-        setFilteredProyectosGuardados(proyectosFiltrados); // 🔹 Guardar los proyectos filtrados
+        setFilteredProyectosGuardados(proyectosFiltrados);
 
         console.log("✅ Estado actualizado con proyectos:", proyectosFiltrados);
       }
@@ -483,16 +509,6 @@ export default function Dashboard() {
       <h1 className="container mt-5" style={{ margin: 0, padding: "1vh", marginTop: "5vh", fontWeight: "bold" }}>
         Dashboard
       </h1>
-      <h4
-        style={{
-          marginTop: "2vh",
-          padding: "1rem",
-          fontSize: "1.8rem",
-          fontWeight: "600", // ✅ Texto más definido
-        }}
-      >
-        Proyecto en uso: {proyectoActivo ? proyectoActivo.nombre : "Ninguno"}
-      </h4>
 
       {/* Cuadros de opciones directamente en el Dashboard */}
       <div

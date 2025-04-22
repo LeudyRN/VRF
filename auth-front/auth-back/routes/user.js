@@ -127,7 +127,7 @@ router.get("/confirm-email", async (req, res) => {
     const refreshToken = jwt.sign(
       { id: user.id },
       process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "30m" }
     );
 
     await pool.query("UPDATE usuarios SET email_verified = true, token = NULL, refresh_token = ? WHERE id = ?",

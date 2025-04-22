@@ -3,6 +3,8 @@ const jwt = require("jsonwebtoken");
 const pool = require("../config/db");
 const bcrypt = require("bcryptjs");
 const router = express.Router();
+const cookieParser = require("cookie-parser");
+
 
 // Mensaje genérico de error
 const GENERIC_ERROR_MESSAGE = "Credenciales inválidas.";
@@ -14,64 +16,69 @@ const generateAccessToken = (userId) => {
 
 // Generar nuevo refresh token
 const generateRefreshToken = (userId) => {
-  return jwt.sign({ id: String(userId) }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "7d" });
+  return jwt.sign({ id: String(userId) }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "35m" });
 };
 
 router.post("/", async (req, res) => {
   const { refreshToken } = req.body;
 
   if (!refreshToken || typeof refreshToken !== "string") {
-    console.warn("No se proporcionó un refreshToken válido.");
+    console.warn("⚠️ No se proporcionó un refreshToken válido.");
     return res.status(400).json({ error: "Error: Refresh token inválido." });
   }
 
   try {
     console.log("🚀 Refresh token recibido:", refreshToken);
 
-    // Obtener el usuario con el refresh token específico
-    const [[validUser]] = await pool.query(
-      "SELECT id, refresh_token FROM usuarios WHERE refresh_token = ?",
-      [refreshToken]
-    );
-
-    if (!validUser) {
-      console.warn("❌ No se encontró un usuario válido para el refresh token.");
-      return res.status(403).json({ error: "Error: Refresh token inválido." });
-    }
-
-    // Verificar validez del refresh token con JWT
     let decoded;
     try {
       decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
       console.log("✅ Refresh token decodificado correctamente:", decoded);
     } catch (error) {
-      console.warn("❌ El refreshToken proporcionado es inválido o expirado:", error.message);
-      return res.status(403).json({ error: "Error: Refresh token expirado." });
+      console.warn("❌ Refresh token inválido o expirado:", error.message);
+
+      // 🔥 Invalidar el refresh token en caso de expiración
+      await pool.query("UPDATE usuarios SET refresh_token = NULL WHERE refresh_token = ?", [refreshToken]);
+
+      return res.status(403).json({ error: "Sesión expirada, inicia sesión nuevamente." });
     }
 
-    // Confirmar que el ID decodificado coincide con el usuario
-    if (String(validUser.id) !== String(decoded.id)) {
-      console.warn("❌ El ID del token no coincide con el usuario.");
-      return res.status(403).json({ error: "Error: Refresh token inválido." });
+    // 🔹 Obtener el usuario por ID
+    const [[validUser]] = await pool.query("SELECT id, refresh_token FROM usuarios WHERE id = ?", [decoded.id]);
+
+    if (!validUser || !validUser.refresh_token) {
+      console.warn("❌ Usuario no encontrado o sin refresh token. Invalidando sesión...");
+
+      // 🔥 Invalidar el token en la base de datos en caso de inconsistencia
+      await pool.query("UPDATE usuarios SET refresh_token = NULL WHERE id = ?", [decoded.id]);
+
+      return res.status(401).json({ error: "Sesión expirada, por favor inicia sesión nuevamente." });
     }
 
-    // Generar nuevos tokens
+    // 🔹 Validar si el token coincide con el registrado en la BD
+    if (refreshToken !== validUser.refresh_token) {
+      console.warn("❌ El refresh token no coincide con el almacenado. Invalidando sesión...");
+
+      // 🔥 Invalidar el token incorrecto
+      await pool.query("UPDATE usuarios SET refresh_token = NULL WHERE id = ?", [decoded.id]);
+
+      return res.status(401).json({ error: "Sesión expirada, por favor inicia sesión nuevamente." });
+    }
+
+    // 🔥 Generar nuevos tokens
     const newAccessToken = generateAccessToken(decoded.id);
     const newRefreshToken = generateRefreshToken(decoded.id);
 
-    // Guardar el nuevo refreshToken hasheado en la base de datos
-    const hashedRefreshToken = await bcrypt.hash(newRefreshToken, 10);
-    try {
-      await pool.query("UPDATE usuarios SET refresh_token = ? WHERE id = ?", [hashedRefreshToken, validUser.id]);
-      console.log("✅ Tokens renovados con éxito para el usuario:", validUser.id);
-    } catch (dbError) {
-      console.error("❌ Error al actualizar el refreshToken en la base de datos:", dbError.message);
-      return res.status(500).json({ error: "Error al actualizar el token en la base de datos." });
-    }
+    // 🔥 Reemplazar el refreshToken viejo por el nuevo correctamente
+    await pool.query("UPDATE usuarios SET refresh_token = ? WHERE id = ?", [newRefreshToken, decoded.id]);
+    console.log("✅ Tokens renovados con éxito para el usuario:", decoded.id);
 
-    // Enviar nuevos tokens al cliente
-    res.json({ accessToken: newAccessToken, refreshToken: newRefreshToken });
-
+    // 🔹 Enviar respuesta con ambos tokens renovados
+    res.json({
+      message: "✅ Tokens renovados correctamente.",
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken, // 🔥 Aseguramos que el nuevo refreshToken se envíe correctamente
+    });
   } catch (error) {
     console.error("❌ Error al procesar el refresh token:", error.message);
     res.status(500).json({ error: "Error en el servidor. Inténtalo nuevamente." });

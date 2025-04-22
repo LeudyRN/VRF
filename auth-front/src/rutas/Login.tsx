@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider";
 import fondo from "../assets/fondo.jpg";
+import { toast } from "react-toastify";
 
 export default function Login() {
   const [usuario, setUsuario] = useState<string>("");
@@ -35,40 +36,46 @@ export default function Login() {
     e.preventDefault();
 
     if (!validateInput()) {
+      toast.warn("⚠️ Usuario y contraseña son obligatorios.");
       return;
     }
 
     try {
       const response = await fetch("http://localhost:3100/api/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ usuario, contraseña }),
       });
 
-      if (response.ok) {
-        const json = await response.json();
+      const json = await response.json();
 
-        localStorage.setItem("accessToken", json.accessToken);
-        localStorage.setItem("refreshToken", json.refreshToken);
-
-        if (json.redirectToRegisterCard === true) {
-          navigate("/register-card");
-          return;
-        }
-
-        auth.login(json.accessToken, json.refreshToken);
-        navigate("/dashboard");
-      } else {
-        setErrorResponse("Usuario o contraseña incorrectos.");
+      if (!response.ok) {
+        console.error("❌ Error en autenticación:", json.error || "Error desconocido.");
+        toast.error("❌ Usuario o contraseña incorrectos.");
+        return;
       }
+
+      if (!json.accessToken || !json.refreshToken) {
+        console.error("❌ El backend no envió los tokens correctamente.");
+        toast.error("❌ Error en el servidor, intenta de nuevo.");
+        return;
+      }
+
+      sessionStorage.setItem("refreshToken", json.refreshToken);
+      localStorage.setItem("accessToken", json.accessToken);
+
+      toast.success("✅ Inicio de sesión exitoso!");
+
+      if (json.redirectToRegisterCard) {
+        navigate("/register-card");
+        return;
+      }
+
+      auth.login(json.accessToken, json.refreshToken);
+      navigate("/dashboard");
     } catch (error) {
-      if (error instanceof Error) {
-        setErrorResponse("Hubo un problema con el servidor. Inténtalo de nuevo.");
-      } else {
-        setErrorResponse("Error desconocido. Inténtalo de nuevo.");
-      }
+      console.error("❌ Error en la solicitud de login:", error);
+      toast.error("❌ Hubo un problema con el servidor. Inténtalo de nuevo.");
     }
   }
 

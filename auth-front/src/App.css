@@ -1,42 +1,41 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+.proyecto-header {
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 12px 30px;
+  border-radius: 50px;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  background: linear-gradient(145deg, rgba(0, 123, 255, 0.8), rgba(0, 200, 255, 0.6));
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  width: fit-content;
+  box-shadow: 0px 4px 15px rgba(0, 123, 255, 0.7), inset 0px 0px 10px rgba(255, 255, 255, 0.3);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background 0.3s;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.proyecto-header:hover {
+  transform: scale(1.1);
+  box-shadow: 0px 6px 20px rgba(0, 123, 255, 0.9), inset 0px 0px 15px rgba(255, 255, 255, 0.5);
+  background: linear-gradient(145deg, rgba(0, 90, 255, 0.8), rgba(0, 170, 255, 0.6));
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.proyecto-header span {
+  display: inline-block;
+  border-bottom: 3px solid rgba(255, 255, 255, 0.8);
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+  border-radius: 4px;
+  transition: all 0.3s ease-in-out;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+.proyecto-header span:hover {
+  background: rgba(0, 123, 255, 0.4);
+  border-bottom: 3px solid rgba(0, 123, 255, 0.8);
 }

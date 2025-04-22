@@ -18,14 +18,13 @@ const generateAccessToken = (userId, usuario) => {
 // Generar Refresh Token
 const generateRefreshToken = (userId, usuario) => {
   return jwt.sign({ id: userId, usuario }, process.env.REFRESH_TOKEN_SECRET, {
-    expiresIn: "7d", // Duración de 7 días
+    expiresIn: "15m", // Duración de 7 días
   });
 };
 
 router.post("/", async (req, res) => {
   const { usuario, contraseña } = req.body;
 
-  // Validación inicial de los campos
   if (!usuario || !contraseña) {
     return res.status(400).json({ error: "Usuario y contraseña son obligatorios." });
   }
@@ -38,7 +37,7 @@ router.post("/", async (req, res) => {
     );
 
     if (users.length === 0) {
-      return res.status(401).json({ error: GENERIC_ERROR_MESSAGE });
+      return res.status(401).json({ error: "Usuario o contraseña incorrectos." });
     }
 
     const user = users[0];
@@ -47,41 +46,37 @@ router.post("/", async (req, res) => {
     const validPassword = await bcrypt.compare(contraseña, user.contraseña_hash);
 
     if (!validPassword) {
-      return res.status(401).json({ error: GENERIC_ERROR_MESSAGE });
+      return res.status(401).json({ error: "Usuario o contraseña incorrectos." });
     }
 
-    // Generar tokens
+    // ✅ Generar nuevos tokens
     const accessToken = generateAccessToken(user.id, user.usuario);
     const refreshToken = generateRefreshToken(user.id, user.usuario);
 
-    // Guardar el Refresh Token en la base de datos
-    await pool.query("UPDATE usuarios SET refresh_token = ? WHERE id = ?", [
-      refreshToken,
-      user.id,
-    ]);
+    // ✅ Guardar el refreshToken en la base de datos
+    await pool.query("UPDATE usuarios SET refresh_token = ? WHERE id = ?", [refreshToken, user.id]);
 
-    // Verificar si tiene tarjeta registrada
-    if (!user.tarjeta_registrada) {
-      return res.status(200).json({
-        message: "Usuario autenticado, pero necesita registrar tarjeta.",
-        accessToken,
-        refreshToken,
-        redirectToRegisterCard: true,
-      });
-    }
+    console.log("✅ RefreshToken actualizado correctamente en la base de datos.");
 
-    // Respuesta para usuarios con tarjeta registrada
+    // 🔥 Almacenar el `refreshToken` en `httpOnly` cookies para mayor seguridad
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // Expira en 7 días
+    });
+
+    // 🔹 **Enviar `refreshToken` junto con `accessToken` en la respuesta JSON**
     res.status(200).json({
       message: "Inicio de sesión exitoso.",
       accessToken,
-      refreshToken,
-      redirectToRegisterCard: false,
+      refreshToken, // 🔥 **Antes faltaba esta línea, ahora el frontend lo recibirá correctamente.**
+      redirectToRegisterCard: !user.tarjeta_registrada,
     });
   } catch (error) {
-    console.error("Error al iniciar sesión:", error.message);
-    res.status(500).json({ error: "Hubo un problema al procesar tu solicitud. Inténtalo nuevamente." });
+    console.error("❌ Error al iniciar sesión:", error.message);
+    res.status(500).json({ error: "Error en el servidor. Inténtalo nuevamente." });
   }
 });
-
 
 module.exports = router;

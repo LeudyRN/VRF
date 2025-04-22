@@ -4,16 +4,19 @@ require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 3100;
 const path = require("path");
+const cookieParser = require("cookie-parser");
 
 // Configuración de CORS
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || ["http://localhost:5173"];
 app.use(
   cors({
     origin: (origin, callback) => {
+      console.log("🔍 Verificando origen:", origin);
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(new Error("Origen no permitido por CORS"));
+        console.error("❌ Origen no permitido:", origin);
+        callback(new Error(`Origen no permitido por CORS: ${origin}`));
       }
     },
     credentials: true,
@@ -27,6 +30,7 @@ app.use((req, res, next) => {
 });
 
 // Middleware para analizar JSON
+app.use(cookieParser());
 app.use(express.json());
 
 // Registro de rutas

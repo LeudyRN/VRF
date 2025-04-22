@@ -77,82 +77,145 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const refreshToken = async (): Promise<string | null> => {
-    if (!refreshTokenValue) {
-      console.error("❌ No se encontró refreshToken en el cliente. Cerrando sesión...");
+    const storedToken = sessionStorage.getItem("refreshToken");
+
+    if (!storedToken) {
+      console.warn("⚠️ No hay refreshToken en sessionStorage. Cerrando sesión...");
+      setRefreshTokenValue(null);
       logout();
       return null;
     }
 
-    console.log("🚀 Intentando renovar token con refreshToken:", refreshTokenValue);
+    console.log("🚀 Intentando renovar token con refreshToken:", storedToken);
 
     try {
       const response = await fetch(`${API_URL}/refreshToken`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refreshToken: refreshTokenValue }),
+        body: JSON.stringify({ refreshToken: storedToken }),
         credentials: "include",
       });
 
-      // Manejo de errores de respuesta
       if (!response.ok) {
         if (response.status === 401 || response.status === 403) {
-          console.error("Refresh token inválido o expirado. Cerrando sesión...");
-          logout(); // Cierra la sesión si el token no es válido
+          console.error("❌ Refresh token inválido o expirado. Eliminándolo y cerrando sesión...");
+
+          sessionStorage.removeItem("refreshToken");
+          setRefreshTokenValue(null);
+          logout();
+          return null;
         }
+
         throw new Error(`Error al renovar token: ${response.status} - ${response.statusText}`);
       }
 
-      // Procesar respuesta exitosa
       const data = await response.json();
 
-      // Actualizar los tokens en el estado y almacenamiento
-      setAccessToken(data.accessToken);
+      // 🔥 Asegurar que el nuevo `refreshToken` se guarda correctamente
       setRefreshTokenValue(data.refreshToken);
-      localStorage.setItem("token", data.accessToken);
       sessionStorage.setItem("refreshToken", data.refreshToken);
+      localStorage.setItem("accessToken", data.accessToken);
+      setAccessToken(data.accessToken);
 
-      console.log("Nuevo accessToken obtenido:", data.accessToken);
+      console.log("✅ Nuevo accessToken y refreshToken guardados correctamente.");
+
+      // 🔥 Verificar inmediatamente después si `sessionStorage` tiene el nuevo `refreshToken`
+      console.log("📌 Refresh token en sessionStorage después de renovación:", sessionStorage.getItem("refreshToken"));
+
       return data.accessToken;
     } catch (error) {
-      console.error("Error al renovar el token:", error || error);
-      logout();
+      console.error("❌ Error al renovar el token:", error);
       return null;
     }
   };
 
   // Iniciar sesión
   const login = (newAccessToken: string, newRefreshToken: string) => {
+    if (!newAccessToken || !newRefreshToken) {
+      console.error("❌ Error: AccessToken o RefreshToken no proporcionados.");
+      return;
+    }
+
+    console.log("🚀 Iniciando sesión con tokens recibidos:", { newAccessToken, newRefreshToken });
+
     setAccessToken(newAccessToken);
     setRefreshTokenValue(newRefreshToken);
 
-    // ✅ Extraer usuarioId desde el JWT (accessToken)
     try {
-      const payload = JSON.parse(atob(newAccessToken.split(".")[1])); // Decodificar el payload
-      if (payload.id) {
-        localStorage.setItem("usuarioId", payload.id.toString()); // ✅ Guardamos usuarioId en localStorage
+      // 🔥 Extraer usuarioId desde el JWT (accessToken)
+      const [, payloadBase64] = newAccessToken.split(".");
+      if (!payloadBase64) throw new Error("Formato de token inválido.");
+
+      const payload = JSON.parse(atob(payloadBase64)); // Decodificar el payload
+
+      if (payload?.id) {
+        localStorage.setItem("usuarioId", payload.id.toString());
         console.log("✅ Usuario ID extraído y guardado:", payload.id);
       } else {
-        console.error("❌ Error: usuarioId no está presente en el token.");
+        console.warn("⚠️ usuarioId no está presente en el token. Puede haber un problema en el backend.");
       }
     } catch (error) {
       console.error("❌ Error al obtener usuarioId desde el token:", error);
     }
 
-    localStorage.setItem("accessToken", newAccessToken);
-    sessionStorage.setItem("refreshToken", newRefreshToken);
-    setIsAuthenticated(true);
+    try {
+      // 🔥 Guardar tokens en localStorage y sessionStorage con verificaciones
+      localStorage.setItem("accessToken", newAccessToken);
 
+      if (newRefreshToken) {
+        sessionStorage.setItem("refreshToken", newRefreshToken);
+        console.log("✅ RefreshToken guardado correctamente.");
+      } else {
+        console.warn("⚠️ No se proporcionó un RefreshToken válido.");
+      }
+
+      console.log("📌 Refresh token en sessionStorage después de guardarlo:", sessionStorage.getItem("refreshToken"));
+    } catch (error) {
+      console.error("❌ Error al guardar tokens en almacenamiento:", error);
+    }
+
+    setIsAuthenticated(true);
     console.log("✅ Inicio de sesión completado.");
   };
 
   // Cerrar sesión
-  const logout = () => {
-    setAccessToken(null);
-    setRefreshTokenValue(null);
-    setIsAuthenticated(false);
-    localStorage.removeItem("accessToken");
-    sessionStorage.removeItem("refreshToken");
-    console.log("Sesión cerrada correctamente.");
+  const logout = async () => {
+    try {
+      const usuarioId = localStorage.getItem("usuarioId"); // 🔥 Obtiene el usuarioId almacenado
+
+      if (usuarioId) {
+        console.log("🚪 Enviando solicitud de cierre de sesión al backend...");
+
+        const response = await fetch(`${API_URL}/singout`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: usuarioId }),
+        });
+
+        if (!response.ok) {
+          console.error(`❌ Error al cerrar sesión en el backend: ${response.status} - ${response.statusText}`);
+          return; // 🔥 Evitamos limpiar el frontend si hay un error en el backend
+        }
+
+        const data = await response.json();
+        console.log("✅ Sesión cerrada correctamente en el backend:", data.message);
+      }
+
+      // 🔥 Eliminamos el `refreshToken` localmente después de confirmar el cierre en el backend
+      sessionStorage.removeItem("refreshToken");
+      console.log("🔄 Eliminado refreshToken antes de cerrar sesión.");
+
+      // 🔥 Limpieza final de los tokens y autenticación local
+      setAccessToken(null);
+      setRefreshTokenValue(null);
+      setIsAuthenticated(false);
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("usuarioId");
+
+      console.log("✅ Sesión cerrada correctamente en el frontend.");
+    } catch (error) {
+      console.error("❌ Error al procesar la solicitud de cierre de sesión:", error);
+    }
   };
 
   return (

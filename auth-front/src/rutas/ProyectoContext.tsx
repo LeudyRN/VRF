@@ -1,11 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-
 import { Proyecto } from "../rutas/Dashboard";
-
-interface ProyectoContextType {
-  proyectoActivo: Proyecto | null;
-  setProyectoActivo: (proyecto: Proyecto | null) => void;
-}
 
 interface ProyectoContextType {
   proyectoActivo: Proyecto | null;
@@ -37,12 +31,7 @@ export const ProyectoProvider = ({ children }: ProyectoProviderProps) => {
     console.log("🔄 Proyecto activo actualizado:", proyectoActivo);
 
     if (proyectoActivo) {
-      const proyectoSeguro = {
-        ...proyectoActivo,
-        data: proyectoActivo.data ?? {}, // 🔹 Si `data` es undefined, usa un objeto vacío `{}`.
-      };
-
-      localStorage.setItem("proyectoActivo", JSON.stringify(proyectoSeguro));
+      localStorage.setItem("proyectoActivo", JSON.stringify(proyectoActivo));
     } else {
       localStorage.removeItem("proyectoActivo");
     }
@@ -60,5 +49,5 @@ export const useProyecto = () => {
   if (!context) {
     throw new Error("useProyecto debe ser usado dentro de un ProyectoProvider.");
   }
-  return context;
+  return context; // 🔥 Ahora devuelve `proyectoActivo` y `setProyectoActivo`
 };

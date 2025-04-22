@@ -92,15 +92,27 @@ async function processPayment(cardNumber, expiryDate, cvv, amount) {
 router.post("/register-card", verifyToken, validateCardData, async (req, res) => {
   const { userId, cardNumber, expiryDate, cvv } = req.body;
 
+  if (!userId || !cardNumber || !expiryDate || !cvv) {
+    return res.status(400).json({ error: "Datos incompletos para registrar la tarjeta." });
+  }
+
+  const connection = await pool.getConnection();
+  await connection.beginTransaction();
+
   try {
-    const [[userResult]] = await pool.query("SELECT email_verified, tarjeta_registrada FROM usuarios WHERE id = ?", [userId]);
+    const [[userResult]] = await connection.query(
+      "SELECT email_verified, tarjeta_registrada FROM usuarios WHERE id = ?",
+      [userId]
+    );
 
     if (!userResult) {
       return res.status(404).json({ error: "Usuario no encontrado." });
     }
+
     if (!userResult.email_verified) {
       return res.status(403).json({ error: "Debes confirmar tu correo antes de registrar una tarjeta." });
     }
+
     if (userResult.tarjeta_registrada) {
       return res.status(400).json({ error: "El usuario ya tiene una tarjeta registrada." });
     }
@@ -108,16 +120,20 @@ router.post("/register-card", verifyToken, validateCardData, async (req, res) =>
     const { encrypted, iv } = encryptCardNumber(cardNumber);
     const hashedCvv = await hashCvv(cvv);
 
-    await pool.query(
+    await connection.query(
       "INSERT INTO credit_cards (user_id, card_number, expiry_date, cvv, iv) VALUES (?, ?, ?, ?, ?)",
       [userId, encrypted, expiryDate, hashedCvv, iv]
     );
 
-    await pool.query("UPDATE usuarios SET tarjeta_registrada = 1 WHERE id = ?", [userId]);
+    await connection.query("UPDATE usuarios SET tarjeta_registrada = 1 WHERE id = ?", [userId]);
 
+    await connection.commit();
+    connection.release();
     return res.status(201).json({ message: "Tarjeta registrada exitosamente." });
 
   } catch (error) {
+    await connection.rollback();
+    connection.release();
     console.error("Error registrando tarjeta:", error.message);
     return res.status(500).json({ error: "Error interno del servidor.", details: error.message });
   }

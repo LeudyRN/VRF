@@ -16,7 +16,7 @@ const generateAccessToken = (userId, usuario) => {
 // Generar Refresh Token
 const generateRefreshToken = (userId, usuario) => {
   return jwt.sign({ id: userId, usuario }, process.env.REFRESH_TOKEN_SECRET, {
-    expiresIn: "7d", // Duración de 7 días
+    expiresIn: "15m", // Duración de 7 días
   });
 };
 
