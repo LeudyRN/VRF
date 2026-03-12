@@ -1,10 +1,10 @@
 {
-  "dependencies": {
-    "bcryptjs": "^3.0.2",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
-    "express": "^4.21.2",
-    "jsonwebtoken": "^9.0.2",
-    "mysql2": "^3.13.0"
+  "name": "vrf-engineering-platform",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "install:all": "echo 'Dependencies already bundled in repository'",
+    "dev": "bash -c 'npm run dev --prefix backend & npm run dev --prefix auth-front & wait'",
+    "build": "npm run build --prefix auth-front"
   }
 }

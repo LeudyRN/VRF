@@ -1,0 +1,2016 @@
+{
+  "equipmentTypes": [
+    {
+      "id": 1,
+      "code": "GX-VRF",
+      "category": "OUTDOOR"
+    },
+    {
+      "id": 2,
+      "code": "GX-Cassette",
+      "category": "INDOOR"
+    },
+    {
+      "id": 3,
+      "code": "GX-Duct",
+      "category": "INDOOR"
+    },
+    {
+      "id": 4,
+      "code": "GX-Branch",
+      "category": "BRANCH_CONTROLLER"
+    },
+    {
+      "id": 5,
+      "code": "GX-HR",
+      "category": "HEAT_RECOVERY"
+    },
+    {
+      "id": 6,
+      "code": "GX-Control",
+      "category": "CONTROLLER"
+    }
+  ],
+  "equipment": [
+    {
+      "id": 1,
+      "name": "GX-Cassette-2_5 Indoor Unit",
+      "typeId": 2,
+      "coolingCapacityKw": 2.5,
+      "heatingCapacityKw": 2.7,
+      "powerKw": 0.96,
+      "voltage": 460,
+      "weightKg": 13.5,
+      "dimensions": {
+        "width": 936,
+        "height": 912,
+        "depth": 832
+      },
+      "efficiency": 2.96,
+      "noiseLevelDb": 43.4,
+      "estimatedPrice": 791.06
+    },
+    {
+      "id": 2,
+      "name": "GX-VRF-89_8 Outdoor Unit",
+      "typeId": 1,
+      "coolingCapacityKw": 89.8,
+      "heatingCapacityKw": 94.3,
+      "powerKw": 26.23,
+      "voltage": 230,
+      "weightKg": 492.4,
+      "dimensions": {
+        "width": 1145,
+        "height": 832,
+        "depth": 765
+      },
+      "efficiency": 3.99,
+      "noiseLevelDb": 52.0,
+      "estimatedPrice": 9383.29
+    },
+    {
+      "id": 3,
+      "name": "GX-Control-0_2 Controller",
+      "typeId": 6,
+      "coolingCapacityKw": 0.2,
+      "heatingCapacityKw": 0.2,
+      "powerKw": 0.05,
+      "voltage": 220,
+      "weightKg": 1.1,
+      "dimensions": {
+        "width": 676,
+        "height": 433,
+        "depth": 301
+      },
+      "efficiency": 4.71,
+      "noiseLevelDb": 36.9,
+      "estimatedPrice": 687.62
+    },
+    {
+      "id": 4,
+      "name": "GX-HR-44_8 Heat Recovery",
+      "typeId": 5,
+      "coolingCapacityKw": 44.8,
+      "heatingCapacityKw": 46.2,
+      "powerKw": 13.41,
+      "voltage": 230,
+      "weightKg": 173.2,
+      "dimensions": {
+        "width": 1145,
+        "height": 402,
+        "depth": 777
+      },
+      "efficiency": 2.98,
+      "noiseLevelDb": 45.8,
+      "estimatedPrice": 4854.71
+    },
+    {
+      "id": 5,
+      "name": "GX-Duct-7_6 Indoor Unit",
+      "typeId": 3,
+      "coolingCapacityKw": 7.6,
+      "heatingCapacityKw": 8.0,
+      "powerKw": 2.04,
+      "voltage": 220,
+      "weightKg": 33.2,
+      "dimensions": {
+        "width": 903,
+        "height": 250,
+        "depth": 474
+      },
+      "efficiency": 4.32,
+      "noiseLevelDb": 33.7,
+      "estimatedPrice": 1056.75
+    },
+    {
+      "id": 6,
+      "name": "GX-VRF-84_2 Outdoor Unit",
+      "typeId": 1,
+      "coolingCapacityKw": 84.2,
+      "heatingCapacityKw": 90.8,
+      "powerKw": 19.84,
+      "voltage": 220,
+      "weightKg": 225.0,
+      "dimensions": {
+        "width": 1051,
+        "height": 1012,
+        "depth": 299
+      },
+      "efficiency": 4.32,
+      "noiseLevelDb": 50.9,
+      "estimatedPrice": 8730.26
+    },
+    {
+      "id": 7,
+      "name": "GX-Control-0_1 Controller",
+      "typeId": 6,
+      "coolingCapacityKw": 0.1,
+      "heatingCapacityKw": 0.1,
+      "powerKw": 0.05,
+      "voltage": 460,
+      "weightKg": 0.6,
+      "dimensions": {
+        "width": 708,
+        "height": 1158,
+        "depth": 330
+      },
+      "efficiency": 4.19,
+      "noiseLevelDb": 52.5,
+      "estimatedPrice": 662.61
+    },
+    {
+      "id": 8,
+      "name": "GX-Branch-58_8 Branch Controller",
+      "typeId": 4,
+      "coolingCapacityKw": 58.8,
+      "heatingCapacityKw": 65.7,
+      "powerKw": 17.74,
+      "voltage": 230,
+      "weightKg": 304.6,
+      "dimensions": {
+        "width": 1374,
+        "height": 313,
+        "depth": 706
+      },
+      "efficiency": 3.54,
+      "noiseLevelDb": 39.4,
+      "estimatedPrice": 6211.09
+    },
+    {
+      "id": 9,
+      "name": "GX-Duct-13_9 Indoor Unit",
+      "typeId": 3,
+      "coolingCapacityKw": 13.9,
+      "heatingCapacityKw": 14.5,
+      "powerKw": 4.57,
+      "voltage": 400,
+      "weightKg": 58.7,
+      "dimensions": {
+        "width": 799,
+        "height": 699,
+        "depth": 487
+      },
+      "efficiency": 3.52,
+      "noiseLevelDb": 27.0,
+      "estimatedPrice": 1364.5
+    },
+    {
+      "id": 10,
+      "name": "GX-HR-28_8 Heat Recovery",
+      "typeId": 5,
+      "coolingCapacityKw": 28.8,
+      "heatingCapacityKw": 33.0,
+      "powerKw": 7.13,
+      "voltage": 208,
+      "weightKg": 158.6,
+      "dimensions": {
+        "width": 1198,
+        "height": 819,
+        "depth": 523
+      },
+      "efficiency": 3.64,
+      "noiseLevelDb": 34.7,
+      "estimatedPrice": 3453.19
+    },
+    {
+      "id": 11,
+      "name": "GX-Duct-13_8 Indoor Unit",
+      "typeId": 3,
+      "coolingCapacityKw": 13.8,
+      "heatingCapacityKw": 15.5,
+      "powerKw": 3.14,
+      "voltage": 380,
+      "weightKg": 46.7,
+      "dimensions": {
+        "width": 1432,
+        "height": 537,
+        "depth": 544
+      },
+      "efficiency": 3.5,
+      "noiseLevelDb": 60.0,
+      "estimatedPrice": 1393.58
+    },
+    {
+      "id": 12,
+      "name": "GX-Branch-51_1 Branch Controller",
+      "typeId": 4,
+      "coolingCapacityKw": 51.1,
+      "heatingCapacityKw": 56.6,
+      "powerKw": 12.49,
+      "voltage": 208,
+      "weightKg": 258.8,
+      "dimensions": {
+        "width": 926,
+        "height": 902,
+        "depth": 387
+      },
+      "efficiency": 4.67,
+      "noiseLevelDb": 27.0,
+      "estimatedPrice": 5598.47
+    },
+    {
+      "id": 13,
+      "name": "GX-Control-0_2 Controller",
+      "typeId": 6,
+      "coolingCapacityKw": 0.2,
+      "heatingCapacityKw": 0.2,
+      "powerKw": 0.06,
+      "voltage": 460,
+      "weightKg": 0.8,
+      "dimensions": {
+        "width": 719,
+        "height": 500,
+        "depth": 669
+      },
+      "efficiency": 4.79,
+      "noiseLevelDb": 36.4,
+      "estimatedPrice": 726.1
+    },
+    {
+      "id": 14,
+      "name": "GX-HR-37_8 Heat Recovery",
+      "typeId": 5,
+      "coolingCapacityKw": 37.8,
+      "heatingCapacityKw": 41.6,
+      "powerKw": 10.68,
+      "voltage": 460,
+      "weightKg": 158.3,
+      "dimensions": {
+        "width": 1252,
+        "height": 1028,
+        "depth": 724
+      },
+      "efficiency": 4.31,
+      "noiseLevelDb": 52.1,
+      "estimatedPrice": 4516.49
+    },
+    {
+      "id": 15,
+      "name": "GX-Control-0_2 Controller",
+      "typeId": 6,
+      "coolingCapacityKw": 0.2,
+      "heatingCapacityKw": 0.2,
+      "powerKw": 0.08,
+      "voltage": 460,
+      "weightKg": 0.8,
+      "dimensions": {
+        "width": 827,
+        "height": 311,
+        "depth": 720
+      },
+      "efficiency": 3.31,
+      "noiseLevelDb": 32.8,
+      "estimatedPrice": 567.04
+    },
+    {
+      "id": 16,
+      "name": "GX-VRF-117_5 Outdoor Unit",
+      "typeId": 1,
+      "coolingCapacityKw": 117.5,
+      "heatingCapacityKw": 125.1,
+      "powerKw": 29.77,
+      "voltage": 460,
+      "weightKg": 617.2,
+      "dimensions": {
+        "width": 1554,
+        "height": 1140,
+        "depth": 356
+      },
+      "efficiency": 3.65,
+      "noiseLevelDb": 58.0,
+      "estimatedPrice": 11944.0
+    },
+    {
+      "id": 17,
+      "name": "GX-Branch-30_2 Branch Controller",
+      "typeId": 4,
+      "coolingCapacityKw": 30.2,
+      "heatingCapacityKw": 35.4,
+      "powerKw": 7.39,
+      "voltage": 208,
+      "weightKg": 88.1,
+      "dimensions": {
+        "width": 683,
+        "height": 456,
+        "depth": 225
+      },
+      "efficiency": 3.94,
+      "noiseLevelDb": 49.6,
+      "estimatedPrice": 3464.02
+    },
+    {
+      "id": 18,
+      "name": "GX-VRF-30_2 Outdoor Unit",
+      "typeId": 1,
+      "coolingCapacityKw": 30.2,
+      "heatingCapacityKw": 32.3,
+      "powerKw": 8.76,
+      "voltage": 400,
+      "weightKg": 159.5,
+      "dimensions": {
+        "width": 1363,
+        "height": 410,
+        "depth": 356
+      },
+      "efficiency": 4.64,
+      "noiseLevelDb": 27.8,
+      "estimatedPrice": 3587.6
+    },
+    {
+      "id": 19,
+      "name": "GX-Duct-4_9 Indoor Unit",
+      "typeId": 3,
+      "coolingCapacityKw": 4.9,
+      "heatingCapacityKw": 5.6,
+      "powerKw": 1.47,
+      "voltage": 230,
+      "weightKg": 19.6,
+      "dimensions": {
+        "width": 1078,
+        "height": 866,
+        "depth": 597
+      },
+      "efficiency": 4.18,
+      "noiseLevelDb": 65.7,
+      "estimatedPrice": 1006.83
+    },
+    {
+      "id": 20,
+      "name": "GX-Duct-10_8 Indoor Unit",
+      "typeId": 3,
+      "coolingCapacityKw": 10.8,
+      "heatingCapacityKw": 12.7,
+      "powerKw": 3.44,
+      "voltage": 230,
+      "weightKg": 58.6,
+      "dimensions": {
+        "width": 1422,
+        "height": 543,
+        "depth": 219
+      },
+      "efficiency": 3.94,
+      "noiseLevelDb": 36.2,
+      "estimatedPrice": 1210.27
+    },
+    {
+      "id": 21,
+      "name": "GX-VRF-33_4 Outdoor Unit",
+      "typeId": 1,
+      "coolingCapacityKw": 33.4,
+      "heatingCapacityKw": 35.0,
+      "powerKw": 8.4,
+      "voltage": 220,
+      "weightKg": 167.6,
+      "dimensions": {
+        "width": 974,
+        "height": 289,
+        "depth": 539
+      },
+      "efficiency": 4.58,
+      "noiseLevelDb": 68.0,
+      "estimatedPrice": 3867.9
+    },
+    {
+      "id": 22,
+      "name": "GX-VRF-85_6 Outdoor Unit",
+      "typeId": 1,
+      "coolingCapacityKw": 85.6,
+      "heatingCapacityKw": 87.8,
+      "powerKw": 29.22,
+      "voltage": 460,
+      "weightKg": 484.6,
+      "dimensions": {
+        "width": 872,
+        "height": 1168,
+        "depth": 537
+      },
+      "efficiency": 2.87,
+      "noiseLevelDb": 46.8,
+      "estimatedPrice": 8804.1
+    },
+    {
+      "id": 23,
+      "name": "GX-VRF-62_8 Outdoor Unit",
+      "typeId": 1,
+      "coolingCapacityKw": 62.8,
+      "heatingCapacityKw": 64.9,
+      "powerKw": 20.66,
+      "voltage": 220,
+      "weightKg": 208.3,
+      "dimensions": {
+        "width": 696,
+        "height": 439,
+        "depth": 710
+      },
+      "efficiency": 3.32,
+      "noiseLevelDb": 65.9,
+      "estimatedPrice": 6559.35
+    },
+    {
+      "id": 24,
+      "name": "GX-VRF-88_8 Outdoor Unit",
+      "typeId": 1,
+      "coolingCapacityKw": 88.8,
+      "heatingCapacityKw": 99.7,
+      "powerKw": 25.01,
+      "voltage": 460,
+      "weightKg": 489.7,
+      "dimensions": {
+        "width": 749,
+        "height": 982,
+        "depth": 687
+      },
+      "efficiency": 4.63,
+      "noiseLevelDb": 59.4,
+      "estimatedPrice": 9268.49
+    },
+    {
+      "id": 25,
+      "name": "GX-Cassette-10_0 Indoor Unit",
+      "typeId": 2,
+      "coolingCapacityKw": 10.0,
+      "heatingCapacityKw": 10.5,
+      "powerKw": 2.57,
+      "voltage": 208,
+      "weightKg": 32.5,
+      "dimensions": {
+        "width": 913,
+        "height": 1194,
+        "depth": 611
+      },
+      "efficiency": 4.66,
+      "noiseLevelDb": 33.8,
+      "estimatedPrice": 1362.52
+    },
+    {
+      "id": 26,
+      "name": "GX-VRF-37_8 Outdoor Unit",
+      "typeId": 1,
+      "coolingCapacityKw": 37.8,
+      "heatingCapacityKw": 43.3,
+      "powerKw": 11.96,
+      "voltage": 460,
+      "weightKg": 114.7,
+      "dimensions": {
+        "width": 1131,
+        "height": 244,
+        "depth": 269
+      },
+      "efficiency": 3.78,
+      "noiseLevelDb": 34.7,
+      "estimatedPrice": 4176.84
+    },
+    {
+      "id": 27,
+      "name": "GX-VRF-38_1 Outdoor Unit",
+      "typeId": 1,
+      "coolingCapacityKw": 38.1,
+      "heatingCapacityKw": 42.1,
+      "powerKw": 10.97,
+      "voltage": 208,
+      "weightKg": 109.8,
+      "dimensions": {
+        "width": 837,
+        "height": 841,
+        "depth": 887
+      },
+      "efficiency": 4.79,
+      "noiseLevelDb": 48.8,
+      "estimatedPrice": 4512.64
+    },
+    {
+      "id": 28,
+      "name": "GX-VRF-112_6 Outdoor Unit",
+      "typeId": 1,
+      "coolingCapacityKw": 112.6,
+      "heatingCapacityKw": 118.4,
+      "powerKw": 33.94,
+      "voltage": 208,
+      "weightKg": 446.9,
+      "dimensions": {
+        "width": 1535,
+        "height": 912,
+        "depth": 712
+      },
+      "efficiency": 3.47,
+      "noiseLevelDb": 33.0,
+      "estimatedPrice": 11597.78
+    },
+    {
+      "id": 29,
+      "name": "GX-Branch-23_3 Branch Controller",
+      "typeId": 4,
+      "coolingCapacityKw": 23.3,
+      "heatingCapacityKw": 24.3,
+      "powerKw": 6.17,
+      "voltage": 460,
+      "weightKg": 92.3,
+      "dimensions": {
+        "width": 774,
+        "height": 228,
+        "depth": 416
+      },
+      "efficiency": 4.72,
+      "noiseLevelDb": 63.0,
+      "estimatedPrice": 2887.52
+    },
+    {
+      "id": 30,
+      "name": "GX-HR-28_8 Heat Recovery",
+      "typeId": 5,
+      "coolingCapacityKw": 28.8,
+      "heatingCapacityKw": 29.6,
+      "powerKw": 9.34,
+      "voltage": 208,
+      "weightKg": 127.2,
+      "dimensions": {
+        "width": 1449,
+        "height": 709,
+        "depth": 413
+      },
+      "efficiency": 2.87,
+      "noiseLevelDb": 66.1,
+      "estimatedPrice": 3346.2
+    },
+    {
+      "id": 31,
+      "name": "GX-HR-38_3 Heat Recovery",
+      "typeId": 5,
+      "coolingCapacityKw": 38.3,
+      "heatingCapacityKw": 43.5,
+      "powerKw": 11.48,
+      "voltage": 380,
+      "weightKg": 127.1,
+      "dimensions": {
+        "width": 1366,
+        "height": 665,
+        "depth": 694
+      },
+      "efficiency": 4.77,
+      "noiseLevelDb": 46.6,
+      "estimatedPrice": 4508.27
+    },
+    {
+      "id": 32,
+      "name": "GX-Duct-2_7 Indoor Unit",
+      "typeId": 3,
+      "coolingCapacityKw": 2.7,
+      "heatingCapacityKw": 3.1,
+      "powerKw": 0.96,
+      "voltage": 208,
+      "weightKg": 15.4,
+      "dimensions": {
+        "width": 1064,
+        "height": 1171,
+        "depth": 445
+      },
+      "efficiency": 4.5,
+      "noiseLevelDb": 45.1,
+      "estimatedPrice": 917.11
+    },
+    {
+      "id": 33,
+      "name": "GX-VRF-113_4 Outdoor Unit",
+      "typeId": 1,
+      "coolingCapacityKw": 113.4,
+      "heatingCapacityKw": 123.0,
+      "powerKw": 31.56,
+      "voltage": 220,
+      "weightKg": 550.6,
+      "dimensions": {
+        "width": 1391,
+        "height": 1101,
+        "depth": 552
+      },
+      "efficiency": 4.83,
+      "noiseLevelDb": 56.3,
+      "estimatedPrice": 11753.02
+    },
+    {
+      "id": 34,
+      "name": "GX-Duct-11_1 Indoor Unit",
+      "typeId": 3,
+      "coolingCapacityKw": 11.1,
+      "heatingCapacityKw": 12.5,
+      "powerKw": 2.68,
+      "voltage": 220,
+      "weightKg": 40.8,
+      "dimensions": {
+        "width": 1422,
+        "height": 561,
+        "depth": 317
+      },
+      "efficiency": 4.76,
+      "noiseLevelDb": 62.0,
+      "estimatedPrice": 1329.72
+    },
+    {
+      "id": 35,
+      "name": "GX-Duct-7_1 Indoor Unit",
+      "typeId": 3,
+      "coolingCapacityKw": 7.1,
+      "heatingCapacityKw": 8.1,
+      "powerKw": 2.13,
+      "voltage": 230,
+      "weightKg": 41.6,
+      "dimensions": {
+        "width": 1176,
+        "height": 835,
+        "depth": 219
+      },
+      "efficiency": 2.91,
+      "noiseLevelDb": 45.5,
+      "estimatedPrice": 915.26
+    },
+    {
+      "id": 36,
+      "name": "GX-Cassette-10_0 Indoor Unit",
+      "typeId": 2,
+      "coolingCapacityKw": 10.0,
+      "heatingCapacityKw": 11.0,
+      "powerKw": 3.13,
+      "voltage": 460,
+      "weightKg": 28.6,
+      "dimensions": {
+        "width": 1328,
+        "height": 315,
+        "depth": 677
+      },
+      "efficiency": 2.98,
+      "noiseLevelDb": 50.4,
+      "estimatedPrice": 1098.8
+    },
+    {
+      "id": 37,
+      "name": "GX-Branch-34_7 Branch Controller",
+      "typeId": 4,
+      "coolingCapacityKw": 34.7,
+      "heatingCapacityKw": 36.8,
+      "powerKw": 13.33,
+      "voltage": 208,
+      "weightKg": 122.3,
+      "dimensions": {
+        "width": 1533,
+        "height": 281,
+        "depth": 363
+      },
+      "efficiency": 4.59,
+      "noiseLevelDb": 64.7,
+      "estimatedPrice": 3982.41
+    },
+    {
+      "id": 38,
+      "name": "GX-Cassette-10_6 Indoor Unit",
+      "typeId": 2,
+      "coolingCapacityKw": 10.6,
+      "heatingCapacityKw": 11.3,
+      "powerKw": 3.68,
+      "voltage": 400,
+      "weightKg": 33.4,
+      "dimensions": {
+        "width": 801,
+        "height": 643,
+        "depth": 558
+      },
+      "efficiency": 4.17,
+      "noiseLevelDb": 65.8,
+      "estimatedPrice": 1251.85
+    },
+    {
+      "id": 39,
+      "name": "GX-Branch-20_2 Branch Controller",
+      "typeId": 4,
+      "coolingCapacityKw": 20.2,
+      "heatingCapacityKw": 23.4,
+      "powerKw": 5.42,
+      "voltage": 400,
+      "weightKg": 83.5,
+      "dimensions": {
+        "width": 690,
+        "height": 264,
+        "depth": 366
+      },
+      "efficiency": 3.39,
+      "noiseLevelDb": 47.7,
+      "estimatedPrice": 2458.0
+    },
+    {
+      "id": 40,
+      "name": "GX-Duct-7_0 Indoor Unit",
+      "typeId": 3,
+      "coolingCapacityKw": 7.0,
+      "heatingCapacityKw": 7.9,
+      "powerKw": 1.99,
+      "voltage": 208,
+      "weightKg": 32.0,
+      "dimensions": {
+        "width": 911,
+        "height": 497,
+        "depth": 834
+      },
+      "efficiency": 3.85,
+      "noiseLevelDb": 66.8,
+      "estimatedPrice": 1044.4
+    },
+    {
+      "id": 41,
+      "name": "GX-Duct-13_3 Indoor Unit",
+      "typeId": 3,
+      "coolingCapacityKw": 13.3,
+      "heatingCapacityKw": 13.6,
+      "powerKw": 2.99,
+      "voltage": 230,
+      "weightKg": 74.8,
+      "dimensions": {
+        "width": 1177,
+        "height": 1010,
+        "depth": 555
+      },
+      "efficiency": 3.75,
+      "noiseLevelDb": 34.2,
+      "estimatedPrice": 1451.44
+    },
+    {
+      "id": 42,
+      "name": "GX-HR-70_8 Heat Recovery",
+      "typeId": 5,
+      "coolingCapacityKw": 70.8,
+      "heatingCapacityKw": 73.5,
+      "powerKw": 17.39,
+      "voltage": 208,
+      "weightKg": 438.3,
+      "dimensions": {
+        "width": 1026,
+        "height": 1199,
+        "depth": 520
+      },
+      "efficiency": 4.87,
+      "noiseLevelDb": 40.9,
+      "estimatedPrice": 7608.9
+    },
+    {
+      "id": 43,
+      "name": "GX-Control-0_1 Controller",
+      "typeId": 6,
+      "coolingCapacityKw": 0.1,
+      "heatingCapacityKw": 0.1,
+      "powerKw": 0.05,
+      "voltage": 380,
+      "weightKg": 0.4,
+      "dimensions": {
+        "width": 1097,
+        "height": 698,
+        "depth": 399
+      },
+      "efficiency": 3.56,
+      "noiseLevelDb": 61.0,
+      "estimatedPrice": 606.6
+    },
+    {
+      "id": 44,
+      "name": "GX-Duct-5_9 Indoor Unit",
+      "typeId": 3,
+      "coolingCapacityKw": 5.9,
+      "heatingCapacityKw": 6.6,
+      "powerKw": 1.62,
+      "voltage": 460,
+      "weightKg": 15.8,
+      "dimensions": {
+        "width": 1449,
+        "height": 389,
+        "depth": 724
+      },
+      "efficiency": 3.14,
+      "noiseLevelDb": 31.1,
+      "estimatedPrice": 920.52
+    },
+    {
+      "id": 45,
+      "name": "GX-VRF-30_2 Outdoor Unit",
+      "typeId": 1,
+      "coolingCapacityKw": 30.2,
+      "heatingCapacityKw": 32.3,
+      "powerKw": 7.59,
+      "voltage": 380,
+      "weightKg": 148.7,
+      "dimensions": {
+        "width": 635,
+        "height": 1118,
+        "depth": 273
+      },
+      "efficiency": 3.6,
+      "noiseLevelDb": 49.8,
+      "estimatedPrice": 3481.68
+    },
+    {
+      "id": 46,
+      "name": "GX-Control-0_2 Controller",
+      "typeId": 6,
+      "coolingCapacityKw": 0.2,
+      "heatingCapacityKw": 0.2,
+      "powerKw": 0.07,
+      "voltage": 208,
+      "weightKg": 1.2,
+      "dimensions": {
+        "width": 1386,
+        "height": 1012,
+        "depth": 331
+      },
+      "efficiency": 4.75,
+      "noiseLevelDb": 52.6,
+      "estimatedPrice": 766.85
+    },
+    {
+      "id": 47,
+      "name": "GX-Cassette-4_1 Indoor Unit",
+      "typeId": 2,
+      "coolingCapacityKw": 4.1,
+      "heatingCapacityKw": 4.5,
+      "powerKw": 1.13,
+      "voltage": 220,
+      "weightKg": 18.1,
+      "dimensions": {
+        "width": 1149,
+        "height": 516,
+        "depth": 840
+      },
+      "efficiency": 4.09,
+      "noiseLevelDb": 42.1,
+      "estimatedPrice": 939.01
+    },
+    {
+      "id": 48,
+      "name": "GX-HR-60_1 Heat Recovery",
+      "typeId": 5,
+      "coolingCapacityKw": 60.1,
+      "heatingCapacityKw": 65.0,
+      "powerKw": 22.38,
+      "voltage": 460,
+      "weightKg": 166.2,
+      "dimensions": {
+        "width": 705,
+        "height": 683,
+        "depth": 610
+      },
+      "efficiency": 3.12,
+      "noiseLevelDb": 49.1,
+      "estimatedPrice": 6300.63
+    },
+    {
+      "id": 49,
+      "name": "GX-Cassette-4_5 Indoor Unit",
+      "typeId": 2,
+      "coolingCapacityKw": 4.5,
+      "heatingCapacityKw": 4.9,
+      "powerKw": 1.49,
+      "voltage": 230,
+      "weightKg": 16.1,
+      "dimensions": {
+        "width": 996,
+        "height": 887,
+        "depth": 711
+      },
+      "efficiency": 4.01,
+      "noiseLevelDb": 61.1,
+      "estimatedPrice": 985.53
+    },
+    {
+      "id": 50,
+      "name": "GX-Duct-2_8 Indoor Unit",
+      "typeId": 3,
+      "coolingCapacityKw": 2.8,
+      "heatingCapacityKw": 3.2,
+      "powerKw": 0.63,
+      "voltage": 220,
+      "weightKg": 13.8,
+      "dimensions": {
+        "width": 1316,
+        "height": 1143,
+        "depth": 848
+      },
+      "efficiency": 4.19,
+      "noiseLevelDb": 28.6,
+      "estimatedPrice": 1071.89
+    },
+    {
+      "id": 51,
+      "name": "GX-Branch-43_5 Branch Controller",
+      "typeId": 4,
+      "coolingCapacityKw": 43.5,
+      "heatingCapacityKw": 48.2,
+      "powerKw": 13.24,
+      "voltage": 400,
+      "weightKg": 261.6,
+      "dimensions": {
+        "width": 1131,
+        "height": 542,
+        "depth": 463
+      },
+      "efficiency": 3.62,
+      "noiseLevelDb": 66.2,
+      "estimatedPrice": 4759.65
+    },
+    {
+      "id": 52,
+      "name": "GX-Control-0_1 Controller",
+      "typeId": 6,
+      "coolingCapacityKw": 0.1,
+      "heatingCapacityKw": 0.1,
+      "powerKw": 0.05,
+      "voltage": 208,
+      "weightKg": 0.6,
+      "dimensions": {
+        "width": 763,
+        "height": 494,
+        "depth": 213
+      },
+      "efficiency": 4.75,
+      "noiseLevelDb": 60.0,
+      "estimatedPrice": 680.56
+    },
+    {
+      "id": 53,
+      "name": "GX-Duct-11_1 Indoor Unit",
+      "typeId": 3,
+      "coolingCapacityKw": 11.1,
+      "heatingCapacityKw": 13.0,
+      "powerKw": 3.76,
+      "voltage": 460,
+      "weightKg": 45.0,
+      "dimensions": {
+        "width": 1477,
+        "height": 657,
+        "depth": 480
+      },
+      "efficiency": 4.36,
+      "noiseLevelDb": 43.7,
+      "estimatedPrice": 1342.95
+    },
+    {
+      "id": 54,
+      "name": "GX-Branch-46_9 Branch Controller",
+      "typeId": 4,
+      "coolingCapacityKw": 46.9,
+      "heatingCapacityKw": 48.8,
+      "powerKw": 11.34,
+      "voltage": 208,
+      "weightKg": 235.4,
+      "dimensions": {
+        "width": 785,
+        "height": 557,
+        "depth": 204
+      },
+      "efficiency": 3.27,
+      "noiseLevelDb": 62.5,
+      "estimatedPrice": 4989.26
+    },
+    {
+      "id": 55,
+      "name": "GX-VRF-112_7 Outdoor Unit",
+      "typeId": 1,
+      "coolingCapacityKw": 112.7,
+      "heatingCapacityKw": 124.4,
+      "powerKw": 27.67,
+      "voltage": 220,
+      "weightKg": 557.9,
+      "dimensions": {
+        "width": 679,
+        "height": 1038,
+        "depth": 841
+      },
+      "efficiency": 2.93,
+      "noiseLevelDb": 59.5,
+      "estimatedPrice": 11401.78
+    },
+    {
+      "id": 56,
+      "name": "GX-Cassette-4_1 Indoor Unit",
+      "typeId": 2,
+      "coolingCapacityKw": 4.1,
+      "heatingCapacityKw": 4.5,
+      "powerKw": 1.13,
+      "voltage": 230,
+      "weightKg": 24.9,
+      "dimensions": {
+        "width": 1140,
+        "height": 1062,
+        "depth": 247
+      },
+      "efficiency": 3.71,
+      "noiseLevelDb": 67.2,
+      "estimatedPrice": 851.26
+    },
+    {
+      "id": 57,
+      "name": "GX-Duct-7_0 Indoor Unit",
+      "typeId": 3,
+      "coolingCapacityKw": 7.0,
+      "heatingCapacityKw": 7.8,
+      "powerKw": 1.6,
+      "voltage": 230,
+      "weightKg": 27.4,
+      "dimensions": {
+        "width": 1292,
+        "height": 350,
+        "depth": 793
+      },
+      "efficiency": 2.97,
+      "noiseLevelDb": 38.0,
+      "estimatedPrice": 951.65
+    },
+    {
+      "id": 58,
+      "name": "GX-HR-84_3 Heat Recovery",
+      "typeId": 5,
+      "coolingCapacityKw": 84.3,
+      "heatingCapacityKw": 95.0,
+      "powerKw": 31.13,
+      "voltage": 230,
+      "weightKg": 249.3,
+      "dimensions": {
+        "width": 644,
+        "height": 425,
+        "depth": 327
+      },
+      "efficiency": 3.79,
+      "noiseLevelDb": 39.8,
+      "estimatedPrice": 8597.71
+    },
+    {
+      "id": 59,
+      "name": "GX-Control-0_2 Controller",
+      "typeId": 6,
+      "coolingCapacityKw": 0.2,
+      "heatingCapacityKw": 0.2,
+      "powerKw": 0.05,
+      "voltage": 230,
+      "weightKg": 1.0,
+      "dimensions": {
+        "width": 1153,
+        "height": 982,
+        "depth": 362
+      },
+      "efficiency": 3.38,
+      "noiseLevelDb": 49.1,
+      "estimatedPrice": 618.97
+    },
+    {
+      "id": 60,
+      "name": "GX-Cassette-12_9 Indoor Unit",
+      "typeId": 2,
+      "coolingCapacityKw": 12.9,
+      "heatingCapacityKw": 15.0,
+      "powerKw": 4.1,
+      "voltage": 230,
+      "weightKg": 54.1,
+      "dimensions": {
+        "width": 1205,
+        "height": 662,
+        "depth": 829
+      },
+      "efficiency": 4.55,
+      "noiseLevelDb": 48.7,
+      "estimatedPrice": 1509.83
+    },
+    {
+      "id": 61,
+      "name": "GX-HR-52_3 Heat Recovery",
+      "typeId": 5,
+      "coolingCapacityKw": 52.3,
+      "heatingCapacityKw": 61.6,
+      "powerKw": 13.59,
+      "voltage": 220,
+      "weightKg": 189.7,
+      "dimensions": {
+        "width": 1387,
+        "height": 412,
+        "depth": 717
+      },
+      "efficiency": 4.08,
+      "noiseLevelDb": 55.2,
+      "estimatedPrice": 5694.78
+    },
+    {
+      "id": 62,
+      "name": "GX-VRF-99_7 Outdoor Unit",
+      "typeId": 1,
+      "coolingCapacityKw": 99.7,
+      "heatingCapacityKw": 111.5,
+      "powerKw": 22.29,
+      "voltage": 208,
+      "weightKg": 405.9,
+      "dimensions": {
+        "width": 617,
+        "height": 560,
+        "depth": 870
+      },
+      "efficiency": 4.38,
+      "noiseLevelDb": 49.8,
+      "estimatedPrice": 10202.23
+    },
+    {
+      "id": 63,
+      "name": "GX-Control-0_3 Controller",
+      "typeId": 6,
+      "coolingCapacityKw": 0.3,
+      "heatingCapacityKw": 0.3,
+      "powerKw": 0.08,
+      "voltage": 220,
+      "weightKg": 1.4,
+      "dimensions": {
+        "width": 1182,
+        "height": 1184,
+        "depth": 321
+      },
+      "efficiency": 3.43,
+      "noiseLevelDb": 66.1,
+      "estimatedPrice": 641.35
+    },
+    {
+      "id": 64,
+      "name": "GX-Control-0_2 Controller",
+      "typeId": 6,
+      "coolingCapacityKw": 0.2,
+      "heatingCapacityKw": 0.2,
+      "powerKw": 0.05,
+      "voltage": 230,
+      "weightKg": 0.9,
+      "dimensions": {
+        "width": 1274,
+        "height": 494,
+        "depth": 227
+      },
+      "efficiency": 4.83,
+      "noiseLevelDb": 43.0,
+      "estimatedPrice": 710.57
+    },
+    {
+      "id": 65,
+      "name": "GX-HR-87_5 Heat Recovery",
+      "typeId": 5,
+      "coolingCapacityKw": 87.5,
+      "heatingCapacityKw": 94.5,
+      "powerKw": 25.06,
+      "voltage": 380,
+      "weightKg": 263.2,
+      "dimensions": {
+        "width": 1381,
+        "height": 876,
+        "depth": 716
+      },
+      "efficiency": 4.15,
+      "noiseLevelDb": 51.2,
+      "estimatedPrice": 9199.84
+    },
+    {
+      "id": 66,
+      "name": "GX-Cassette-6_1 Indoor Unit",
+      "typeId": 2,
+      "coolingCapacityKw": 6.1,
+      "heatingCapacityKw": 6.7,
+      "powerKw": 1.78,
+      "voltage": 460,
+      "weightKg": 15.5,
+      "dimensions": {
+        "width": 711,
+        "height": 518,
+        "depth": 202
+      },
+      "efficiency": 4.72,
+      "noiseLevelDb": 30.1,
+      "estimatedPrice": 1006.1
+    },
+    {
+      "id": 67,
+      "name": "GX-Control-0_1 Controller",
+      "typeId": 6,
+      "coolingCapacityKw": 0.1,
+      "heatingCapacityKw": 0.1,
+      "powerKw": 0.05,
+      "voltage": 380,
+      "weightKg": 0.3,
+      "dimensions": {
+        "width": 781,
+        "height": 844,
+        "depth": 249
+      },
+      "efficiency": 4.4,
+      "noiseLevelDb": 64.1,
+      "estimatedPrice": 662.33
+    },
+    {
+      "id": 68,
+      "name": "GX-HR-75_6 Heat Recovery",
+      "typeId": 5,
+      "coolingCapacityKw": 75.6,
+      "heatingCapacityKw": 80.6,
+      "powerKw": 19.52,
+      "voltage": 220,
+      "weightKg": 263.5,
+      "dimensions": {
+        "width": 1471,
+        "height": 709,
+        "depth": 678
+      },
+      "efficiency": 3.37,
+      "noiseLevelDb": 46.2,
+      "estimatedPrice": 7937.65
+    },
+    {
+      "id": 69,
+      "name": "GX-HR-77_4 Heat Recovery",
+      "typeId": 5,
+      "coolingCapacityKw": 77.4,
+      "heatingCapacityKw": 79.0,
+      "powerKw": 19.98,
+      "voltage": 208,
+      "weightKg": 236.8,
+      "dimensions": {
+        "width": 1293,
+        "height": 1047,
+        "depth": 197
+      },
+      "efficiency": 4.56,
+      "noiseLevelDb": 36.8,
+      "estimatedPrice": 8079.01
+    },
+    {
+      "id": 70,
+      "name": "GX-Duct-5_2 Indoor Unit",
+      "typeId": 3,
+      "coolingCapacityKw": 5.2,
+      "heatingCapacityKw": 5.9,
+      "powerKw": 1.2,
+      "voltage": 460,
+      "weightKg": 30.1,
+      "dimensions": {
+        "width": 1280,
+        "height": 533,
+        "depth": 445
+      },
+      "efficiency": 2.83,
+      "noiseLevelDb": 42.1,
+      "estimatedPrice": 824.9
+    },
+    {
+      "id": 71,
+      "name": "GX-Control-0_1 Controller",
+      "typeId": 6,
+      "coolingCapacityKw": 0.1,
+      "heatingCapacityKw": 0.1,
+      "powerKw": 0.05,
+      "voltage": 380,
+      "weightKg": 0.5,
+      "dimensions": {
+        "width": 720,
+        "height": 631,
+        "depth": 403
+      },
+      "efficiency": 3.67,
+      "noiseLevelDb": 52.1,
+      "estimatedPrice": 593.12
+    },
+    {
+      "id": 72,
+      "name": "GX-Control-0_1 Controller",
+      "typeId": 6,
+      "coolingCapacityKw": 0.1,
+      "heatingCapacityKw": 0.1,
+      "powerKw": 0.05,
+      "voltage": 220,
+      "weightKg": 0.5,
+      "dimensions": {
+        "width": 945,
+        "height": 1047,
+        "depth": 448
+      },
+      "efficiency": 3.52,
+      "noiseLevelDb": 50.8,
+      "estimatedPrice": 630.15
+    },
+    {
+      "id": 73,
+      "name": "GX-Branch-55_3 Branch Controller",
+      "typeId": 4,
+      "coolingCapacityKw": 55.3,
+      "heatingCapacityKw": 62.9,
+      "powerKw": 13.48,
+      "voltage": 208,
+      "weightKg": 232.9,
+      "dimensions": {
+        "width": 1164,
+        "height": 1058,
+        "depth": 284
+      },
+      "efficiency": 4.74,
+      "noiseLevelDb": 60.1,
+      "estimatedPrice": 6012.42
+    },
+    {
+      "id": 74,
+      "name": "GX-Branch-48_1 Branch Controller",
+      "typeId": 4,
+      "coolingCapacityKw": 48.1,
+      "heatingCapacityKw": 55.0,
+      "powerKw": 18.42,
+      "voltage": 230,
+      "weightKg": 167.1,
+      "dimensions": {
+        "width": 1550,
+        "height": 792,
+        "depth": 621
+      },
+      "efficiency": 3.66,
+      "noiseLevelDb": 39.4,
+      "estimatedPrice": 5344.2
+    },
+    {
+      "id": 75,
+      "name": "GX-Branch-51_3 Branch Controller",
+      "typeId": 4,
+      "coolingCapacityKw": 51.3,
+      "heatingCapacityKw": 56.1,
+      "powerKw": 15.59,
+      "voltage": 208,
+      "weightKg": 183.1,
+      "dimensions": {
+        "width": 1372,
+        "height": 875,
+        "depth": 735
+      },
+      "efficiency": 3.32,
+      "noiseLevelDb": 51.3,
+      "estimatedPrice": 5650.21
+    },
+    {
+      "id": 76,
+      "name": "GX-VRF-103_3 Outdoor Unit",
+      "typeId": 1,
+      "coolingCapacityKw": 103.3,
+      "heatingCapacityKw": 106.7,
+      "powerKw": 26.07,
+      "voltage": 380,
+      "weightKg": 595.0,
+      "dimensions": {
+        "width": 811,
+        "height": 755,
+        "depth": 552
+      },
+      "efficiency": 4.02,
+      "noiseLevelDb": 52.4,
+      "estimatedPrice": 10522.25
+    },
+    {
+      "id": 77,
+      "name": "GX-Duct-14_9 Indoor Unit",
+      "typeId": 3,
+      "coolingCapacityKw": 14.9,
+      "heatingCapacityKw": 15.5,
+      "powerKw": 4.19,
+      "voltage": 400,
+      "weightKg": 88.8,
+      "dimensions": {
+        "width": 986,
+        "height": 510,
+        "depth": 519
+      },
+      "efficiency": 4.36,
+      "noiseLevelDb": 29.2,
+      "estimatedPrice": 1500.75
+    },
+    {
+      "id": 78,
+      "name": "GX-Control-0_1 Controller",
+      "typeId": 6,
+      "coolingCapacityKw": 0.1,
+      "heatingCapacityKw": 0.1,
+      "powerKw": 0.05,
+      "voltage": 380,
+      "weightKg": 0.3,
+      "dimensions": {
+        "width": 1344,
+        "height": 1084,
+        "depth": 556
+      },
+      "efficiency": 3.25,
+      "noiseLevelDb": 59.6,
+      "estimatedPrice": 676.51
+    },
+    {
+      "id": 79,
+      "name": "GX-Cassette-6_6 Indoor Unit",
+      "typeId": 2,
+      "coolingCapacityKw": 6.6,
+      "heatingCapacityKw": 7.4,
+      "powerKw": 2.11,
+      "voltage": 208,
+      "weightKg": 28.7,
+      "dimensions": {
+        "width": 1268,
+        "height": 430,
+        "depth": 289
+      },
+      "efficiency": 2.86,
+      "noiseLevelDb": 35.2,
+      "estimatedPrice": 868.39
+    },
+    {
+      "id": 80,
+      "name": "GX-HR-27_4 Heat Recovery",
+      "typeId": 5,
+      "coolingCapacityKw": 27.4,
+      "heatingCapacityKw": 32.2,
+      "powerKw": 6.57,
+      "voltage": 208,
+      "weightKg": 94.1,
+      "dimensions": {
+        "width": 1037,
+        "height": 717,
+        "depth": 277
+      },
+      "efficiency": 3.38,
+      "noiseLevelDb": 63.3,
+      "estimatedPrice": 3190.51
+    },
+    {
+      "id": 81,
+      "name": "GX-Control-0_2 Controller",
+      "typeId": 6,
+      "coolingCapacityKw": 0.2,
+      "heatingCapacityKw": 0.2,
+      "powerKw": 0.05,
+      "voltage": 460,
+      "weightKg": 1.1,
+      "dimensions": {
+        "width": 1151,
+        "height": 1137,
+        "depth": 737
+      },
+      "efficiency": 4.11,
+      "noiseLevelDb": 31.2,
+      "estimatedPrice": 802.9
+    },
+    {
+      "id": 82,
+      "name": "GX-Control-0_1 Controller",
+      "typeId": 6,
+      "coolingCapacityKw": 0.1,
+      "heatingCapacityKw": 0.1,
+      "powerKw": 0.05,
+      "voltage": 230,
+      "weightKg": 0.5,
+      "dimensions": {
+        "width": 695,
+        "height": 697,
+        "depth": 573
+      },
+      "efficiency": 3.51,
+      "noiseLevelDb": 46.7,
+      "estimatedPrice": 596.01
+    },
+    {
+      "id": 83,
+      "name": "GX-Duct-2_4 Indoor Unit",
+      "typeId": 3,
+      "coolingCapacityKw": 2.4,
+      "heatingCapacityKw": 2.8,
+      "powerKw": 0.78,
+      "voltage": 220,
+      "weightKg": 7.7,
+      "dimensions": {
+        "width": 624,
+        "height": 1171,
+        "depth": 667
+      },
+      "efficiency": 3.91,
+      "noiseLevelDb": 49.9,
+      "estimatedPrice": 824.84
+    },
+    {
+      "id": 84,
+      "name": "GX-HR-74_8 Heat Recovery",
+      "typeId": 5,
+      "coolingCapacityKw": 74.8,
+      "heatingCapacityKw": 86.4,
+      "powerKw": 24.46,
+      "voltage": 220,
+      "weightKg": 348.8,
+      "dimensions": {
+        "width": 1038,
+        "height": 398,
+        "depth": 214
+      },
+      "efficiency": 3.62,
+      "noiseLevelDb": 56.9,
+      "estimatedPrice": 7677.84
+    },
+    {
+      "id": 85,
+      "name": "GX-Duct-5_4 Indoor Unit",
+      "typeId": 3,
+      "coolingCapacityKw": 5.4,
+      "heatingCapacityKw": 5.8,
+      "powerKw": 1.96,
+      "voltage": 230,
+      "weightKg": 18.2,
+      "dimensions": {
+        "width": 831,
+        "height": 1185,
+        "depth": 310
+      },
+      "efficiency": 4.42,
+      "noiseLevelDb": 32.3,
+      "estimatedPrice": 995.32
+    },
+    {
+      "id": 86,
+      "name": "GX-Cassette-7_4 Indoor Unit",
+      "typeId": 2,
+      "coolingCapacityKw": 7.4,
+      "heatingCapacityKw": 7.8,
+      "powerKw": 2.66,
+      "voltage": 460,
+      "weightKg": 30.9,
+      "dimensions": {
+        "width": 1496,
+        "height": 596,
+        "depth": 334
+      },
+      "efficiency": 3.83,
+      "noiseLevelDb": 47.8,
+      "estimatedPrice": 1044.45
+    },
+    {
+      "id": 87,
+      "name": "GX-Duct-3_5 Indoor Unit",
+      "typeId": 3,
+      "coolingCapacityKw": 3.5,
+      "heatingCapacityKw": 3.6,
+      "powerKw": 0.86,
+      "voltage": 230,
+      "weightKg": 8.9,
+      "dimensions": {
+        "width": 1215,
+        "height": 251,
+        "depth": 833
+      },
+      "efficiency": 3.34,
+      "noiseLevelDb": 42.5,
+      "estimatedPrice": 770.01
+    },
+    {
+      "id": 88,
+      "name": "GX-Branch-52_1 Branch Controller",
+      "typeId": 4,
+      "coolingCapacityKw": 52.1,
+      "heatingCapacityKw": 56.4,
+      "powerKw": 12.51,
+      "voltage": 400,
+      "weightKg": 205.6,
+      "dimensions": {
+        "width": 729,
+        "height": 1110,
+        "depth": 790
+      },
+      "efficiency": 4.25,
+      "noiseLevelDb": 51.3,
+      "estimatedPrice": 5746.28
+    },
+    {
+      "id": 89,
+      "name": "GX-VRF-54_9 Outdoor Unit",
+      "typeId": 1,
+      "coolingCapacityKw": 54.9,
+      "heatingCapacityKw": 59.0,
+      "powerKw": 20.74,
+      "voltage": 380,
+      "weightKg": 236.6,
+      "dimensions": {
+        "width": 791,
+        "height": 952,
+        "depth": 440
+      },
+      "efficiency": 2.88,
+      "noiseLevelDb": 46.7,
+      "estimatedPrice": 5807.75
+    },
+    {
+      "id": 90,
+      "name": "GX-Duct-10_2 Indoor Unit",
+      "typeId": 3,
+      "coolingCapacityKw": 10.2,
+      "heatingCapacityKw": 11.9,
+      "powerKw": 3.19,
+      "voltage": 208,
+      "weightKg": 35.2,
+      "dimensions": {
+        "width": 973,
+        "height": 1015,
+        "depth": 756
+      },
+      "efficiency": 4.32,
+      "noiseLevelDb": 57.5,
+      "estimatedPrice": 1359.66
+    },
+    {
+      "id": 91,
+      "name": "GX-Duct-15_3 Indoor Unit",
+      "typeId": 3,
+      "coolingCapacityKw": 15.3,
+      "heatingCapacityKw": 17.4,
+      "powerKw": 5.73,
+      "voltage": 380,
+      "weightKg": 78.3,
+      "dimensions": {
+        "width": 688,
+        "height": 1000,
+        "depth": 495
+      },
+      "efficiency": 3.38,
+      "noiseLevelDb": 41.3,
+      "estimatedPrice": 1444.64
+    },
+    {
+      "id": 92,
+      "name": "GX-Cassette-8_5 Indoor Unit",
+      "typeId": 2,
+      "coolingCapacityKw": 8.5,
+      "heatingCapacityKw": 9.8,
+      "powerKw": 2.15,
+      "voltage": 208,
+      "weightKg": 26.7,
+      "dimensions": {
+        "width": 1172,
+        "height": 497,
+        "depth": 541
+      },
+      "efficiency": 4.36,
+      "noiseLevelDb": 66.1,
+      "estimatedPrice": 1162.28
+    },
+    {
+      "id": 93,
+      "name": "GX-HR-52_3 Heat Recovery",
+      "typeId": 5,
+      "coolingCapacityKw": 52.3,
+      "heatingCapacityKw": 55.7,
+      "powerKw": 15.08,
+      "voltage": 460,
+      "weightKg": 160.7,
+      "dimensions": {
+        "width": 828,
+        "height": 583,
+        "depth": 677
+      },
+      "efficiency": 3.15,
+      "noiseLevelDb": 45.5,
+      "estimatedPrice": 5573.8
+    },
+    {
+      "id": 94,
+      "name": "GX-Branch-26_1 Branch Controller",
+      "typeId": 4,
+      "coolingCapacityKw": 26.1,
+      "heatingCapacityKw": 30.4,
+      "powerKw": 5.99,
+      "voltage": 230,
+      "weightKg": 90.0,
+      "dimensions": {
+        "width": 1010,
+        "height": 589,
+        "depth": 379
+      },
+      "efficiency": 4.37,
+      "noiseLevelDb": 61.6,
+      "estimatedPrice": 3164.14
+    },
+    {
+      "id": 95,
+      "name": "GX-Control-0_3 Controller",
+      "typeId": 6,
+      "coolingCapacityKw": 0.3,
+      "heatingCapacityKw": 0.3,
+      "powerKw": 0.09,
+      "voltage": 220,
+      "weightKg": 1.3,
+      "dimensions": {
+        "width": 657,
+        "height": 588,
+        "depth": 286
+      },
+      "efficiency": 3.6,
+      "noiseLevelDb": 53.0,
+      "estimatedPrice": 590.6
+    },
+    {
+      "id": 96,
+      "name": "GX-Cassette-11_5 Indoor Unit",
+      "typeId": 2,
+      "coolingCapacityKw": 11.5,
+      "heatingCapacityKw": 12.4,
+      "powerKw": 2.56,
+      "voltage": 230,
+      "weightKg": 48.1,
+      "dimensions": {
+        "width": 827,
+        "height": 507,
+        "depth": 442
+      },
+      "efficiency": 3.87,
+      "noiseLevelDb": 44.7,
+      "estimatedPrice": 1245.83
+    },
+    {
+      "id": 97,
+      "name": "GX-Control-0_2 Controller",
+      "typeId": 6,
+      "coolingCapacityKw": 0.2,
+      "heatingCapacityKw": 0.2,
+      "powerKw": 0.05,
+      "voltage": 380,
+      "weightKg": 0.9,
+      "dimensions": {
+        "width": 1332,
+        "height": 705,
+        "depth": 558
+      },
+      "efficiency": 3.12,
+      "noiseLevelDb": 39.2,
+      "estimatedPrice": 615.8
+    },
+    {
+      "id": 98,
+      "name": "GX-Branch-36_0 Branch Controller",
+      "typeId": 4,
+      "coolingCapacityKw": 36.0,
+      "heatingCapacityKw": 40.0,
+      "powerKw": 9.93,
+      "voltage": 380,
+      "weightKg": 109.3,
+      "dimensions": {
+        "width": 610,
+        "height": 1006,
+        "depth": 775
+      },
+      "efficiency": 3.38,
+      "noiseLevelDb": 28.8,
+      "estimatedPrice": 4080.68
+    },
+    {
+      "id": 99,
+      "name": "GX-Branch-24_0 Branch Controller",
+      "typeId": 4,
+      "coolingCapacityKw": 24.0,
+      "heatingCapacityKw": 27.7,
+      "powerKw": 7.54,
+      "voltage": 460,
+      "weightKg": 100.8,
+      "dimensions": {
+        "width": 1526,
+        "height": 1121,
+        "depth": 255
+      },
+      "efficiency": 3.14,
+      "noiseLevelDb": 52.2,
+      "estimatedPrice": 2904.86
+    },
+    {
+      "id": 100,
+      "name": "GX-Duct-2_4 Indoor Unit",
+      "typeId": 3,
+      "coolingCapacityKw": 2.4,
+      "heatingCapacityKw": 2.8,
+      "powerKw": 0.87,
+      "voltage": 220,
+      "weightKg": 14.3,
+      "dimensions": {
+        "width": 1011,
+        "height": 669,
+        "depth": 252
+      },
+      "efficiency": 3.64,
+      "noiseLevelDb": 29.7,
+      "estimatedPrice": 718.61
+    },
+    {
+      "id": 101,
+      "name": "GX-HR-69_2 Heat Recovery",
+      "typeId": 5,
+      "coolingCapacityKw": 69.2,
+      "heatingCapacityKw": 79.2,
+      "powerKw": 16.93,
+      "voltage": 208,
+      "weightKg": 327.2,
+      "dimensions": {
+        "width": 627,
+        "height": 681,
+        "depth": 851
+      },
+      "efficiency": 3.33,
+      "noiseLevelDb": 36.5,
+      "estimatedPrice": 7209.64
+    },
+    {
+      "id": 102,
+      "name": "GX-Branch-59_9 Branch Controller",
+      "typeId": 4,
+      "coolingCapacityKw": 59.9,
+      "heatingCapacityKw": 61.4,
+      "powerKw": 18.4,
+      "voltage": 400,
+      "weightKg": 213.5,
+      "dimensions": {
+        "width": 759,
+        "height": 467,
+        "depth": 748
+      },
+      "efficiency": 4.54,
+      "noiseLevelDb": 40.4,
+      "estimatedPrice": 6404.04
+    },
+    {
+      "id": 103,
+      "name": "GX-Branch-55_2 Branch Controller",
+      "typeId": 4,
+      "coolingCapacityKw": 55.2,
+      "heatingCapacityKw": 61.9,
+      "powerKw": 20.73,
+      "voltage": 380,
+      "weightKg": 138.0,
+      "dimensions": {
+        "width": 1516,
+        "height": 653,
+        "depth": 285
+      },
+      "efficiency": 4.39,
+      "noiseLevelDb": 30.9,
+      "estimatedPrice": 5947.64
+    },
+    {
+      "id": 104,
+      "name": "GX-Cassette-7_0 Indoor Unit",
+      "typeId": 2,
+      "coolingCapacityKw": 7.0,
+      "heatingCapacityKw": 7.6,
+      "powerKw": 1.63,
+      "voltage": 460,
+      "weightKg": 17.6,
+      "dimensions": {
+        "width": 1269,
+        "height": 349,
+        "depth": 764
+      },
+      "efficiency": 4.0,
+      "noiseLevelDb": 51.0,
+      "estimatedPrice": 1049.59
+    },
+    {
+      "id": 105,
+      "name": "GX-Duct-13_8 Indoor Unit",
+      "typeId": 3,
+      "coolingCapacityKw": 13.8,
+      "heatingCapacityKw": 14.6,
+      "powerKw": 4.3,
+      "voltage": 230,
+      "weightKg": 42.5,
+      "dimensions": {
+        "width": 1078,
+        "height": 837,
+        "depth": 736
+      },
+      "efficiency": 4.6,
+      "noiseLevelDb": 33.3,
+      "estimatedPrice": 1565.02
+    },
+    {
+      "id": 106,
+      "name": "GX-Duct-11_7 Indoor Unit",
+      "typeId": 3,
+      "coolingCapacityKw": 11.7,
+      "heatingCapacityKw": 12.4,
+      "powerKw": 3.61,
+      "voltage": 220,
+      "weightKg": 64.9,
+      "dimensions": {
+        "width": 1197,
+        "height": 900,
+        "depth": 666
+      },
+      "efficiency": 3.18,
+      "noiseLevelDb": 31.6,
+      "estimatedPrice": 1320.87
+    },
+    {
+      "id": 107,
+      "name": "GX-Cassette-1_9 Indoor Unit",
+      "typeId": 2,
+      "coolingCapacityKw": 1.9,
+      "heatingCapacityKw": 2.2,
+      "powerKw": 0.56,
+      "voltage": 230,
+      "weightKg": 10.6,
+      "dimensions": {
+        "width": 600,
+        "height": 423,
+        "depth": 633
+      },
+      "efficiency": 4.18,
+      "noiseLevelDb": 30.7,
+      "estimatedPrice": 742.66
+    },
+    {
+      "id": 108,
+      "name": "GX-Branch-50_5 Branch Controller",
+      "typeId": 4,
+      "coolingCapacityKw": 50.5,
+      "heatingCapacityKw": 53.5,
+      "powerKw": 13.57,
+      "voltage": 208,
+      "weightKg": 190.8,
+      "dimensions": {
+        "width": 944,
+        "height": 1001,
+        "depth": 313
+      },
+      "efficiency": 3.03,
+      "noiseLevelDb": 38.8,
+      "estimatedPrice": 5369.23
+    },
+    {
+      "id": 109,
+      "name": "GX-VRF-96_5 Outdoor Unit",
+      "typeId": 1,
+      "coolingCapacityKw": 96.5,
+      "heatingCapacityKw": 106.9,
+      "powerKw": 24.92,
+      "voltage": 230,
+      "weightKg": 594.9,
+      "dimensions": {
+        "width": 791,
+        "height": 884,
+        "depth": 467
+      },
+      "efficiency": 3.78,
+      "noiseLevelDb": 44.9,
+      "estimatedPrice": 9847.96
+    },
+    {
+      "id": 110,
+      "name": "GX-Duct-10_4 Indoor Unit",
+      "typeId": 3,
+      "coolingCapacityKw": 10.4,
+      "heatingCapacityKw": 10.9,
+      "powerKw": 2.39,
+      "voltage": 230,
+      "weightKg": 56.2,
+      "dimensions": {
+        "width": 1477,
+        "height": 819,
+        "depth": 876
+      },
+      "efficiency": 3.0,
+      "noiseLevelDb": 39.6,
+      "estimatedPrice": 1316.92
+    }
+  ]
+}
