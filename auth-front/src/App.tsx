@@ -1,11 +1,3 @@
-import './App.css'
-
-function App() {
-
-
-  return (
-   <>Hola</>
-  )
+export default function App() {
+  return null;
 }
-
-export default App

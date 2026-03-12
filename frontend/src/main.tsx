@@ -1,7 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { DashboardPage } from "./vrf/pages/DashboardPage";
-import "./index.css";
+import { DashboardPage } from "./pages/DashboardPage";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
