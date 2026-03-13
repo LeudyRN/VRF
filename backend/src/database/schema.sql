@@ -1,7 +1,40 @@
+
+CREATE TABLE IF NOT EXISTS users (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(120) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  email_verified TINYINT(1) NOT NULL DEFAULT 0,
+  verification_token VARCHAR(255) NULL,
+  reset_token VARCHAR(255) NULL,
+  stripe_customer_id VARCHAR(255) NULL,
+  subscription_status ENUM('inactive','trial','active','canceled','past_due') NOT NULL DEFAULT 'inactive',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS subscriptions (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  user_id INT NOT NULL,
+  stripe_subscription_id VARCHAR(255) NOT NULL UNIQUE,
+  plan VARCHAR(120) NOT NULL,
+  status ENUM('inactive','trial','active','canceled','past_due') NOT NULL,
+  current_period_end DATETIME NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS projects (
+  id VARCHAR(64) PRIMARY KEY,
+  user_id INT NULL,
+  name VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_projects_user_id (user_id)
+
 CREATE TABLE IF NOT EXISTS projects (
   id VARCHAR(64) PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
 );
 
 CREATE TABLE IF NOT EXISTS zones (
