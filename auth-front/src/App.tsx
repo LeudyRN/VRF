@@ -30,4 +30,8 @@ export default function App() {
       </BrowserRouter>
     </AuthProvider>
   );
+
+export default function App() {
+  return null;
+
 }

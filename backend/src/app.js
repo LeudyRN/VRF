@@ -22,5 +22,10 @@ export function createApp() {
     console.error(err);
     res.status(500).json({ error: "Internal server error" });
   });
+
+  app.use(express.json());
+  app.get("/health", (_, res) => res.json({ ok: true }));
+  app.use("/api", apiRouter);
+
   return app;
 }

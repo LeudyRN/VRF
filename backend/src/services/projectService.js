@@ -5,6 +5,7 @@ import { computeTotalEquipmentCost } from "../engine/costEngine/costEngine.js";
 import { runSizing } from "../engine/sizingEngine/sizingEngine.js";
 
 export const projectService = {
+
   listProjects(userId) {
     return store.projects.filter((p) => p.userId === userId);
   },
@@ -19,12 +20,25 @@ export const projectService = {
   },
   placeEquipment(projectId, userId, equipmentId, label, x, y) {
     this.ensureOwner(projectId, userId);
+
+  listProjects() { return store.projects; },
+  createProject(name) {
+    const p = { id: randomUUID(), name, createdAt: new Date().toISOString() };
+    store.projects.push(p);
+    return p;
+  },
+  placeEquipment(projectId, equipmentId, label, x, y) {
+
     const placement = { id: randomUUID(), projectId, equipmentId, label, x, y };
     store.placements.push(placement);
     return placement;
   },
+
   createConnection(projectId, userId, fromNodeId, toNodeId, kind) {
     this.ensureOwner(projectId, userId);
+
+  createConnection(projectId, fromNodeId, toNodeId, kind) {
+
     validateConnection(fromNodeId, toNodeId);
     const from = store.placements.find((p) => p.id === fromNodeId && p.projectId === projectId);
     const to = store.placements.find((p) => p.id === toNodeId && p.projectId === projectId);
@@ -34,14 +48,22 @@ export const projectService = {
     store.connections.push(conn);
     return conn;
   },
+
   getProjectModel(projectId, userId) {
     this.ensureOwner(projectId, userId);
+
+  getProjectModel(projectId) {
+
     const placements = store.placements.filter((p) => p.projectId === projectId);
     const connections = store.connections.filter((c) => c.projectId === projectId);
     return { placements, connections };
   },
+
   getCalculations(projectId, userId) {
     this.ensureOwner(projectId, userId);
+
+  getCalculations(projectId) {
+
     const placements = store.placements.filter((p) => p.projectId === projectId);
     const equipment = placements.map((p) => store.equipment.find((e) => e.id === p.equipmentId)).filter(Boolean);
     const pipeLength = store.connections.filter((c) => c.projectId === projectId && c.kind === "PIPE").reduce((s, c) => s + c.lengthM, 0);
@@ -49,8 +71,12 @@ export const projectService = {
     const totalCost = computeTotalEquipmentCost(equipment);
     return runSizing(equipment, pipeLength, cableLength, totalCost);
   },
+
   getBom(projectId, userId) {
     this.ensureOwner(projectId, userId);
+
+  getBom(projectId) {
+
     const placements = store.placements.filter((p) => p.projectId === projectId);
     const equipmentMap = new Map();
     for (const p of placements) {

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { projectController } from "../controllers/projectController.js";
 import { equipmentController } from "../controllers/equipmentController.js";
+
 import { authRouter } from "./authRoutes.js";
 import { stripeRouter } from "./stripeRoutes.js";
 import { requireAuth } from "../middleware/auth.js";
@@ -19,3 +20,15 @@ apiRouter.post("/connections", requireAuth, requireVerifiedAndActive, projectCon
 apiRouter.get("/projects/:projectId/model", requireAuth, requireVerifiedAndActive, projectController.getModel);
 apiRouter.get("/calculations/:projectId", requireAuth, requireVerifiedAndActive, projectController.calculations);
 apiRouter.get("/bom/:projectId", requireAuth, requireVerifiedAndActive, projectController.bom);
+
+
+export const apiRouter = Router();
+apiRouter.get("/projects", projectController.list);
+apiRouter.post("/projects", projectController.create);
+apiRouter.get("/equipment", equipmentController.list);
+apiRouter.post("/equipment", projectController.placeEquipment);
+apiRouter.post("/connections", projectController.createConnection);
+apiRouter.get("/projects/:projectId/model", projectController.getModel);
+apiRouter.get("/calculations/:projectId", projectController.calculations);
+apiRouter.get("/bom/:projectId", projectController.bom);
+
