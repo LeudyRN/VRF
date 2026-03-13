@@ -13,6 +13,10 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+async function fetchMe(currentToken: string): Promise<UserProfile> {
+  return apiFetch<UserProfile>("/auth/me", {}, currentToken);
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(localStorage.getItem("token"));
   const [user, setUser] = useState<UserProfile | null>(null);
@@ -24,8 +28,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
       return;
     }
+
+    setLoading(true);
+
     try {
-      const me = await apiFetch<UserProfile>("/auth/me", {}, token);
+      const me = await fetchMe(token);
       setUser(me);
     } catch {
       setUser(null);
@@ -37,26 +44,42 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    refreshMe();
+    void refreshMe();
   }, [token]);
 
   const login = async (jwt: string) => {
+    setLoading(true);
     localStorage.setItem("token", jwt);
     setToken(jwt);
-    await refreshMe();
+
+    try {
+      const me = await fetchMe(jwt);
+      setUser(me);
+    } catch (error) {
+      localStorage.removeItem("token");
+      setToken(null);
+      setUser(null);
+      setLoading(false);
+      throw error;
+    }
   };
 
   const logout = () => {
     localStorage.removeItem("token");
     setToken(null);
     setUser(null);
+    setLoading(false);
   };
 
   return <AuthContext.Provider value={{ token, user, loading, login, logout, refreshMe }}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be inside AuthProvider");
-  return ctx;
+  const context = useContext(AuthContext);
+
+  if (!context) {
+    throw new Error("useAuth must be inside AuthProvider");
+  }
+
+  return context;
 }

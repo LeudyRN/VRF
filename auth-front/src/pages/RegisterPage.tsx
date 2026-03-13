@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+﻿import { FormEvent, useState } from "react";
 import { Link } from "react-router-dom";
 import { apiFetch } from "../services/apiClient";
 
@@ -14,11 +14,76 @@ export function RegisterPage() {
     setError("");
     try {
       await apiFetch("/auth/register", { method: "POST", body: JSON.stringify({ name, email, password }) });
-      setMessage("Account created. Check your email for the verification link.");
+      setMessage("Cuenta creada. Revise su correo para verificar el acceso.");
     } catch (err) {
       setError((err as Error).message);
     }
   };
 
-  return <div className="min-h-screen bg-slate-100 grid place-items-center p-4"><form onSubmit={submit} className="w-full max-w-md bg-white rounded-2xl shadow p-6 space-y-4"><h1 className="text-2xl font-semibold">Create account</h1><input className="w-full border rounded-lg px-3 py-2" placeholder="Name" value={name} onChange={(e)=>setName(e.target.value)} required /><input className="w-full border rounded-lg px-3 py-2" placeholder="Email" type="email" value={email} onChange={(e)=>setEmail(e.target.value)} required /><input className="w-full border rounded-lg px-3 py-2" placeholder="Password" type="password" value={password} onChange={(e)=>setPassword(e.target.value)} required /><button className="w-full py-2 rounded-lg bg-slate-900 text-white">Register</button>{message && <p className="text-emerald-600 text-sm">{message}</p>}{error && <p className="text-rose-600 text-sm">{error}</p>}<p className="text-sm">Already have an account? <Link to="/login" className="text-cyan-600">Login</Link></p></form></div>;
+  return (
+    <div className="relative grid min-h-screen place-items-center overflow-hidden bg-[var(--page-bg)] p-4 text-[var(--ink)]">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(20,83,45,0.12),_transparent_26%),radial-gradient(circle_at_bottom_left,_rgba(201,116,25,0.12),_transparent_24%)]" />
+
+      <form onSubmit={submit} className="panel-glass-strong relative z-10 w-full max-w-md rounded-[32px] p-8">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--ink-soft)]">
+          Plataforma de Sistemas VRF
+        </p>
+        <h1 className="mt-4 text-3xl font-bold text-[var(--ink)]">Crear cuenta</h1>
+        <p className="mt-3 text-sm leading-6 text-[var(--ink-soft)]">
+          Registre su acceso para trabajar seleccion de equipos, configuracion del sistema y reportes de ingenieria.
+        </p>
+
+        <label className="mt-6 block">
+          <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ink-soft)]">Nombre</span>
+          <input
+            className="w-full rounded-2xl border border-[var(--line)] bg-white/85 px-4 py-3 text-sm text-[var(--ink)] outline-none transition focus:border-[var(--accent)]"
+            placeholder="Nombre completo"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+        </label>
+
+        <label className="mt-4 block">
+          <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ink-soft)]">Correo</span>
+          <input
+            className="w-full rounded-2xl border border-[var(--line)] bg-white/85 px-4 py-3 text-sm text-[var(--ink)] outline-none transition focus:border-[var(--accent)]"
+            placeholder="usuario@empresa.com"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </label>
+
+        <label className="mt-4 block">
+          <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ink-soft)]">
+            Contrasena
+          </span>
+          <input
+            className="w-full rounded-2xl border border-[var(--line)] bg-white/85 px-4 py-3 text-sm text-[var(--ink)] outline-none transition focus:border-[var(--accent)]"
+            placeholder="Minimo 8 caracteres"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </label>
+
+        <button className="mt-6 w-full rounded-2xl bg-[var(--ink)] py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-black">
+          Registrar usuario
+        </button>
+
+        {message && <p className="mt-3 text-sm text-emerald-700">{message}</p>}
+        {error && <p className="mt-3 text-sm text-rose-700">{error}</p>}
+
+        <p className="mt-5 text-sm text-[var(--ink-soft)]">
+          Ya tiene cuenta?{" "}
+          <Link to="/login" className="font-semibold text-[var(--accent)]">
+            Iniciar sesion
+          </Link>
+        </p>
+      </form>
+    </div>
+  );
 }

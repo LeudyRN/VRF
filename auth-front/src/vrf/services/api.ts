@@ -1,66 +1,58 @@
-import { Connection, EquipmentItem, Placement, Project } from "../types";
-
-const BASE = "http://localhost:3100/api";
-
-const authHeader = () => {
-  const token = localStorage.getItem("token");
-  return token ? { Authorization: `Bearer ${token}` } : {};
-};
+import { apiFetch } from "../../services/apiClient";
+import { BomSummary, CalculationSummary, Connection, EquipmentItem, Placement, Project } from "../types";
 
 export const api = {
-  async getEquipment(): Promise<{ items: EquipmentItem[] }> {
-    const res = await fetch(`${BASE}/equipment`, { headers: { ...authHeader() } });
-    return res.json();
+  getEquipment() {
+    return apiFetch<{ items: EquipmentItem[] }>("/equipment");
   },
-  async getProjects(): Promise<Project[]> {
-    const res = await fetch(`${BASE}/projects`, { headers: { ...authHeader() } });
-    return res.json();
-  },
-  async createProject(name: string): Promise<Project> {
-    const res = await fetch(`${BASE}/projects`, { method: "POST", headers: { "Content-Type": "application/json", ...authHeader() }, body: JSON.stringify({ name }) });
-    return res.json();
-  },
-  async placeEquipment(payload: { projectId: string; equipmentId: number; x: number; y: number; label: string }): Promise<Placement> {
-    const res = await fetch(`${BASE}/equipment`, { method: "POST", headers: { "Content-Type": "application/json", ...authHeader() }, body: JSON.stringify(payload) });
-    return res.json();
-  },
-  async createConnection(payload: { projectId: string; fromNodeId: string; toNodeId: string; kind: "PIPE"|"CABLE" }): Promise<Connection> {
-    const res = await fetch(`${BASE}/connections`, { method: "POST", headers: { "Content-Type": "application/json", ...authHeader() }, body: JSON.stringify(payload) });
-    return res.json();
-  },
-  async getModel(projectId: string): Promise<{ placements: Placement[]; connections: Connection[] }> {
-    const res = await fetch(`${BASE}/projects/${projectId}/model`, { headers: { ...authHeader() } });
-    return res.json();
-  },
-  async getCalculations(projectId: string) { const res = await fetch(`${BASE}/calculations/${projectId}`, { headers: { ...authHeader() } }); return res.json(); },
-  async getBom(projectId: string) { const res = await fetch(`${BASE}/bom/${projectId}`, { headers: { ...authHeader() } }); return res.json(); },
 
-export const api = {
-  async getEquipment(): Promise<{ items: EquipmentItem[] }> {
-    const res = await fetch(`${BASE}/equipment`);
-    return res.json();
+  getProjects() {
+    return apiFetch<Project[]>("/projects");
   },
-  async getProjects(): Promise<Project[]> {
-    const res = await fetch(`${BASE}/projects`);
-    return res.json();
-  },
-  async createProject(name: string): Promise<Project> {
-    const res = await fetch(`${BASE}/projects`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name }) });
-    return res.json();
-  },
-  async placeEquipment(payload: { projectId: string; equipmentId: number; x: number; y: number; label: string }): Promise<Placement> {
-    const res = await fetch(`${BASE}/equipment`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-    return res.json();
-  },
-  async createConnection(payload: { projectId: string; fromNodeId: string; toNodeId: string; kind: "PIPE"|"CABLE" }): Promise<Connection> {
-    const res = await fetch(`${BASE}/connections`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-    return res.json();
-  },
-  async getModel(projectId: string): Promise<{ placements: Placement[]; connections: Connection[] }> {
-    const res = await fetch(`${BASE}/projects/${projectId}/model`);
-    return res.json();
-  },
-  async getCalculations(projectId: string) { const res = await fetch(`${BASE}/calculations/${projectId}`); return res.json(); },
-  async getBom(projectId: string) { const res = await fetch(`${BASE}/bom/${projectId}`); return res.json(); },
 
+  createProject(name: string) {
+    return apiFetch<Project>("/projects", {
+      method: "POST",
+      body: JSON.stringify({ name }),
+    });
+  },
+
+  deleteProject(projectId: string) {
+    return apiFetch<{ success: boolean }>(`/projects/${projectId}`, {
+      method: "DELETE",
+    });
+  },
+
+  placeEquipment(payload: { projectId: string; equipmentId: number; x: number; y: number; label: string }) {
+    return apiFetch<Placement>("/equipment", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  movePlacement(payload: { projectId: string; placementId: string; x: number; y: number }) {
+    return apiFetch<{ placement: Placement; connections: Connection[] }>(`/placements/${payload.placementId}`, {
+      method: "PATCH",
+      body: JSON.stringify({ projectId: payload.projectId, x: payload.x, y: payload.y }),
+    });
+  },
+
+  createConnection(payload: { projectId: string; fromNodeId: string; toNodeId: string; kind: "PIPE" | "CABLE" }) {
+    return apiFetch<Connection>("/connections", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  getModel(projectId: string) {
+    return apiFetch<{ placements: Placement[]; connections: Connection[] }>(`/projects/${projectId}/model`);
+  },
+
+  getCalculations(projectId: string) {
+    return apiFetch<CalculationSummary>(`/calculations/${projectId}`);
+  },
+
+  getBom(projectId: string) {
+    return apiFetch<BomSummary>(`/bom/${projectId}`);
+  },
 };

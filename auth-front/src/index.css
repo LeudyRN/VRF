@@ -1,4 +1,121 @@
-:root { color-scheme: light; }
-* { box-sizing: border-box; }
-body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #f1f5f9; color: #0f172a; }
-a { text-decoration: none; }
+﻿@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap");
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+  --page-bg: #efe3cf;
+  --page-bg-deep: #e3d3ba;
+  --surface: rgba(255, 250, 243, 0.76);
+  --surface-strong: rgba(255, 247, 237, 0.92);
+  --surface-muted: rgba(255, 248, 239, 0.6);
+  --ink: #18202f;
+  --ink-soft: #556072;
+  --line: rgba(24, 32, 47, 0.12);
+  --line-strong: rgba(24, 32, 47, 0.2);
+  --accent: #14532d;
+  --accent-soft: #d7f1dc;
+  --warn: #c97419;
+  --danger: #b91c1c;
+  --shadow: 0 24px 60px rgba(49, 40, 24, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--page-bg);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at top left, rgba(20, 83, 45, 0.16), transparent 28%),
+    radial-gradient(circle at top right, rgba(201, 116, 25, 0.14), transparent 26%),
+    linear-gradient(180deg, #f6efe4 0%, var(--page-bg) 45%, var(--page-bg-deep) 100%);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  letter-spacing: -0.03em;
+}
+
+.panel-glass {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow);
+}
+
+.panel-glass-strong {
+  border: 1px solid var(--line-strong);
+  background: var(--surface-strong);
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow);
+}
+
+.design-grid {
+  background-color: rgba(255, 252, 247, 0.76);
+  background-image:
+    linear-gradient(rgba(24, 32, 47, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(24, 32, 47, 0.05) 1px, transparent 1px),
+    radial-gradient(circle at top, rgba(20, 83, 45, 0.08), transparent 55%);
+  background-position: center;
+  background-size: 28px 28px, 28px 28px, auto;
+}
+
+.fade-up {
+  animation: fade-up 0.55s ease both;
+}
+
+.fade-up-delay {
+  animation: fade-up 0.72s ease both;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.engineering-grid {
+  background-color: rgba(255, 252, 247, 0.82);
+  background-image:
+    linear-gradient(rgba(24, 32, 47, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(24, 32, 47, 0.05) 1px, transparent 1px),
+    linear-gradient(rgba(24, 32, 47, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(24, 32, 47, 0.08) 1px, transparent 1px),
+    radial-gradient(circle at top, rgba(20, 83, 45, 0.08), transparent 58%);
+  background-size: 28px 28px, 28px 28px, 140px 140px, 140px 140px, auto;
+  background-position: center;
+}

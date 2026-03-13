@@ -37,6 +37,23 @@ export const userRepository = {
     }, async () => mem.users.find((u) => u.email === email) || null);
   },
 
+  async findByLoginIdentifier(identifier) {
+    return withDb(
+      async (db) => {
+        const [rows] = await db.query(
+          `SELECT *
+           FROM users
+           WHERE email = ?
+              OR SUBSTRING_INDEX(email, '@', 1) = ?
+           LIMIT 1`,
+          [identifier, identifier]
+        );
+        return rows[0] || null;
+      },
+      async () => mem.users.find((user) => user.email === identifier || user.email.split("@")[0] === identifier) || null
+    );
+  },
+
   async findById(id) {
     return withDb(async (db) => {
       const [rows] = await db.query(`SELECT * FROM users WHERE id = ? LIMIT 1`, [id]);

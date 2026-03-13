@@ -3,8 +3,10 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "install:all": "echo 'Dependencies already bundled in repository'",
-    "dev": "bash -c 'npm run dev --prefix backend & npm run dev --prefix auth-front & wait'",
+    "install:all": "npm install --prefix backend && npm install --prefix auth-front",
+    "dev": "node scripts/dev.mjs",
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:frontend": "npm run dev --prefix auth-front",
     "build": "npm run build --prefix auth-front"
   }
 }

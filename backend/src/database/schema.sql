@@ -1,4 +1,3 @@
-
 CREATE TABLE IF NOT EXISTS users (
   id INT PRIMARY KEY AUTO_INCREMENT,
   name VARCHAR(120) NOT NULL,
@@ -28,13 +27,8 @@ CREATE TABLE IF NOT EXISTS projects (
   user_id INT NULL,
   name VARCHAR(255) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  INDEX idx_projects_user_id (user_id)
-
-CREATE TABLE IF NOT EXISTS projects (
-  id VARCHAR(64) PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-
+  INDEX idx_projects_user_id (user_id),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS zones (
@@ -67,6 +61,18 @@ CREATE TABLE IF NOT EXISTS equipment (
   noise_level DECIMAL(10,2),
   price_estimate DECIMAL(10,2),
   FOREIGN KEY (type_id) REFERENCES equipment_types(id)
+);
+
+CREATE TABLE IF NOT EXISTS placements (
+  id VARCHAR(64) PRIMARY KEY,
+  project_id VARCHAR(64) NOT NULL,
+  equipment_id INT NOT NULL,
+  label VARCHAR(255) NOT NULL,
+  x DECIMAL(10,2) NOT NULL,
+  y DECIMAL(10,2) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+  FOREIGN KEY (equipment_id) REFERENCES equipment(id)
 );
 
 CREATE TABLE IF NOT EXISTS connections (
